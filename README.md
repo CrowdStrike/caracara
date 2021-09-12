@@ -10,7 +10,8 @@
 A collection of tools for interacting with the CrowdStrike Falcon API.
 
 ## Basic usage example
-The following example demonstrates using the Hosts Toolbox to retrieve a host AID.
+The following example demonstrates using the Hosts Toolbox to retrieve a host AID,
+and then using the RTR Toolbox to initiate a session and execute `ifconfig`.
 ```python
 import os
 from falconpytools.hosts import HostsToolbox, Host
