@@ -5,12 +5,14 @@
 [![Flake8](https://github.com/CrowdStrike/falconpy-tools/actions/workflows/flake8.yml/badge.svg)](https://github.com/CrowdStrike/falconpy-tools/actions/workflows/flake8.yml)
 [![Bandit](https://github.com/CrowdStrike/falconpy-tools/actions/workflows/bandit.yml/badge.svg)](https://github.com/CrowdStrike/falconpy-tools/actions/workflows/bandit.yml)
 [![CodeQL](https://github.com/CrowdStrike/falconpy-tools/actions/workflows/codeql.yml/badge.svg)](https://github.com/CrowdStrike/falconpy-tools/actions/workflows/codeql.yml)
+![Maintained](https://img.shields.io/maintenance/yes/2021)
 
 A collection of tools for interacting with the CrowdStrike Falcon API.
 
 ## Basic usage example
 The following example demonstrates using the Hosts Toolbox to retrieve a host AID.
 ```python
+import os
 from falconpytools.hosts import HostsToolbox, Host
 
 hosts = HostsToolbox(os.environ["FALCON_CLIENT_ID"],
