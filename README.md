@@ -15,12 +15,28 @@ The following example demonstrates using the Hosts Toolbox to retrieve a host AI
 import os
 from falconpytools.hosts import HostsToolbox, Host
 
-hosts = HostsToolbox(os.environ["FALCON_CLIENT_ID"],
-                     os.environ["FALCON_CLIENT_SECRET"],
+# Open the RTR toolbox
+rtr = RTRToolbox(os.environ["FALCON_CLIENT_ID"],
+                 os.environ["FALCON_CLIENT_SECRET"],
+                 verbose=True
+                 )
+# Open the Hosts toolbox
+hosts = HostsToolbox(auth_object=rtr.api.rtr.auth_object,
                      verbose=True
                      )
-
+# Host helper
 host = Host(api=hosts.api, verbose=hosts.verbose)
-aid = host.find_host_aid(hostname="SEARCH-STRING")
-print(aid)
+# Lookup the AID for our search string
+target_aid = host.find_host_aid(hostname="SEARCH-STRING")
+hostname = host.get_host(target_aid)[0]["hostname"]
+# RTR Single Target helper
+target = SingleTarget(api=rtr.api, verbose=rtr.verbose)
+# Initialize a RTR session
+target_session = target.connect_to_host(target_aid)
+# Execute a RTR command
+command_result = host.execute_command("ifconfig", target_session)
+# Disconnect from the RTR session
+host.disconnect_from_host(target_session)
+# Output the results
+print(command_result)
 ```
