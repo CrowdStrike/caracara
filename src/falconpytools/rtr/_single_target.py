@@ -46,6 +46,8 @@ class SingleTarget(Toolbox):
             returned = "ls"
         elif command[:4].lower() == "cat ":
             returned = "cat"
+        elif command[:10] == "runscript ":
+            returned = "runscript"
         else:
             returned = cls.BASE_COMMAND
 
