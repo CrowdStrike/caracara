@@ -1,0 +1,6 @@
+dist/*
+dist-old/*
+build/*
+src/crowdstrike_falconpy_tools*/*
+__pycache__
+.DS_Store
