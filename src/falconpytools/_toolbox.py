@@ -18,7 +18,7 @@ class Toolbox():
             # Error handling, yo
             self.api = OAuth2(client_id=key, client_secret=secret)
         self.verbose = verbose
-        self.indicator = ["⠧", "⠏", "⠹", "⠼"]
+        self.indicator = ["⠧", "⠇", "⠏", "⠹", "⠸", "⠼"]
         self.position = 0
 
     def display(self, message):
