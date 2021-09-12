@@ -14,6 +14,7 @@ The following example demonstrates using the Hosts Toolbox to retrieve a host AI
 ```python
 import os
 from falconpytools.hosts import HostsToolbox, Host
+from falconpytools.rtr import RTRToolbox, SingleTarget
 
 # Open the RTR toolbox
 rtr = RTRToolbox(os.environ["FALCON_CLIENT_ID"],
@@ -39,4 +40,19 @@ command_result = host.execute_command("ifconfig", target_session)
 host.disconnect_from_host(target_session)
 # Output the results
 print(command_result)
+```
+
+## Installation
+```shell
+python3 -m pip install crowdstrike-falconpy-tools
+```
+
+## Upgrading
+```shell
+python3 -m pip install crowdstrike-falconpy-tools --upgrade
+```
+
+## Removal
+```shell
+python3 -m pip uninstall crowdstrike-falconpy-tools
 ```
