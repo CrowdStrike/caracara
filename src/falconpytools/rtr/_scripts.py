@@ -3,6 +3,7 @@ from .._toolbox import Toolbox
 
 
 class Scripts(Toolbox):
+    """Class to represent Script interactions"""
     def __init__(self, key: str = None, secret: str = None, api: object = None, verbose: bool = True):
         super().__init__(key=key, secret=secret, api=api, verbose=verbose)
 
