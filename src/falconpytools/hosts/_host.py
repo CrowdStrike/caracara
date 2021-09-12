@@ -22,6 +22,7 @@ class Host(Toolbox):
         return resources
 
     def get_host(self: object, aid: str):
+        """Retrieve details for a host"""
         self.display("  Retrieving host detail")
         result = self.api.hosts.get_device_details(ids=aid)
         if not result["body"]["resources"]:
