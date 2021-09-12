@@ -2,7 +2,6 @@
 from ._api import FalconAPI
 from ._single_target import SingleTarget
 from .._toolbox import Toolbox
-# from toolbox import inform
 
 
 class RTRToolbox(Toolbox):
