@@ -35,11 +35,12 @@ class Host(Toolbox):
     def get_cid(self: object):
         """Retrieves the CID by looking at the first host"""
         self.display("Retrieving CID")
-        result = self.api.hosts.query_devices_by_filter()
+        result = self.api.hosts.get_device_details(
+            ids=self.api.hosts.query_devices_by_filter()["body"]["resources"][0]
+            )
         if not result["body"]["resources"]:
             returned = False
         else:
-            print(result)
             returned = result["body"]["resources"][0]["cid"]
 
         return returned
