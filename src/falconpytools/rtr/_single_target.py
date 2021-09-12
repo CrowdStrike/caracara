@@ -16,17 +16,17 @@ class SingleTarget(Toolbox):
         the host matching the AID provided
         """
         hdr = f"Initializing session with host {aid}"
-        self.display(f"  {hdr}")
+        self.display(f"{hdr}")
 
         session = self.api.rtr.init_session(body={
             "device_id": aid
             })
         if session["status_code"] == 201:
             sess_id = session["body"]["resources"][0]["session_id"]
-            self.display(f"  {hdr} [ {sess_id} ]")
+            self.display(f"{hdr} [ {sess_id} ]")
         else:
             sess_id = False
-            self.display(f"  {hdr} [ FAILED ]")
+            self.display(f"{hdr} [ FAILED ]")
 
         return sess_id
 
@@ -35,7 +35,7 @@ class SingleTarget(Toolbox):
         Deletes the RTR session as specified by session ID
         and then returns the status code.
         """
-        self.display(f"  Disconnecting session {session_id}")
+        self.display(f"Disconnecting session {session_id}")
         return self.api.rtr.delete_session(session_id=session_id)["status_code"]
 
     @classmethod
@@ -70,12 +70,12 @@ class SingleTarget(Toolbox):
                 )
         request_id = req["body"]["resources"][0]["cloud_request_id"]
         completed = False
-        hdr = "  Waiting on command to finish executing"
+        hdr = "Waiting on command to finish executing"
         self.display(hdr)
-        cnt = 1
+        # cnt = 1
         while not completed:
-            self.display(f"  {hdr}{'.' * cnt}")
-            cnt += 1
+            self.display(hdr)
+            # cnt += 1
             requested = self.api.rtr_admin.check_admin_command_status(
                 cloud_request_id=request_id,
                 sequence_id=0
@@ -85,6 +85,7 @@ class SingleTarget(Toolbox):
             except IndexError:
                 print(requested)    # Move to a debug handler
 
-        self.display(f"  {hdr}{'.' * cnt}done!")
+        self.display(f"{hdr} complete!")
+        # Need to wire in an error handler here and pass stderr
 
         return requested["body"]["resources"][0]["stdout"]

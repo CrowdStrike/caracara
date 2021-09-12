@@ -18,13 +18,25 @@ class Toolbox():
             # Error handling, yo
             self.api = OAuth2(client_id=key, client_secret=secret)
         self.verbose = verbose
+        self.indicator = ["⠧", "⠏", "⠹", "⠼"]
+        self.position = 0
 
     def display(self, message):
         """Provides informational updates"""
         if self.verbose:
-            print("%-80s" % message, end="\r", flush=True)
+            msg = f" {self.next()} {message}"
+            print("%-80s" % msg, end="\r", flush=True)
 
     def close(self):
         """Revokes the token and destroys the API object"""
         self.api.deauthenticate()
         self.api = None
+
+    def next(self):
+        """Gets the next indicator and increments the position"""
+        ind = self.indicator[self.position]
+        self.position += 1
+        if self.position >= (len(self.indicator) - 1):
+            self.position = 0
+
+        return ind
