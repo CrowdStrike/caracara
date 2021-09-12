@@ -64,28 +64,32 @@ class SingleTarget(Toolbox):
         payload["command_string"] = cmd
         req = self.api.rtr_admin.execute_admin_command(payload)
         if req["status_code"] != 201:
-            print(req)      # Move this to a debug handler
-            raise SystemExit(
-                "Unable to execute command. "
-                )
-        request_id = req["body"]["resources"][0]["cloud_request_id"]
-        completed = False
-        hdr = "Waiting on command to finish executing"
-        self.display(hdr)
-        # cnt = 1
-        while not completed:
+            # print(req["body"]["errors"][0]["message"])
+            # raise SystemExit(
+            #     "Unable to execute command. "
+            #     )
+            returned = req["body"]["errors"][0]["message"]
+        else:
+            request_id = req["body"]["resources"][0]["cloud_request_id"]
+            completed = False
+            hdr = "Waiting on command to finish executing"
             self.display(hdr)
-            # cnt += 1
-            requested = self.api.rtr_admin.check_admin_command_status(
-                cloud_request_id=request_id,
-                sequence_id=0
-                )
-            try:
-                completed = requested["body"]["resources"][0]["complete"]
-            except IndexError:
-                print(requested)    # Move to a debug handler
+            # cnt = 1
+            while not completed:
+                self.display(hdr)
+                # cnt += 1
+                requested = self.api.rtr_admin.check_admin_command_status(
+                    cloud_request_id=request_id,
+                    sequence_id=0
+                    )
+                try:
+                    completed = requested["body"]["resources"][0]["complete"]
+                except IndexError:
+                    print(requested)    # Move to a debug handler
 
-        self.display(f"{hdr} complete!")
-        # Need to wire in an error handler here and pass stderr
+            self.display(f"{hdr} complete!")
+            # Need to wire in an error handler here and pass stderr
 
-        return requested["body"]["resources"][0]["stdout"]
+            returned = requested["body"]["resources"][0]["stdout"]
+
+        return returned
