@@ -29,7 +29,7 @@ class Scripts(Toolbox):
         """
         Deletes a script
         """
-        self.display("  Removing pony scripts")
+        self.display(f"  Removing script {script_name}")
         delete = self.api.rtr_admin.delete_scripts(ids=self.api.rtr_admin.list_scripts(
             filter=f"name:'{script_name}'"
             )["body"]["resources"][0]
