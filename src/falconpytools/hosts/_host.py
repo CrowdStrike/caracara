@@ -39,6 +39,7 @@ class Host(Toolbox):
         if not result["body"]["resources"]:
             returned = False
         else:
+            print(result)
             returned = result["body"]["resources"][0]["cid"]
 
         return returned
