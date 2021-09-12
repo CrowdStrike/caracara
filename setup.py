@@ -23,7 +23,7 @@ setup(
     long_description_content_type="text/markdown",
     url=_PROJECT_URL,
     project_urls={
-        "Source": "https://github.com/CrowdStrike/falconpy-tools/tree/main/src/falconpy",
+        "Source": "https://github.com/CrowdStrike/falconpy-tools/tree/main/src/falconpytools",
         "Tracker": "https://github.com/CrowdStrike/falconpy-tools/issues"
     },
     # "Documentation": "https://www.falconpy.io",
