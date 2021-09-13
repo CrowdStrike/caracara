@@ -24,9 +24,10 @@ class Files(Toolbox):
         if success:
             if upload["status_code"] == 200:
                 self.display(f"Put file {file_name} uploaded")
+                returned = upload["body"]["resources"][0]["sha256"]
             if upload["status_code"] == 409:
                 self.display(f"Put file {file_name} already exists")
-            returned = upload["body"]["resources"][0]["sha256"]
+                returned = True  # File pre-exists, tell them so
         else:
             returned = False
 
