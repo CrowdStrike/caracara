@@ -15,7 +15,6 @@ class Files(Toolbox):
         upload = self.api.rtr_admin.create_put_files(
                 data={
                     "name": file_name,
-#                    "file": raw_file,
                     "description": f"RTR put file {file_name}"
                 }, files=[(file_name, (file_name, raw_file, 'application/octet-stream'))]
             )
@@ -63,7 +62,7 @@ class Files(Toolbox):
                 for file_item in file_list["body"]["resources"]:
                     self.display(f"Comparing {file_item['sha256']}")
                     if file_name == file_item["name"] or sha == file_item["sha256"]:
-                        self.display(f"Download identified")
+                        self.display("Download identified")
                         retrieve_id = file_item["sha256"]
                         matched = True
                 if matched:
