@@ -2,6 +2,7 @@
 from ._api import FalconAPI
 from ._single_target import SingleTarget
 from ._scripts import Scripts
+from ._files import Files
 from .._toolbox import Toolbox
 
 
@@ -12,4 +13,4 @@ class RTRToolbox(Toolbox):
         super().__init__(api=FalconAPI(key=key, secret=secret, auth_object=auth_object), verbose=verbose)
 
 
-__all__ = ["RTRToolbox", "SingleTarget", "Scripts"]
+__all__ = ["RTRToolbox", "SingleTarget", "Scripts", "Files"]
