@@ -50,7 +50,7 @@ class Files(Toolbox):
 
         return success
 
-    def download(self: object, session_id: str, file_name: str = None, sha: str = None):
+    def download(self: object, session_id: str, file_name: str = None):
         """Downloads a file that has been uploaded to CrowdStrike cloud with the GET command"""
         returned = False
         self.display("Retrieving file list")
