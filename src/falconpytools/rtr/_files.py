@@ -60,16 +60,19 @@ class Files(Toolbox):
             for file_item in file_list["body"]["resources"]:
                 retrieve_id = file_item["sha256"]
                 self.display("Initiating download")
+                clean_name = file_name.replace("/", "_")
+                if clean_name[:1] == "_":
+                    clean_name = clean_name[1:]
                 download = self.api.rtr.get_extracted_file_contents(
                     sha256=retrieve_id,
                     session_id=session_id,
-                    file_name=f"{file_name}_download.zip"
+                    file_name=f"{clean_name}_download.zip"
                 )
                 if not isinstance(download, dict):
                     self.display("Saving to local file")
                     if not os.path.isdir("download"):
                         os.mkdir("download")
-                    with open(f"download/{file_name}_download.zip", "wb+") as download_file:
+                    with open(f"download/{clean_name}_download.zip", "wb+") as download_file:
                         download_file.write(download)
                         returned = True
 
