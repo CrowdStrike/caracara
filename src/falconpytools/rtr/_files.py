@@ -1,4 +1,5 @@
 """File interactions"""
+import os
 from .._toolbox import Toolbox
 
 
@@ -78,6 +79,8 @@ class Files(Toolbox):
                 )
                 if not isinstance(download, dict):
                     self.display("Saving to local file")
+                    if not os.path.isdir("download"):
+                        os.mkdir("download")
                     with open(f"download/{file_name}_download.zip", "wb+") as download_file:
                         download_file.write(download)
                         returned = True
