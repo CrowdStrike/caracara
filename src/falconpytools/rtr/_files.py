@@ -20,7 +20,6 @@ class Files(Toolbox):
                     "description": f"RTR put file {file_name}"
                 }, files=[(file_name, (file_name, raw_file, 'application/octet-stream'))]
             )
-        print(upload)   # DEBUG
         success = bool(upload["status_code"] in [200, 409])
         if success:
             if upload["status_code"] == 200:
@@ -54,23 +53,12 @@ class Files(Toolbox):
     def download(self: object, session_id: str, file_name: str = None, sha: str = None):
         """Downloads a file that has been uploaded to CrowdStrike cloud with the GET command"""
         returned = False
-        # if not file_name and not sha:
-        #     returned = False
-        # else:
-        #     matched = False
         self.display("Retrieving file list")
         file_list = self.api.rtr.list_files(session_id=session_id)
-        print(file_list)  # DEBUG
         if file_list["body"]["resources"]:
             self.display("Reviewing file list")
             for file_item in file_list["body"]["resources"]:
-                #self.display(f"Comparing {file_item['sha256']}")
-                print(file_item)  # DEBUG
-                #if file_name == file_item["name"] or sha == file_item["sha256"]:
-                #    self.display("Download identified")
                 retrieve_id = file_item["sha256"]
-                #    matched = True
-            #if matched:
                 self.display("Initiating download")
                 download = self.api.rtr.get_extracted_file_contents(
                     sha256=retrieve_id,
@@ -84,7 +72,5 @@ class Files(Toolbox):
                     with open(f"download/{file_name}_download.zip", "wb+") as download_file:
                         download_file.write(download)
                         returned = True
-                else:
-                    print(download)  # DEBUG
 
         return returned
