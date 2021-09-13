@@ -15,6 +15,7 @@ class Files(Toolbox):
         upload = self.api.rtr_admin.create_put_files(
                 data={
                     "name": file_name,
+                    "content": raw_file,
                     "description": f"RTR put file {file_name}"
                 }, files=[(file_name, (file_name, raw_file, 'application/octet-stream'))]
             )
