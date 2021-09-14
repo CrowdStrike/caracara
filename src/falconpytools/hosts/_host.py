@@ -1,12 +1,9 @@
 """Host interactions"""
-from .._toolbox import Toolbox
+from .._tool import Tool
 
 
-class Host(Toolbox):
+class Host(Tool):
     """Class to represent host interactions"""
-
-    def __init__(self, key: str = None, secret: str = None, api: object = None, verbose: bool = True):
-        super().__init__(key=key, secret=secret, api=api, verbose=verbose)
 
     def find_host_aid(self: object, hostname: str):
         """Retrieves a list of hosts that match the specified hostname."""

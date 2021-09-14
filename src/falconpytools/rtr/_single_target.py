@@ -1,14 +1,11 @@
 """Single target interactions"""
-from .._toolbox import Toolbox
+from .._tool import Tool
 
 
-class SingleTarget(Toolbox):
+class SingleTarget(Tool):
     """Class to represent single target interactions"""
 
     BASE_COMMAND = "run"  # This will prolly need to dynamic
-
-    def __init__(self, key: str = None, secret: str = None, api: object = None, verbose: bool = True):
-        super().__init__(key=key, secret=secret, api=api, verbose=verbose)
 
     def connect_to_host(self: object, aid: str):
         """

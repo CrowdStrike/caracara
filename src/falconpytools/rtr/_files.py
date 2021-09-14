@@ -1,12 +1,10 @@
 """File interactions"""
 import os
-from .._toolbox import Toolbox
+from .._tool import Tool
 
 
-class Files(Toolbox):
+class Files(Tool):
     """Class to represent File interactions"""
-    def __init__(self, key: str = None, secret: str = None, api: object = None, verbose: bool = True):
-        super().__init__(key=key, secret=secret, api=api, verbose=verbose)
 
     def upload(self: object, raw_file: str, file_name: str):
         """

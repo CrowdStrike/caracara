@@ -12,5 +12,9 @@ class RTRToolbox(Toolbox):
         """Opens the toolbox"""
         super().__init__(api=FalconAPI(key=key, secret=secret, auth_object=auth_object), verbose=verbose)
 
+        self.scripts = Scripts(api=self.api)
+        self.single_target = SingleTarget(api=self.api)
+        self.files = Files(api=self.api)
 
-__all__ = ["RTRToolbox", "SingleTarget", "Scripts", "Files"]
+
+__all__ = ["RTRToolbox"]

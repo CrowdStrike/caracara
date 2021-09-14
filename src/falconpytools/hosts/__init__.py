@@ -10,5 +10,7 @@ class HostsToolbox(Toolbox):
         """Opens the toolbox"""
         super().__init__(api=FalconAPI(key=key, secret=secret, auth_object=auth_object), verbose=verbose)
 
+        self.host = Host(api=self.api)
 
-__all__ = ["HostsToolbox", "Host"]
+
+__all__ = ["HostsToolbox"]

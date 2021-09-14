@@ -1,11 +1,9 @@
 """Script interactions"""
-from .._toolbox import Toolbox
+from .._tool import Tool
 
 
-class Scripts(Toolbox):
+class Scripts(Tool):
     """Class to represent Script interactions"""
-    def __init__(self, key: str = None, secret: str = None, api: object = None, verbose: bool = True):
-        super().__init__(key=key, secret=secret, api=api, verbose=verbose)
 
     def upload(self: object, script: str, script_name: str):
         """
