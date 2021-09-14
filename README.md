@@ -14,8 +14,8 @@ The following example demonstrates using the Hosts Toolbox to retrieve a host AI
 and then using the RTR Toolbox to initiate a session and execute `ifconfig`.
 ```python
 import os
-from falconpytools.hosts import HostsToolbox, Host
-from falconpytools.rtr import RTRToolbox, SingleTarget
+from falconpytools.hosts import HostsToolbox
+from falconpytools.rtr import RTRToolbox
 
 # Open the RTR toolbox
 rtr = RTRToolbox(os.environ["FALCON_CLIENT_ID"],
