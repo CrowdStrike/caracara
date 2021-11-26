@@ -1,11 +1,13 @@
 ![CrowdStrike Falcon](https://raw.githubusercontent.com/CrowdStrike/falconpy/main/docs/asset/cs-logo.png) [![Twitter URL](https://img.shields.io/twitter/url?label=Follow%20%40CrowdStrike&style=social&url=https%3A%2F%2Ftwitter.com%2FCrowdStrike)](https://twitter.com/CrowdStrike)<br/>
 
 # Caracara
+![PyPI - Status](https://img.shields.io/pypi/status/caracara)
+[![PyPI](https://img.shields.io/pypi/v/caracara)](https://pypi.org/project/caracara/)
 [![Pylint](https://github.com/CrowdStrike/caracara/actions/workflows/pylint.yml/badge.svg)](https://github.com/CrowdStrike/caracara/actions/workflows/pylint.yml)
 [![Flake8](https://github.com/CrowdStrike/caracara/actions/workflows/flake8.yml/badge.svg)](https://github.com/CrowdStrike/caracara/actions/workflows/flake8.yml)
 [![Bandit](https://github.com/CrowdStrike/caracara/actions/workflows/bandit.yml/badge.svg)](https://github.com/CrowdStrike/caracara/actions/workflows/bandit.yml)
 [![CodeQL](https://github.com/CrowdStrike/caracara/actions/workflows/codeql.yml/badge.svg)](https://github.com/CrowdStrike/caracara/actions/workflows/codeql.yml)
-![Maintained](https://img.shields.io/maintenance/yes/2021)
+![OSS Lifecycle](https://img.shields.io/osslifecycle/crowdstrike/caracara)
 
 A collection of tools for interacting with the CrowdStrike Falcon API.
 
@@ -14,8 +16,7 @@ The following example demonstrates using the Hosts Toolbox to retrieve a host AI
 and then using the RTR Toolbox to initiate a session and execute `ifconfig`.
 ```python
 import os
-from caracara.hosts import HostsToolbox
-from caracara.rtr import RTRToolbox
+from caracara import HostsToolbox, RTRToolbox
 
 # Open the RTR toolbox
 rtr = RTRToolbox(os.environ["FALCON_CLIENT_ID"],
