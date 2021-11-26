@@ -7,7 +7,7 @@
 [![Flake8](https://github.com/CrowdStrike/caracara/actions/workflows/flake8.yml/badge.svg)](https://github.com/CrowdStrike/caracara/actions/workflows/flake8.yml)
 [![Bandit](https://github.com/CrowdStrike/caracara/actions/workflows/bandit.yml/badge.svg)](https://github.com/CrowdStrike/caracara/actions/workflows/bandit.yml)
 [![CodeQL](https://github.com/CrowdStrike/caracara/actions/workflows/codeql.yml/badge.svg)](https://github.com/CrowdStrike/caracara/actions/workflows/codeql.yml)
-![OSS Lifecycle](https://img.shields.io/osslifecycle/crowdstrike/caracara)
+![OSS Lifecycle](https://img.shields.io/osslifecycle/CrowdStrike/caracara)
 
 A collection of tools for interacting with the CrowdStrike Falcon API.
 
