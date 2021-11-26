@@ -10,13 +10,19 @@ except ImportError as no_falconpy:
 
 class Toolbox():
     """Generic Toolbox base class"""
-    def __init__(self, key: str = None, secret: str = None, api: object = None, verbose: bool = True):
+    def __init__(self, api: object = None, verbose: bool = True, **kwargs):
         """Opens the toolbox"""
         if api:
             self.api = api
         else:
-            # Error handling, yo
-            self.api = OAuth2(client_id=key, client_secret=secret)
+            # Error handling
+            self.api = OAuth2(client_id=kwargs.get("key", None),
+                              client_secret=kwargs.get("secret", None),
+                              base_url=kwargs.get("base", "us1"),
+                              ssl_verify=kwargs.get("use_ssl", True),
+                              timeout=kwargs.get("timeout", None),
+                              proxy=kwargs.get("proxy", None)
+                              )
         self.verbose = verbose
         self.indicator = ["⠧", "⠇", "⠏", "⠹", "⠸", "⠼"]
         self.position = 0
