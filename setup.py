@@ -3,25 +3,41 @@ from os.path import basename
 from os.path import splitext
 from setuptools import find_packages
 from setuptools import setup
-from src.caracara._version import _VERSION, _MAINTAINER, _TITLE, _DESCRIPTION, _AUTHOR
-from src.caracara._version import _AUTHOR_EMAIL, _PROJECT_URL, _KEYWORDS  # _DOCS_URL,
+
+# This solution works for now, but it's not ideal.
+# Direct importing will require setup to have crowdstrike-falconpy available.
+meta_keys = [
+    "_VERSION", "_MAINTAINER", "_TITLE", "_DESCRIPTION", "_AUTHOR",
+    "_AUTHOR_EMAIL", "_PROJECT_URL", "_KEYWORDS"
+]
+meta = {}
+with open("src/caracara/_version.py", "r") as ver:
+    for line in ver:
+        for metakey in meta_keys:
+            if f"{metakey} " in line:
+                metaval = line.rstrip().replace(f"{metakey} = ", "").replace("'", "")
+                if metakey == "_KEYWORDS":
+                    _ = metaval.replace("[", "").replace("]", "").replace('"', '')
+                    meta[metakey] = _.split(", ")
+                else:
+                    meta[metakey] = metaval
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name=_TITLE,
-    version=_VERSION,
-    author=_AUTHOR,
-    author_email=_AUTHOR_EMAIL,
-    maintainer=_MAINTAINER,
-    maintainer_email=_AUTHOR_EMAIL,
+    name=meta["_TITLE"],
+    version=meta["_VERSION"],
+    author=meta["_AUTHOR"],
+    author_email=meta["_AUTHOR_EMAIL"],
+    maintainer=meta["_MAINTAINER"],
+    maintainer_email=meta["_AUTHOR_EMAIL"],
     # docs_url=_DOCS_URL,
-    description=_DESCRIPTION,
-    keywords=_KEYWORDS,
+    description=meta["_DESCRIPTION"],
+    keywords=meta["_KEYWORDS"],
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url=_PROJECT_URL,
+    url=meta["_PROJECT_URL"],
     project_urls={
         "Source": "https://github.com/CrowdStrike/caracara/tree/main/src/caracara",
         "Tracker": "https://github.com/CrowdStrike/caracara/issues"
