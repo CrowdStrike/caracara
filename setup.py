@@ -3,8 +3,8 @@ from os.path import basename
 from os.path import splitext
 from setuptools import find_packages
 from setuptools import setup
-from src.falconpytools import _VERSION, _MAINTAINER, _TITLE, _DESCRIPTION, _AUTHOR
-from src.falconpytools import _AUTHOR_EMAIL, _PROJECT_URL, _KEYWORDS  # _DOCS_URL,
+from src.caracara import _VERSION, _MAINTAINER, _TITLE, _DESCRIPTION, _AUTHOR
+from src.caracara import _AUTHOR_EMAIL, _PROJECT_URL, _KEYWORDS  # _DOCS_URL,
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -23,8 +23,8 @@ setup(
     long_description_content_type="text/markdown",
     url=_PROJECT_URL,
     project_urls={
-        "Source": "https://github.com/CrowdStrike/falconpy-tools/tree/main/src/falconpytools",
-        "Tracker": "https://github.com/CrowdStrike/falconpy-tools/issues"
+        "Source": "https://github.com/CrowdStrike/caracara/tree/main/src/caracara",
+        "Tracker": "https://github.com/CrowdStrike/caracara/issues"
     },
     # "Documentation": "https://www.falconpy.io",
     packages=find_packages("src"),
