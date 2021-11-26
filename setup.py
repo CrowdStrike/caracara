@@ -3,25 +3,25 @@ from os.path import basename
 from os.path import splitext
 from setuptools import find_packages
 from setuptools import setup
-from src.caracara import __version__, __maintainer__, __title__, __description__, __author__
-from src.caracara import __author_email__, __project_url__, __keywords__  # _DOCS_URL,
+from src.caracara._version import _VERSION, _MAINTAINER, _TITLE, _DESCRIPTION, _AUTHOR
+from src.caracara._version import _AUTHOR_EMAIL, _PROJECT_URL, _KEYWORDS  # _DOCS_URL,
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name=__title__,
-    version=__version__,
-    author=__author__,
-    author_email=__author_email__,
-    maintainer=__maintainer__,
-    maintainer_email=__author_email__,
+    name=_TITLE,
+    version=_VERSION,
+    author=_AUTHOR,
+    author_email=_AUTHOR_EMAIL,
+    maintainer=_MAINTAINER,
+    maintainer_email=_AUTHOR_EMAIL,
     # docs_url=_DOCS_URL,
-    description=__description__,
-    keywords=__keywords__,
+    description=_DESCRIPTION,
+    keywords=_KEYWORDS,
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url=__project_url__,
+    url=_PROJECT_URL,
     project_urls={
         "Source": "https://github.com/CrowdStrike/caracara/tree/main/src/caracara",
         "Tracker": "https://github.com/CrowdStrike/caracara/issues"
