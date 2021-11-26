@@ -1,4 +1,13 @@
-"""Caracara"""
+"""CrowdStrike Caracara
+
+ _______
+|   _   .---.-.----.---.-.----.---.-.----.---.-.
+|.  1___|  _  |   _|  _  |  __|  _  |   _|  _  |
+|.  |___|___._|__| |___._|____|___._|__| |___._|
+|:  1   |
+|::.. . |  Powered by FalconPy
+`-------'     The CrowdStrike Falcon SDK for Python
+"""
 from ._version import _VERSION, _MAINTAINER, _AUTHOR, _AUTHOR_EMAIL
 from ._version import _CREDITS, _DESCRIPTION, _TITLE, _PROJECT_URL, _KEYWORDS
 
