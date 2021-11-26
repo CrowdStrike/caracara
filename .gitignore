@@ -2,5 +2,6 @@ dist/*
 dist-old/*
 build/*
 src/crowdstrike_falconpy_tools*/*
+src/caracara*/*
 __pycache__
 .DS_Store
