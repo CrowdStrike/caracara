@@ -45,7 +45,7 @@ setup(
         ],
     },
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
         "Operating System :: Unix",
         "Operating System :: POSIX",
