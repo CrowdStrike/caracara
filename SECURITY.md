@@ -20,7 +20,7 @@ FalconPy functionality is unit tested to run under the following versions of Pyt
 
 This unit testing is performed using Windows, MacOS, and Ubuntu Linux.
 
-## Supported FalconPy Tools versions
+## Supported Caracara versions
 
 When discovered, we release security vulnerability patches for the most recent release at an accelerated cadence.  
 
@@ -29,8 +29,8 @@ When discovered, we release security vulnerability patches for the most recent r
 We have multiple avenues to receive security-related vulnerability reports.
 
 Please report suspected security vulnerabilities by:
-+ Submitting a [bug](https://github.com/CrowdStrike/falconpy-tools/issues)
-+ Submitting a [pull request](https://github.com/CrowdStrike/falconpy-tools/pulls) to potentially resolve the issue
++ Submitting a [bug](https://github.com/CrowdStrike/caracara/issues)
++ Submitting a [pull request](https://github.com/CrowdStrike/caracara/pulls) to potentially resolve the issue
 + Sending an email to __falconpy@crowdstrike.com__. 
 
 ## Disclosure and mitigation process
@@ -47,4 +47,4 @@ process, involving the following steps:
     - Once merged, and after post-merge unit testing has been completed, the patch will be immediately published to both PyPI repositories.
 
 ## Comments
-If you have suggestions on how this process could be improved, please let us know by [posting an issue](https://github.com/CrowdStrike/falconpy-tools/issues).
+If you have suggestions on how this process could be improved, please let us know by [posting an issue](https://github.com/CrowdStrike/caracara/issues).
