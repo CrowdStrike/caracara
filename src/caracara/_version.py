@@ -1,4 +1,5 @@
-"""
+"""Internal version control constants
+
  _______                        __ _______ __        __ __
 |   _   .----.-----.--.--.--.--|  |   _   |  |_.----|__|  |--.-----.
 |.  1___|   _|  _  |  |  |  |  _  |   1___|   _|   _|  |    <|  -__|
@@ -8,8 +9,6 @@
 `-------'                         `-------'
 
 OAuth2 API - Customer SDK Toolbox
-
-_version - Internal version control constants
 
 This is free and unencumbered software released into the public domain.
 
@@ -36,13 +35,13 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 For more information, please refer to <https://unlicense.org>
 """
-_VERSION = '0.0.28'
+_VERSION = '0.0.30'
 _MAINTAINER = 'Joshua Hiller'
 _AUTHOR = 'CrowdStrike'
 _AUTHOR_EMAIL = 'falconpy@crowdstrike.com'
 _CREDITS = 'CrowdStrike'
-_DESCRIPTION = "CrowdStrike FalconPy Tools"
-_TITLE = "crowdstrike-falconpy-tools"
-_PROJECT_URL = "https://github.com/CrowdStrike/falconpy-tools"
+_DESCRIPTION = "CrowdStrike Caracara"
+_TITLE = "caracara"
+_PROJECT_URL = "https://github.com/CrowdStrike/caracara"
 # _DOCS_URL = ""
-_KEYWORDS = ["crowdstrike", "falcon", "api", "sdk", "oauth2", "devsecops", "tools"]
+_KEYWORDS = ["crowdstrike", "falcon", "api", "sdk", "oauth2", "devsecops", "tools", "falconpy"]

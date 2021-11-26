@@ -1,4 +1,4 @@
-"""FalconPy Tools"""
+"""Caracara"""
 from ._version import _VERSION, _MAINTAINER, _AUTHOR, _AUTHOR_EMAIL
 from ._version import _CREDITS, _DESCRIPTION, _TITLE, _PROJECT_URL, _KEYWORDS
 
