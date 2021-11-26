@@ -12,22 +12,8 @@ from .._api import ToolboxAPI
 
 class FalconAPI(ToolboxAPI):
     """Class to represent the Falcon API and all relevant service collections."""
-    def __init__(self, key: str = None,
-                 secret: str = None,
-                 base: str = "us1",
-                 use_ssl: bool = True,
-                 timeout: float or tuple = None,
-                 proxy: dict = None,
-                 auth_object: object = None
-                 ):
-        super().__init__(key=key,
-                         secret=secret,
-                         base=base,
-                         usr_ssl=use_ssl,
-                         timeout=timeout,
-                         proxy=proxy,
-                         auth_object=auth_object
-                         )
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
         self.rtr = RealTimeResponse(auth_object=self.auth)
         self.rtr_admin = RealTimeResponseAdmin(auth_object=self.auth)
