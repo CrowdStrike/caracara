@@ -1,12 +1,12 @@
 """Real Time Response APIs"""
-try:
-    from falconpy.real_time_response import RealTimeResponse
-    from falconpy.real_time_response_admin import RealTimeResponseAdmin
-except ImportError as no_falconpy:
-    raise SystemExit(
-        "CrowdStrike FalconPy must be installed in order to use this application.\n"
-        "Please execute `python3 -m pip install crowdstrike-falconpy` and try again."
-        ) from no_falconpy
+# try:
+from falconpy.real_time_response import RealTimeResponse
+from falconpy.real_time_response_admin import RealTimeResponseAdmin
+# except ImportError as no_falconpy:
+#     raise SystemExit(
+#         "CrowdStrike FalconPy must be installed in order to use this application.\n"
+#         "Please execute `python3 -m pip install crowdstrike-falconpy` and try again."
+#         ) from no_falconpy
 from .._api import ToolboxAPI
 
 
