@@ -8,6 +8,9 @@
 |::.. . |  Powered by FalconPy
 `-------'     The CrowdStrike Falcon SDK for Python
 """
+from .hosts import HostsToolbox
+from .rtr import RTRToolbox
+
 from ._version import _VERSION, _MAINTAINER, _AUTHOR, _AUTHOR_EMAIL
 from ._version import _CREDITS, _DESCRIPTION, _TITLE, _PROJECT_URL, _KEYWORDS
 
