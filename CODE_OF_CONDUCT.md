@@ -1,4 +1,4 @@
-# FalconPy Community Code of Conduct
+# Caracara Community Code of Conduct
 
 ## Our Pledge
 
