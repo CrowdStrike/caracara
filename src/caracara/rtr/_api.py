@@ -1,4 +1,4 @@
-"""Real Time Response APIs"""
+"""Real Time Response APIs."""
 try:
     from falconpy import RealTimeResponse, RealTimeResponseAdmin
 except ImportError as no_falconpy:
@@ -11,7 +11,9 @@ from .._api import ToolboxAPI
 
 class FalconAPI(ToolboxAPI):
     """Class to represent the Falcon API and all relevant service collections."""
+
     def __init__(self, **kwargs):
+        """Initialize the toolbox APIs."""
         super().__init__(**kwargs)
 
         self.rtr = RealTimeResponse(auth_object=self.auth)

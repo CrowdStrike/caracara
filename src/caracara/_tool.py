@@ -1,10 +1,12 @@
-"""Tool class"""
+"""Tool class."""
 from ._toolbox import Toolbox
 
 
 class Tool(Toolbox):
-    """Individual tool base class, inherits from the toolbox"""
+    """Individual tool base class, inherits from the toolbox."""
+
     def __init__(self, api: object = None, verbose: bool = True):
+        """Initialize the api and config."""
         super().__init__(api=api, verbose=verbose)
         self.api = api
         self.verbose = verbose

@@ -1,4 +1,4 @@
-"""Generic API interface"""
+"""Generic API interface."""
 try:
     from falconpy import OAuth2
 except ImportError as no_falconpy:
@@ -10,7 +10,9 @@ except ImportError as no_falconpy:
 
 class ToolboxAPI():
     """Base class to represent the Falcon API."""
+
     def __init__(self, auth_object: object = None, **kwargs):
+        """Top level authorization object."""
         if auth_object:
             self.auth = auth_object
         else:
@@ -24,9 +26,9 @@ class ToolboxAPI():
                 )
 
     def authenticated(self):
-        """Returns the authentication status from the auth object"""
+        """Return the authentication status from the auth object."""
         return self.auth.authenticated()
 
     def deauthenticate(self):
-        """Deauthenticates from the API"""
+        """Deauthenticate from the API."""
         self.auth.revoke(self.auth.token_value)

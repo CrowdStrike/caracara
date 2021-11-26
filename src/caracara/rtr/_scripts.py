@@ -1,14 +1,12 @@
-"""Script interactions"""
+"""Script interactions."""
 from .._tool import Tool
 
 
 class Scripts(Tool):
-    """Class to represent Script interactions"""
+    """Class to represent Script interactions."""
 
     def upload(self: object, script: str, script_name: str):
-        """
-        Uploads a script
-        """
+        """Upload a script."""
         self.display(f"  Uploading script {script_name}")
         upload = self.api.rtr_admin.create_scripts(
                 data={
@@ -24,9 +22,7 @@ class Scripts(Tool):
         return bool(upload["status_code"] in [200, 409])
 
     def remove(self: object, script_name: str):
-        """
-        Deletes a script
-        """
+        """Delete a script."""
         self.display(f"  Removing script {script_name}")
         delete = self.api.rtr_admin.delete_scripts(ids=self.api.rtr_admin.list_scripts(
             filter=f"name:'{script_name}'"

@@ -1,17 +1,14 @@
-"""Single target interactions"""
+"""Single target interactions."""
 from .._tool import Tool
 
 
 class SingleTarget(Tool):
-    """Class to represent single target interactions"""
+    """Class to represent single target interactions."""
 
     BASE_COMMAND = "run"  # This will prolly need to dynamic
 
     def connect_to_host(self: object, aid: str):
-        """
-        Initializes a RTR session with
-        the host matching the AID provided
-        """
+        """Initialize a RTR session with the host matching the AID provided."""
         hdr = f"Initializing session with host {aid}"
         self.display(f"{hdr}")
 
@@ -28,16 +25,13 @@ class SingleTarget(Tool):
         return sess_id
 
     def disconnect_from_host(self: object, session_id: str):
-        """
-        Deletes the RTR session as specified by session ID
-        and then returns the status code.
-        """
+        """Delete the RTR session as specified by session ID and then return the status code."""
         self.display(f"Disconnecting session {session_id}")
         return self.api.rtr.delete_session(session_id=session_id)["status_code"]
 
     @classmethod
     def set_base_command(cls: object, command: str):
-        """Determines the base command based upon the value of the provided command"""
+        """Determine the base command based upon the value of the provided command."""
         # Not sure if this is the way to go
         if command[:3].lower() == "ls ":
             returned = "ls"
@@ -51,10 +45,7 @@ class SingleTarget(Tool):
         return returned
 
     def execute_command(self: object, cmd: str, sess_id: str):
-        """
-        Executes a RTR Admin command, waits for it to complete,
-        and then returns the result
-        """
+        """Execute a RTR Admin command, wait for it to complete, and then return the result."""
         payload = {}
         payload["base_command"] = self.set_base_command(cmd)
         payload["session_id"] = sess_id

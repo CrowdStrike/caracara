@@ -1,15 +1,13 @@
-"""File interactions"""
+"""File interactions."""
 import os
 from .._tool import Tool
 
 
 class Files(Tool):
-    """Class to represent File interactions"""
+    """Class to represent File interactions."""
 
     def upload(self: object, raw_file: str, file_name: str):
-        """
-        Uploads a put file
-        """
+        """Upload a put file."""
         self.display(f"  Uploading put file {file_name}")
         upload = self.api.rtr_admin.create_put_files(
                 data={
@@ -32,9 +30,7 @@ class Files(Tool):
         return returned
 
     def remove(self: object, file_name: str):
-        """
-        Deletes a put file
-        """
+        """Delete a put file."""
         self.display(f"Removing put file {file_name}")
         delete = self.api.rtr_admin.delete_put_files(ids=self.api.rtr_admin.list_put_files(
             filter=f"name:'{file_name}'"
@@ -49,7 +45,7 @@ class Files(Tool):
         return success
 
     def download(self: object, session_id: str, file_name: str = None):
-        """Downloads a file that has been uploaded to CrowdStrike cloud with the GET command"""
+        """Download a file that has been uploaded to CrowdStrike cloud with the GET command."""
         returned = False
         self.display("Retrieving file list")
         file_list = self.api.rtr.list_files(session_id=session_id)

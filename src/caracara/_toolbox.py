@@ -1,4 +1,4 @@
-"""Generic toolbox"""
+"""Generic toolbox."""
 try:
     from falconpy import OAuth2
 except ImportError as no_falconpy:
@@ -9,9 +9,10 @@ except ImportError as no_falconpy:
 
 
 class Toolbox():
-    """Generic Toolbox base class"""
+    """Generic Toolbox base class."""
+
     def __init__(self, api: object = None, verbose: bool = True, **kwargs):
-        """Opens the toolbox"""
+        """Open the toolbox."""
         if api:
             self.api = api
         else:
@@ -28,18 +29,18 @@ class Toolbox():
         self.position = 0
 
     def display(self, message):
-        """Provides informational updates"""
+        """Provide informational updates."""
         if self.verbose:
             msg = f" {self.next()} {message}"
             print("%-80s" % msg, end="\r", flush=True)  # pylint: disable=C0209  # May change this
 
     def close(self):
-        """Revokes the token and destroys the API object"""
+        """Revoke the token and destroy the API object."""
         self.api.deauthenticate()
         self.api = None
 
     def next(self):
-        """Gets the next indicator and increments the position"""
+        """Get the next indicator and increment the position."""
         ind = self.indicator[self.position]
         self.position += 1
         if self.position >= (len(self.indicator) - 1):
