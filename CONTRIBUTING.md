@@ -1,10 +1,10 @@
 # Contributing to this repository <!-- omit in toc -->
 
 ## Getting started <!-- omit in toc -->
-_Welcome!_ We're excited you want to take part in the FalconPy community! 
+_Welcome!_ We're excited you want to take part in the Caracara community! 
 
 Please review this document for details regarding getting started with your first contribution, packages you'll need to install as a developer, and our Pull Request process. If you have any questions, please let us know by
-posting your question in the [discussion board](https://github.com/CrowdStrike/falconpy/discussions).
+posting your question in the [discussion board](https://github.com/CrowdStrike/caracara/discussions).
 
 ### Before you begin
 - Have you read the [Code of Conduct](CODE_OF_CONDUCT.md)? The Code of Conduct helps us establish community norms and how they'll be enforced.
@@ -22,16 +22,16 @@ posting your question in the [discussion board](https://github.com/CrowdStrike/f
 - [Suggestions](#suggestions)
 
 ## How you can contribute
-- See something? Say something! Submit a [bug report](https://github.com/CrowdStrike/falconpy/issues) to let the community know what you've experienced or found. Bonus points if you suggest possible fixes or what you feel may resolve the issue. For example: "_Attempted to use the XZY API class but it errored out. Could a more descriptive error code be returned?_"
-- Join the [discussion board](https://github.com/CrowdStrike/falconpy/discussions) where you can:
-    - [Interact](https://github.com/CrowdStrike/falconpy/discussions/categories/general) with other members of the community
-    - Suggest [new functionality](https://github.com/CrowdStrike/falconpy/discussions/categories/ideas)
-    - Provide [feedback](https://github.com/CrowdStrike/falconpy/discussions/categories/q-a)
-    - [Show others](https://github.com/CrowdStrike/falconpy/discussions/categories/show-and-tell) how you are using FalconPy today
+- See something? Say something! Submit a [bug report](https://github.com/CrowdStrike/caracara/issues) to let the community know what you've experienced or found. Bonus points if you suggest possible fixes or what you feel may resolve the issue. For example: "_Attempted to use the XZY API class but it errored out. Could a more descriptive error code be returned?_"
+- Join the [discussion board](https://github.com/CrowdStrike/caracara/discussions) where you can:
+    - [Interact](https://github.com/CrowdStrike/caracara/discussions/categories/general) with other members of the community
+    - Suggest [new functionality](https://github.com/CrowdStrike/caracara/discussions/categories/ideas)
+    - Provide [feedback](https://github.com/CrowdStrike/caracara/discussions/categories/q-a)
+    - [Show others](https://github.com/CrowdStrike/caracara/discussions/categories/show-and-tell) how you are using Caracara today
 - Submit a [Pull Request](#pull-requests)
 
 ### Bug reporting is handled using GitHub's issues
-We use GitHub issues to track bugs. Report a bug by opening a [new issue](https://github.com/CrowdStrike/falconpy/issues).
+We use GitHub issues to track bugs. Report a bug by opening a [new issue](https://github.com/CrowdStrike/caracara/issues).
 
 ## Pull Requests
 
@@ -104,4 +104,4 @@ All Pull Requests must be approved by at least one maintainer. Once approved, a 
 processes related to package deployment. At this time, contributors _do not_ have the ability to merge to the `main` branch.
 
 ## Suggestions
-If you have suggestions on how this process could be improved, please let us know by [posting an issue](https://github.com/CrowdStrike/falconpy-tools/issues).
+If you have suggestions on how this process could be improved, please let us know by [posting an issue](https://github.com/CrowdStrike/caracara/issues).
