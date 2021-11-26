@@ -25,7 +25,7 @@ class Toolbox():
         """Provides informational updates"""
         if self.verbose:
             msg = f" {self.next()} {message}"
-            print("%-80s" % msg, end="\r", flush=True)  # pylint: disable=C0209  May change this
+            print("%-80s" % msg, end="\r", flush=True)  # pylint: disable=C0209  # May change this
 
     def close(self):
         """Revokes the token and destroys the API object"""
