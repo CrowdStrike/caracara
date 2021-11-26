@@ -1,6 +1,6 @@
 """Generic toolbox"""
 try:
-    from falconpy.oauth2 import OAuth2
+    from falconpy import OAuth2
 except ImportError as no_falconpy:
     raise SystemExit(
         "CrowdStrike FalconPy must be installed in order to use this application.\n"
@@ -25,7 +25,7 @@ class Toolbox():
         """Provides informational updates"""
         if self.verbose:
             msg = f" {self.next()} {message}"
-            print("%-80s" % msg, end="\r", flush=True)
+            print("%-80s" % msg, end="\r", flush=True)  # pylint: ignore=C0209  May change this
 
     def close(self):
         """Revokes the token and destroys the API object"""
