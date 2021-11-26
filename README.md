@@ -1,10 +1,10 @@
 ![CrowdStrike Falcon](https://raw.githubusercontent.com/CrowdStrike/falconpy/main/docs/asset/cs-logo.png) [![Twitter URL](https://img.shields.io/twitter/url?label=Follow%20%40CrowdStrike&style=social&url=https%3A%2F%2Ftwitter.com%2FCrowdStrike)](https://twitter.com/CrowdStrike)<br/>
 
-# FalconPy Tools
-[![Pylint](https://github.com/CrowdStrike/falconpy-tools/actions/workflows/pylint.yml/badge.svg)](https://github.com/CrowdStrike/falconpy-tools/actions/workflows/pylint.yml)
-[![Flake8](https://github.com/CrowdStrike/falconpy-tools/actions/workflows/flake8.yml/badge.svg)](https://github.com/CrowdStrike/falconpy-tools/actions/workflows/flake8.yml)
-[![Bandit](https://github.com/CrowdStrike/falconpy-tools/actions/workflows/bandit.yml/badge.svg)](https://github.com/CrowdStrike/falconpy-tools/actions/workflows/bandit.yml)
-[![CodeQL](https://github.com/CrowdStrike/falconpy-tools/actions/workflows/codeql.yml/badge.svg)](https://github.com/CrowdStrike/falconpy-tools/actions/workflows/codeql.yml)
+# Caracara
+[![Pylint](https://github.com/CrowdStrike/caracara/actions/workflows/pylint.yml/badge.svg)](https://github.com/CrowdStrike/caracara/actions/workflows/pylint.yml)
+[![Flake8](https://github.com/CrowdStrike/caracara/actions/workflows/flake8.yml/badge.svg)](https://github.com/CrowdStrike/caracara/actions/workflows/flake8.yml)
+[![Bandit](https://github.com/CrowdStrike/caracara/actions/workflows/bandit.yml/badge.svg)](https://github.com/CrowdStrike/caracara/actions/workflows/bandit.yml)
+[![CodeQL](https://github.com/CrowdStrike/caracara/actions/workflows/codeql.yml/badge.svg)](https://github.com/CrowdStrike/caracara/actions/workflows/codeql.yml)
 ![Maintained](https://img.shields.io/maintenance/yes/2021)
 
 A collection of tools for interacting with the CrowdStrike Falcon API.
@@ -14,8 +14,8 @@ The following example demonstrates using the Hosts Toolbox to retrieve a host AI
 and then using the RTR Toolbox to initiate a session and execute `ifconfig`.
 ```python
 import os
-from falconpytools.hosts import HostsToolbox
-from falconpytools.rtr import RTRToolbox
+from caracara.hosts import HostsToolbox
+from caracara.rtr import RTRToolbox
 
 # Open the RTR toolbox
 rtr = RTRToolbox(os.environ["FALCON_CLIENT_ID"],
@@ -44,15 +44,15 @@ print(command_result)
 
 ## Installation
 ```shell
-python3 -m pip install crowdstrike-falconpy-tools
+python3 -m pip install caracara
 ```
 
 ## Upgrading
 ```shell
-python3 -m pip install crowdstrike-falconpy-tools --upgrade
+python3 -m pip install caracara --upgrade
 ```
 
 ## Removal
 ```shell
-python3 -m pip uninstall crowdstrike-falconpy-tools
+python3 -m pip uninstall caracara
 ```
