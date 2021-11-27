@@ -1,6 +1,6 @@
 """Generic API interface."""
 try:
-    from falconpy import OAuth2
+    from falconpy import OAuth2, APIHarness
 except ImportError as no_falconpy:
     raise SystemExit(
         "CrowdStrike FalconPy must be installed in order to use this application.\n"
@@ -23,17 +23,40 @@ class ToolboxAPI():
         :dict   proxy       - List of proxies to use for requests made to the API.
         :object auth_object - Pre-initialized FalconPy OAuth2 authentication object.
         """
-        if auth_object:
-            self.auth = auth_object
-        else:
-            self.auth = OAuth2(
-                client_id=kwargs.get("key", None),
-                client_secret=kwargs.get("secret", None),
-                base_url=kwargs.get("base", "us1"),
-                ssl_verify=kwargs.get("use_ssl", True),
-                timeout=kwargs.get("timeout", None),
-                proxy=kwargs.get("proxy", None)
-                )
+        def _service_interface(authorization: object = None, **kwargs):
+            """Return a newly created instance of the authorization class if it is not provided."""
+            if not authorization:
+                authorization = OAuth2(client_id=kwargs.get("key", None),
+                                       client_secret=kwargs.get("secret", None),
+                                       base_url=kwargs.get("base", "us1"),
+                                       ssl_verify=kwargs.get("use_ssl", True),
+                                       timeout=kwargs.get("timeout", None),
+                                       proxy=kwargs.get("proxy", None)
+                                       )
+            return authorization
+
+        def _generic_interface(authorization: object = None, **kwargs):
+            """Return a newly created instance of the generic class."""
+            if not authorization:
+                uber = APIHarness(client_id=kwargs.get("key", None),
+                                  client_secret=kwargs.get("secret", None),
+                                  base_url=kwargs.get("base", "us1"),
+                                  ssl_verify=kwargs.get("use_ssl", True),
+                                  timeout=kwargs.get("timeout", None),
+                                  proxy=kwargs.get("proxy", None)
+                                  )
+            else:
+                uber = APIHarness(creds=authorization.creds,
+                                  base_url=authorization.base_url,
+                                  ssl_verify=authorization.ssl_verify,
+                                  timeout=authorization.timeout,
+                                  proxy=authorization.proxy
+                                  )
+            return uber
+
+        self.auth = _service_interface(auth_object, **kwargs)
+        self.generic = _generic_interface(auth_object, **kwargs)
+        self.command = self.generic.command
 
     def authenticated(self):
         """Return the authentication status from the auth object."""
