@@ -12,7 +12,17 @@ class ToolboxAPI():
     """Base class to represent the Falcon API."""
 
     def __init__(self, auth_object: object = None, **kwargs):
-        """Top level authorization object."""
+        """Initialize an instance of the base class, creating the authorization object.
+
+        :str    key         - API client ID to use for authentication.
+        :str    secret      - API client secret to use for authentication.
+        :str    base        - Base URL to use for API requests.
+        :bool   use_ssl     - Enable / disable SSL verification. Defaults to enabled.
+        :float  timeout     - Total time in seconds for API requests before timeout.
+        :tuple  timeout     - Connect / Read time in seconds for API requests before timeout.
+        :dict   proxy       - List of proxies to use for requests made to the API.
+        :object auth_object - Pre-initialized FalconPy OAuth2 authentication object.
+        """
         if auth_object:
             self.auth = auth_object
         else:
