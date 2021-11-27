@@ -8,9 +8,8 @@
 |::.. . |  Powered by FalconPy
 `-------'     The CrowdStrike Falcon SDK for Python
 """
-from .hosts import HostsToolbox
-from .rtr import RTRToolbox
-
+from enum import Enum
+from importlib import import_module
 from ._version import _VERSION, _MAINTAINER, _AUTHOR, _AUTHOR_EMAIL
 from ._version import _CREDITS, _DESCRIPTION, _TITLE, _PROJECT_URL, _KEYWORDS
 
@@ -24,4 +23,29 @@ __title__ = _TITLE
 __project_url__ = _PROJECT_URL
 __keywords__ = _KEYWORDS
 
-__all__ = ["HostsToolbox", "RTRToolbox"]
+__available_kits__ = ["hosts", "rtr"]
+
+__all__ = ["toolbox"]
+
+
+class KitType(Enum):
+    hosts = "HostsToolbox"
+    rtr = "RTRToolbox"
+
+
+def toolbox(kit: str = None, **kwargs):
+    """Return an instance of the specified client."""
+    if not kit:
+        # Implement a generic-only kit here
+        raise SystemError("No toolbox specified.")
+    else:
+        if kit in __available_kits__:
+            try:
+                opened = getattr(import_module(f".{kit}", package=__title__), KitType[kit].value)
+            except (ImportError, TypeError, KeyError) as import_failure:
+                raise SystemError("Unable to load specified toolbox.") from import_failure
+
+            return opened(**kwargs)
+
+        else:
+            raise SystemError("Invalid toolbox specified.")
