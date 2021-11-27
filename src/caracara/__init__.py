@@ -29,8 +29,9 @@ __all__ = ["toolbox"]
 
 
 class KitType(Enum):
-    hosts = "HostsToolbox"
-    rtr = "RTRToolbox"
+    """Enumerator for toolbox class name lookups."""
+    HOSTS = "HostsToolbox"
+    RTR = "RTRToolbox"
 
 
 def toolbox(kit: str = None, **kwargs):
@@ -38,14 +39,13 @@ def toolbox(kit: str = None, **kwargs):
     if not kit:
         # Implement a generic-only kit here
         raise SystemError("No toolbox specified.")
-    else:
-        if kit in __available_kits__:
-            try:
-                opened = getattr(import_module(f".{kit}", package=__title__), KitType[kit].value)
-            except (ImportError, TypeError, KeyError) as import_failure:
-                raise SystemError("Unable to load specified toolbox.") from import_failure
 
-            return opened(**kwargs)
+    if not kit.lower() in __available_kits__:
+        raise SystemError("Invalid toolbox specified.")
 
-        else:
-            raise SystemError("Invalid toolbox specified.")
+    try:
+        opened = getattr(import_module(f".{kit}", package=__title__), KitType[kit.upper()].value)
+    except (ImportError, TypeError, KeyError) as import_failure:
+        raise SystemError("Unable to load specified toolbox.") from import_failure
+
+    return opened(**kwargs)
