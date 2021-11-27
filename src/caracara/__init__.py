@@ -8,8 +8,8 @@
 |::.. . |  Powered by FalconPy
 `-------'     The CrowdStrike Falcon SDK for Python
 """
-from enum import Enum
 from importlib import import_module
+from ._kits import Kits
 from ._version import _VERSION, _MAINTAINER, _AUTHOR, _AUTHOR_EMAIL
 from ._version import _CREDITS, _DESCRIPTION, _TITLE, _PROJECT_URL, _KEYWORDS
 
@@ -23,15 +23,7 @@ __title__ = _TITLE
 __project_url__ = _PROJECT_URL
 __keywords__ = _KEYWORDS
 
-__available_kits__ = ["hosts", "rtr"]
-
 __all__ = ["toolbox"]
-
-
-class KitType(Enum):
-    """Enumerator for toolbox class name lookups."""
-    HOSTS = "HostsToolbox"
-    RTR = "RTRToolbox"
 
 
 def toolbox(kit: str = None, **kwargs):
@@ -40,11 +32,11 @@ def toolbox(kit: str = None, **kwargs):
         # Implement a generic-only kit here
         raise SystemError("No toolbox specified.")
 
-    if not kit.lower() in __available_kits__:
+    if not kit.upper() in [defined.name for defined in Kits]:
         raise SystemError("Invalid toolbox specified.")
 
     try:
-        opened = getattr(import_module(f".{kit}", package=__title__), KitType[kit.upper()].value)
+        opened = getattr(import_module(f".{kit}", package=__title__), Kits[kit.upper()].value)
     except (ImportError, TypeError, KeyError) as import_failure:
         raise SystemError("Unable to load specified toolbox.") from import_failure
 
