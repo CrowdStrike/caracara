@@ -16,17 +16,19 @@ The following example demonstrates using the Hosts Toolbox to retrieve a host AI
 and then using the RTR Toolbox to initiate a session and execute `ifconfig`.
 ```python
 import os
-from caracara import HostsToolbox, RTRToolbox
+import caracara
 
 # Open the RTR toolbox
-rtr = RTRToolbox(key=os.environ["FALCON_CLIENT_ID"],
-                 secret=os.environ["FALCON_CLIENT_SECRET"],
-                 verbose=True
-                 )
+rtr = caracara.toolbox("rtr",
+                       key=os.environ["FALCON_CLIENT_ID"],
+                       secret=os.environ["FALCON_CLIENT_SECRET"],
+                       verbose=True
+                       )
 # Open the Hosts toolbox
-hosts = HostsToolbox(auth_object=rtr.api.rtr.auth_object,
-                     verbose=True
-                     )
+hosts = caracara.toolbox("hosts",
+                         auth_object=rtr.api.auth,
+                         verbose=True
+                         )
 # Lookup the AID for our search string
 target_aid = hosts.host.find_host_aid(hostname="SEARCH-STRING")
 # Retrieve the hostname
