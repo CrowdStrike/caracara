@@ -19,8 +19,8 @@ import os
 from caracara import HostsToolbox, RTRToolbox
 
 # Open the RTR toolbox
-rtr = RTRToolbox(os.environ["FALCON_CLIENT_ID"],
-                 os.environ["FALCON_CLIENT_SECRET"],
+rtr = RTRToolbox(key=os.environ["FALCON_CLIENT_ID"],
+                 secret=os.environ["FALCON_CLIENT_SECRET"],
                  verbose=True
                  )
 # Open the Hosts toolbox
