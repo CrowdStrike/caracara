@@ -18,17 +18,15 @@ and then using the RTR Toolbox to initiate a session and execute `ifconfig`.
 import os
 import caracara
 
-# Open the RTR toolbox
-rtr = caracara.toolbox("rtr",
-                       key=os.environ["FALCON_CLIENT_ID"],
-                       secret=os.environ["FALCON_CLIENT_SECRET"],
-                       verbose=True
-                       )
 # Open the Hosts toolbox
 hosts = caracara.toolbox("hosts",
-                         auth_object=rtr.api.auth,
+                         key=os.environ["FALCON_CLIENT_ID"],
+                         secret=os.environ["FALCON_CLIENT_SECRET"],
                          verbose=True
                          )
+# Open the RTR toolbox
+rtr = caracara.toolbox("rtr")
+
 # Lookup the AID for our search string
 target_aid = hosts.host.find_host_aid(hostname="SEARCH-STRING")
 # Retrieve the hostname
