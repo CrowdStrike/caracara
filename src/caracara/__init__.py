@@ -28,12 +28,14 @@ __all__ = ["toolbox"]
 
 class Session():
     """Class to represent the current session."""
-    def __init__(self, **kwargs):
+    def __init__(self):
+        """Initialize the session."""
         self.connections = []
         self.total = lambda: len(self.connections)
         self.latest = lambda: len(self.connections) - 1
 
     def append(self, cid: object = None):
+        """Append a new CID to the list of connections."""
         self.connections.append(cid)
 
         return self.total
