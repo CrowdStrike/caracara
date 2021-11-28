@@ -26,6 +26,38 @@ __keywords__ = _KEYWORDS
 __all__ = ["toolbox"]
 
 
+class Session():
+    """Class to represent the current session."""
+    def __init__(self, **kwargs):
+        self.connections = []
+        self.total = lambda: len(self.connections)
+        self.latest = lambda: len(self.connections) - 1
+
+    def append(self, cid: object = None):
+        self.connections.append(cid)
+
+        return self.total
+
+
+__session__ = Session()
+
+
+class CID():
+    """Class to represent a single CID connection."""
+    def __init__(self, **kwargs):
+        self.creds = {
+            "client_id": kwargs.get("key", None),
+            "client_secret": kwargs.get("secret", None)
+        }
+        if kwargs.get("member_cid", None):
+            self.creds["member_cid"] = kwargs.get("member_cid", None)
+        self.base = kwargs.get("base", "us1")
+        self.use_ssl = kwargs.get("use_ssl", True)
+        self.proxy = kwargs.get("proxy", None)
+        self.timeout = kwargs.get("timeout", None)
+        self.auth = None
+
+
 def toolbox(kit: str = None, **kwargs):
     """Return an instance of the specified client."""
     if not kit:
@@ -40,4 +72,10 @@ def toolbox(kit: str = None, **kwargs):
     except (ImportError, TypeError, KeyError) as import_failure:
         raise SystemError("Unable to load specified toolbox.") from import_failure
 
-    return opened(**kwargs)
+    if __session__.total() <= 0:
+        __session__.append(CID(**kwargs))
+
+    new = opened(session=__session__.connections[__session__.latest()])
+    __session__.connections[__session__.latest()].auth = new.api.auth
+
+    return new
