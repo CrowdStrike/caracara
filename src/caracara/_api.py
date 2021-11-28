@@ -5,10 +5,6 @@ try:
     from falconpy import OAuth2, APIHarness
 except ImportError as no_falconpy:
     raise MissingFalconPy from no_falconpy
-    # raise SystemExit(
-    #     "CrowdStrike FalconPy must be installed in order to use this application.\n"
-    #     "Please execute `python3 -m pip install crowdstrike-falconpy` and try again."
-    #     ) from no_falconpy
 
 
 class ToolboxAPI():
@@ -29,24 +25,24 @@ class ToolboxAPI():
         def _service_interface(authorization: object = None, **kwargs):
             """Return a newly created instance of the authorization class if it is not provided."""
             if not authorization:
-                authorization = OAuth2(client_id=kwargs.get("key", None),
-                                       client_secret=kwargs.get("secret", None),
-                                       base_url=kwargs.get("base", "us1"),
-                                       ssl_verify=kwargs.get("use_ssl", True),
-                                       timeout=kwargs.get("timeout", None),
-                                       proxy=kwargs.get("proxy", None)
+                current = kwargs.get("session", None)
+                authorization = OAuth2(creds=current.creds,
+                                       base_url=current.base,
+                                       ssl_verify=current.use_ssl,
+                                       timeout=current.timeout,
+                                       proxy=current.proxy
                                        )
             return authorization
 
         def _generic_interface(authorization: object = None, **kwargs):
             """Return a newly created instance of the generic class."""
             if not authorization:
-                uber = APIHarness(client_id=kwargs.get("key", None),
-                                  client_secret=kwargs.get("secret", None),
-                                  base_url=kwargs.get("base", "us1"),
-                                  ssl_verify=kwargs.get("use_ssl", True),
-                                  timeout=kwargs.get("timeout", None),
-                                  proxy=kwargs.get("proxy", None)
+                current = kwargs.get("session", None)
+                uber = APIHarness(creds=current.creds,
+                                  base_url=current.base,
+                                  ssl_verify=current.use_ssl,
+                                  timeout=current.timeout,
+                                  proxy=current.proxy
                                   )
             else:
                 uber = APIHarness(creds=authorization.creds,
