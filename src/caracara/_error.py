@@ -7,7 +7,9 @@ class LibraryError(Exception):
 
 class MissingFalconPy(LibraryError):
     """FalconPy library is not available."""
+
     def __init__(self):
+        """Initialize the error, print an alert and then exit."""
         super().__init__()
         raise SystemExit(
             "CrowdStrike FalconPy must be installed in order to use this application.\n"

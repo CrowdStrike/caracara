@@ -28,6 +28,7 @@ __all__ = ["toolbox"]
 
 class Session():
     """Class to represent the current session."""
+
     def __init__(self):
         """Initialize the session."""
         self.connections = []
@@ -46,6 +47,7 @@ __session__ = Session()
 
 class CID():
     """Class to represent a single CID connection."""
+
     def __init__(self, **kwargs):
         self.creds = {
             "client_id": kwargs.get("key", None),
