@@ -33,11 +33,11 @@
         },
         "crowdstrike-falconpy": {
             "hashes": [
-                "sha256:ab704becb427ddfa0ff15b5092b71f4abb0a3dfbebe19fab2503dec89fbd6ff6",
-                "sha256:e5acb80d2ee108e62ceb8f41551c257596b080f2863dc6adcb2446ef3e93a306"
+                "sha256:8dd50d37e212e0ac1f8a6934f37e1f76ecbfde4257458a512ff175ffcda3a353",
+                "sha256:e5e7f9a0fcb3198255878091aafaaa7164340478bf032df4b4751e4325ddc661"
             ],
             "index": "pypi",
-            "version": "==0.8.4"
+            "version": "==0.8.5"
         },
         "idna": {
             "hashes": [
