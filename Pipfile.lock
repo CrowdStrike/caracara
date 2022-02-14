@@ -25,19 +25,19 @@
         },
         "charset-normalizer": {
             "hashes": [
-                "sha256:2842d8f5e82a1f6aa437380934d5e1cd4fcf2003b06fed6940769c164a480a45",
-                "sha256:98398a9d69ee80548c762ba991a4728bfc3836768ed226b3945908d1a688371c"
+                "sha256:2857e29ff0d34db842cd7ca3230549d1a697f96ee6d3fb071cfa6c7393832597",
+                "sha256:6881edbebdb17b39b4eaaa821b438bf6eddffb4468cf344f09f89def34a8b1df"
             ],
             "markers": "python_version >= '3'",
-            "version": "==2.0.11"
+            "version": "==2.0.12"
         },
         "crowdstrike-falconpy": {
             "hashes": [
-                "sha256:899f47141405ba26818e53e57c5ec4f9ab85f28d317bd071b55ede9aba0588b1",
-                "sha256:bfaad41478222a43421a955f2e6e6cbabf9a679b71bb1b3880f6e0708b89d16a"
+                "sha256:1bcdae7f4deec596021ab92d4188cbf4fb3f86fd85b3b1a3150edbcbf1947f8f",
+                "sha256:8c30370722d1b757096fb41d58e92b8f91fd957d0083af7f0b6644f4b1a844e3"
             ],
             "index": "pypi",
-            "version": "==1.0.1"
+            "version": "==1.0.2"
         },
         "idna": {
             "hashes": [
