@@ -1,0 +1,3 @@
+# Skip the tests folder, as we'll run bandit on that folder separately
+exclude_dirs:
+  - 'tests/'

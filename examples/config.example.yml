@@ -1,0 +1,33 @@
+profiles:
+  TestProfile1Auto:
+    falcon:
+      client_id: clientid123456
+      client_secret: clientsecret123456
+      cloud_name: auto
+    logging:
+      level: debug
+    examples:
+      rtr:
+        download_event_log:
+          # How long to wait between attempts for the file to upload to Falcon
+          attempt_delay: 30
+          # Maximum number of attempts to retrieve files from Falcon
+          attempt_limit: 10
+          # Log filename (must exist in C:\Windows\System32\winevt\Logs\)
+          filename: System.evtx
+          # Which machines to upload logs from
+          filters:
+            - OS: Windows
+          # Output folder on disk to download the logs to
+          output_folder: /tmp/logs
+        queue_command:
+          filters:
+            - OS: Windows
+            - Hostname: EXAMPLE-HOST-1
+          command: ls
+
+  TestProfile2US2:
+    falcon:
+      client_id: clientid123456
+      client_secret: clientsecret123456
+      cloud_name: US2

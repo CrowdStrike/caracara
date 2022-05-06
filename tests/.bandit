@@ -1,0 +1,3 @@
+# Skip the "Use of assert detected" test for our test folder
+skips:
+  - B101

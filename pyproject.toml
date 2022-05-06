@@ -1,0 +1,34 @@
+[tool.poetry]
+name = "caracara"
+version = "0.1.0"
+description = "The CrowdStrike Falcon Developer Toolkit"
+authors = [
+    "Chris Hammond <chris.hammond@crowdstrike.com>",
+    "Joshua Hiller <falconpy@crowdstrike.com>",
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+crowdstrike-falconpy-dev = "1.0.5"
+py7zr = "^0.17.4"
+pyppmd = "0.17.4"
+
+[tool.poetry.dev-dependencies]
+bandit = "^1.7.3"
+bullet = "^2.2.0"
+coverage = "^6.3.2"
+flake8 = "^^4.0.1"
+pydocstyle = "^6.1.1"
+pylint = "^2.12.2"
+pytest = "^7.0.1"
+PyYAML = "^6.0"
+
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=1.0.0"]
+
+[tool.pylint.messages_control]
+max-line-length = 100
+# Disable pointless-string-statement as per this GitHub thread / GVR's Tweet
+# https://github.com/PyCQA/pylint/issues/2864#issuecomment-642398573
+disable = "pointless-string-statement"
