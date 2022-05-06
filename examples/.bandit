@@ -1,0 +1,3 @@
+# Skip the real config file, as this is not pushed to Git
+exclude:
+  - config.yml
