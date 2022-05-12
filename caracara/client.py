@@ -5,7 +5,6 @@ import logging
 
 try:
     from falconpy import (
-        APIHarness,
         OAuth2,
         confirm_base_region,
         confirm_base_url
@@ -41,8 +40,8 @@ class Client:
 
     def __init__(  # pylint: disable=too-many-arguments
         self,
-        client_id: str,
-        client_secret: str,
+        client_id: str = None,
+        client_secret: str = None,
         cloud_name: str = "auto",
         member_cid: str = None,
         ssl_verify: str = True,
@@ -50,53 +49,64 @@ class Client:
         proxy: str = None,
         user_agent: str = None,
         verbose: bool = False,
+        falconpy_authobject: OAuth2 = None,
     ):
         self.logger = logging.getLogger(__name__)
 
-        self.logger.info("Setting up the Caracara client")
-        self.logger.info(
-            "Client ID: %s; Cloud: %s; Member CID: %s",
-            client_id, client_secret, member_cid
-        )
-        self.logger.debug("SSL verification is %s", ssl_verify)
-        self.logger.debug("Timeout: %f", timeout)
-        self.logger.debug("Configured proxy: %s", proxy)
+        if client_id is None and client_secret is None and falconpy_authobject is None:
+            raise Exception(
+                "You must provide either a Client ID and Client Secret, "
+                "or a pre-created FalconPy OAuth2 object"
+            )
 
-        if not user_agent:
-            user_agent = user_agent_string()
-        self.logger.debug("User agent: %s", user_agent)
+        if client_id is not None and client_secret is None:
+            raise Exception("You cannot provide a Client ID without a Client Secret")
 
-        self.verbose = verbose
-        self.logger.debug("Verbose mode: %s", verbose)
+        if client_id is not None and falconpy_authobject is not None:
+            raise Exception(
+                "Please provide either a Client ID/Client Secret pair, "
+                "or a pre-created FalconPy OAuth2 object, but not both"
+            )
 
-        base_url = confirm_base_region(confirm_base_url(provided_base=cloud_name))
-        self.logger.info("Base URL: %s", base_url)
+        self.logger.info("Setting up the Caracara client and configuring authentication")
 
-        self.logger.debug("Configuring api_authentication object as an OAuth2 object")
-        # Pre-configured auth object for service classes
-        self.api_authentication = OAuth2(
-            base_url=base_url,
-            client_id=client_id,
-            client_secret=client_secret,
-            member_cid=member_cid,
-            ssl_verify=ssl_verify,
-            proxy=proxy,
-            timeout=timeout,
-            user_agent=user_agent,
-        )
+        if client_id:
+            self.logger.info(
+                "Client ID: %s; Cloud: %s; Member CID: %s",
+                client_id, client_secret, member_cid
+            )
+            self.logger.debug("SSL verification is %s", ssl_verify)
+            self.logger.debug("Timeout: %f", timeout)
+            self.logger.debug("Configured proxy: %s", proxy)
 
-        self.logger.debug("Configuring an APIHarness to access the uber class")
-        # Uber class
-        self.api_harness = APIHarness(
-            base_url=base_url,
-            client_id=client_id,
-            client_secret=client_secret,
-            member_cid=member_cid,
-            ssl_verify=ssl_verify,
-            proxy=proxy,
-            timeout=timeout,
-            user_agent=user_agent,
-        )
+            if not user_agent:
+                user_agent = user_agent_string()
+            self.logger.debug("User agent: %s", user_agent)
+
+            self.verbose = verbose
+            self.logger.debug("Verbose mode: %s", verbose)
+
+            base_url = confirm_base_region(confirm_base_url(provided_base=cloud_name))
+            self.logger.info("Base URL: %s", base_url)
+
+            self.logger.debug("Configuring api_authentication object as an OAuth2 object")
+            self.api_authentication = OAuth2(
+                base_url=base_url,
+                client_id=client_id,
+                client_secret=client_secret,
+                member_cid=member_cid,
+                ssl_verify=ssl_verify,
+                proxy=proxy,
+                timeout=timeout,
+                user_agent=user_agent,
+            )
+        elif falconpy_authobject:
+            self.logger.info(
+                "Using pre-created FalconPy OAuth2 object. All other options will be ignored"
+            )
+            self.api_authentication = falconpy_authobject
+        else:
+            raise Exception("Impossible authentication scenario")
 
         # Configure modules here so that IDEs can pick them up
         self.logger.debug("Setting up Hosts module")
