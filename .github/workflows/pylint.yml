@@ -30,4 +30,7 @@ jobs:
     - name: Lint package source with pylint
       run: |
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        pylint src/caracara
+        pylint caracara
+        pylint examples
+        pylint tests
+

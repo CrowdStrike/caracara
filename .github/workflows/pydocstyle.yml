@@ -30,4 +30,4 @@ jobs:
     - name: Check package docstrings with pydocstyle
       run: |
         # Check docstring syntax
-        pydocstyle src/caracara --count
+        pydocstyle caracara --count

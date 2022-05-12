@@ -29,4 +29,6 @@ jobs:
         pip install -r requirements.txt
     - name: Analyze package with bandit
       run: |
-        bandit -r src
+        bandit -r caracara --configfile .bandit
+        bandit -r examples --configfile examples/.bandit
+        bandit -r tests --configfile tests/.bandit
