@@ -11,62 +11,109 @@
 -->
 ![OSS Lifecycle](https://img.shields.io/osslifecycle/CrowdStrike/caracara)
 
-A collection of tools for interacting with the CrowdStrike Falcon API.
+A friendly wrapper to help you interact with the CrowdStrike Falcon API. Less code, less fuss, better performance, and full interoperability with [FalconPy](https://github.com/CrowdStrike/falconpy/).
 
-## Basic usage example
+## Installation Instructions
+
+<details>
+    <summary><h4>Installing Caracara from PyPI using Poetry (Recommended!)</h4></summary>
+
+    ### Installation
+
+    ```shell
+    poetry add caracara
+    ```
+
+    ### Upgrading
+
+    ```shell
+    poetry update caracara
+    ```
+
+    ### Removal
+
+    ```shell
+    poetry remove caracara
+    ```
+</details>
+
+<details>
+    <summary><h4>Installing Caracara from PyPI using Pip</h4></summary>
+
+    ### Installation
+
+    ```shell
+    python3 -m pip install caracara
+    ```
+
+    ### Upgrading
+
+    ```shell
+    python3 -m pip install caracara --upgrade
+    ```
+
+    ### Removal
+
+    ```shell
+    python3 -m pip uninstall caracara
+    ```
+</details>
+
+## Basic Usage Example
 
 ```python
 """
-This example will use the API credentials configured in your config.yml file to
+This example will use the API credentials provided as parameters to
 list the names of all systems within your Falcon tenant that run Windows.
 
 The example demonstrates how to use the FalconFilter() class and the Hosts API.
 """
-import logging
 
 from caracara import Client
 
-from examples.common import caracara_example
+client = Client(
+    client_id="12345abcde",
+    client_secret="67890fghij",
+)
 
+filters = client.FalconFilter()
+filters.create_new_filter("OS", "Windows")
 
-@caracara_example
-def list_windows_devices(**kwargs):
-    """List Windows Devices Example"""
-    client: Client = kwargs['client']
-    logger: logging.Logger = kwargs['logger']
+response_data = client.hosts.describe_devices(filters)
+print(f"Found {len(response_data.keys())} devices running Windows")
 
-    logger.info("Grabbing all Windows devices within the tenant")
-
-    filters = client.FalconFilter()
-    filters.create_new_filter("OS", "Windows")
-    logger.info("Using the FQL filter: %s", filters.get_fql())
-
-    response_data = client.hosts.describe_devices(filters)
-    logger.info("Found %d devices running Windows", len(response_data.keys()))
-
-    for device_id, device_data in response_data.items():
-        hostname = device_data.get("hostname", "Unknown Hostname")
-        logger.info("%s (%s)", device_id, hostname)
-
-    logger.info("Done!")
-
-
-if __name__ == '__main__':
-    list_windows_devices()
-
+for device_id, device_data in response_data.items():
+    hostname = device_data.get("hostname", "Unknown Hostname")
+    print(f"{device_id} - {hostname}")
 ```
 
-## Installation
+## Examples Collection
+
+Each API wrapper is provided alongside example code. Cloning or downloading/extracting this repository allows you to execute examples directly.
+
+Using the examples collection requires that you install our Python packaging tool of choice, [Poetry](https://python-poetry.org). Please refer to the Poetry project's [installation guide](https://python-poetry.org/docs/#installation) if you do not yet have Poetry installed.
+
+Once Poetry is installed, make sure you run `poetry install` within the `caracara` folder to set up the Python virtual environment.
+
+To configure the examples, first copy `examples/config.example.yml` to `examples/config.yml`. Then, add your API credentials and example-specific settings to `examples/config.yml`. Once you have set up profiles for each Falcon tenant you want to test with, execute examples using one of the two options below.
+
+
+<details>
+    <summary><h3>Executing the Examples</h3></summary>
+
+### Executing from a Poetry Shell
+
+The `poetry shell` command will enter you into the virtual environment. All future commands will run within the Caracara virtual environment using Python 3, until you run the `deactivate` command.
+
 ```shell
-python3 -m pip install caracara
+poetry shell
+examples/get_devices/list_windows_devices.py
 ```
+### Executing without Activating the Virtual Environment
 
-## Upgrading
-```shell
-python3 -m pip install caracara --upgrade
-```
+If you do not want to enter the Caracara virtual environment (e.g., because you are using your system's installation of Python for other purposes), you can use the `poetry run` command to temporarily invoke the virtual environment for one-off commands.
 
-## Removal
 ```shell
-python3 -m pip uninstall caracara
+poetry run examples/get_devices/list_windows_devices.py
 ```
+</details>
