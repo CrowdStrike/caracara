@@ -15,48 +15,51 @@ A friendly wrapper to help you interact with the CrowdStrike Falcon API. Less co
 
 ## Installation Instructions
 
+Caracara supports all major Python packaging solutions. Instructions for [Poetry](https://python-poetry.org) and [Pip](https://pypi.org/project/pip/) are provided below.
+
 <details>
-    <summary><h4>Installing Caracara from PyPI using Poetry (Recommended!)</h4></summary>
+<summary><h3>Installing Caracara from PyPI using Poetry (Recommended!)</h3></summary>
 
-    ### Installation
+### Poetry: Installation
 
-    ```shell
-    poetry add caracara
-    ```
+```shell
+poetry add caracara
+```
 
-    ### Upgrading
+### Poetry: Upgrading
 
-    ```shell
-    poetry update caracara
-    ```
+```shell
+poetry update caracara
+```
 
-    ### Removal
+### Poetry: Removal
 
-    ```shell
-    poetry remove caracara
-    ```
+```shell
+poetry remove caracara
+```
 </details>
 
 <details>
-    <summary><h4>Installing Caracara from PyPI using Pip</h4></summary>
+<summary><h3>Installing Caracara from PyPI using Pip</h3></summary>
 
-    ### Installation
+### Pip: Installation
 
-    ```shell
-    python3 -m pip install caracara
-    ```
+```shell
+python3 -m pip install caracara
+```
 
-    ### Upgrading
+### Pip: Upgrading
 
-    ```shell
-    python3 -m pip install caracara --upgrade
-    ```
+```shell
+python3 -m pip install caracara --upgrade
+```
 
-    ### Removal
+### Pip: Removal
 
-    ```shell
-    python3 -m pip uninstall caracara
-    ```
+```shell
+python3 -m pip uninstall caracara
+```
+
 </details>
 
 ## Basic Usage Example
@@ -97,11 +100,12 @@ Once Poetry is installed, make sure you run `poetry install` within the `caracar
 
 To configure the examples, first copy `examples/config.example.yml` to `examples/config.yml`. Then, add your API credentials and example-specific settings to `examples/config.yml`. Once you have set up profiles for each Falcon tenant you want to test with, execute examples using one of the two options below.
 
+### Executing the Examples
+
+There are two ways to use Poetry to execute the examples.
 
 <details>
-    <summary><h3>Executing the Examples</h3></summary>
-
-### Executing from a Poetry Shell
+<summary><h4>Executing from a Poetry Shell</h4></summary>
 
 The `poetry shell` command will enter you into the virtual environment. All future commands will run within the Caracara virtual environment using Python 3, until you run the `deactivate` command.
 
@@ -109,11 +113,16 @@ The `poetry shell` command will enter you into the virtual environment. All futu
 poetry shell
 examples/get_devices/list_windows_devices.py
 ```
-### Executing without Activating the Virtual Environment
+
+</details>
+
+<details>
+<summary><h4>Executing without Activating the Virtual Environment</h4></summary>
 
 If you do not want to enter the Caracara virtual environment (e.g., because you are using your system's installation of Python for other purposes), you can use the `poetry run` command to temporarily invoke the virtual environment for one-off commands.
 
 ```shell
 poetry run examples/get_devices/list_windows_devices.py
 ```
+
 </details>
