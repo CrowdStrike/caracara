@@ -73,7 +73,7 @@ class Client:
         if client_id:
             self.logger.info(
                 "Client ID: %s; Cloud: %s; Member CID: %s",
-                client_id, client_secret, member_cid
+                client_id, cloud_name, member_cid
             )
             self.logger.debug("SSL verification is %s", ssl_verify)
             self.logger.debug("Timeout: %f", timeout)
