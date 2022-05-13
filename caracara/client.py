@@ -41,7 +41,7 @@ class Client:
         that we hava available and make them available at runtime.
         """
 
-    def __init__(  # pylint: disable=too-many-arguments
+    def __init__(  # pylint: disable=too-many-arguments,too-many-locals
         self,
         client_id: str = None,
         client_secret: str = None,

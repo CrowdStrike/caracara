@@ -30,6 +30,21 @@ requires = ["poetry-core>=1.0.0"]
 
 [tool.pylint.messages_control]
 max-line-length = 100
-# Disable pointless-string-statement as per this GitHub thread / GVR's Tweet
-# https://github.com/PyCQA/pylint/issues/2864#issuecomment-642398573
-disable = "pointless-string-statement"
+disable = [
+    # Disable duplicate-code as our policies modules will have lots of overlap, by design.
+    # It is not really practical to try to appease this rule when creating an SDK wrapper.
+    "duplicate-code",    
+
+    # Disable pointless-string-statement as per this GitHub thread / GVR's Tweet
+    # https://github.com/PyCQA/pylint/issues/2864#issuecomment-642398573
+    "pointless-string-statement",
+
+    # Disable too-many-instance-attributes as we have some classes that are build
+    # based on data returned by Falcon. It would be silly for us to refactor classes
+    # representing these constructs just to pass this pylint rule. 
+    "too-many-instance-attributes",
+    # Disable pylint rule R0201 as we have functions that are decorated with decorators
+    # that expect a self parameter. In these cases, the functions cannot be decorated
+    # with @staticmethod.
+    "R0201",
+]

@@ -42,7 +42,7 @@ class InnerRTRBatchSession:  # pylint: disable=too-few-public-methods
 
     Many of these may be used in parallel to support batches of > 10,000 systems.
     These are referred to colloquially as "batches of batches. In other words,
-    a batch of batches an RTRBatchSession object, which itself contains 
+    a batch of batches an RTRBatchSession object, which itself contains
     a list of InnerRTRBatchSession objects.
     """
 
@@ -117,7 +117,7 @@ class RTRBatchSession:
     to command "batches of batches" of systems, thus removing the cloud-enforced connection
     limit.
     """
-    
+
     admin_api: RealTimeResponseAdmin = None
     api: RealTimeResponse = None
     batch_sessions: List[InnerRTRBatchSession] = None
@@ -244,7 +244,7 @@ class RTRBatchSession:
     ) -> List[GetFile]:
         """
         Get a list of successful file uploads based on a list of batch get command requests.
-        
+
         Each returned GetFile object will represent a file that has been successfully uploaded as a
         result of a batch get command.
         """

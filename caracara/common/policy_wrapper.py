@@ -37,7 +37,6 @@ class PolicySetting(ABC):
         This dictionary is compliant with the CrowdStrike API specification, and therefore
         can replicate the exact response sent back by the CrowdStrike API.
         """
-        pass
 
     @abstractmethod
     def flat_dump(self) -> Dict:
@@ -46,33 +45,24 @@ class PolicySetting(ABC):
 
         This dictionary is designed for use with CrowdStrike API policy verbs (i.e., policy
         creation (POST) and modification (PATCH), and therefore is limited only to the content
-        required to execute these actions. 
+        required to execute these actions.
         """
-        pass
 
 
 class GroupAssignment(PolicySetting):
     """Represents an assignment rule that maps a policy to a host group."""
 
-    assignment_rule: str = None
-    created_by: str = None
-    created_timestamp: datetime = None
-    description: str = None
-    group_id: str = None
-    group_type: str = None
-    modified_by: str = None
-    modified_timestamp: str = None
-
     def _load_data_dict(self, data_dict: Dict):
         super()._load_data_dict(data_dict)
-        self.assignment_rule = data_dict.get("assignment_rule")
-        self.created_by = data_dict.get("created_by")
-        self.created_timestamp = data_dict.get("created_timestamp")
-        self.description = data_dict.get("description")
-        self.group_type = data_dict.get("group_type")
-        self.group_id = data_dict.get("id")
-        self.modified_by = data_dict.get("modified_by")
-        self.modified_timestamp = data_dict.get("modified_timestamp")
+
+        self.assignment_rule: str = data_dict.get("assignment_rule")
+        self.created_by: str = data_dict.get("created_by")
+        self.created_timestamp: datetime = data_dict.get("created_timestamp")
+        self.description: str = data_dict.get("description")
+        self.group_id: str = data_dict.get("id")
+        self.group_type: str = data_dict.get("group_type")
+        self.modified_by: str = data_dict.get("modified_by")
+        self.modified_timestamp: str = data_dict.get("modified_timestamp")
 
     def dump(self) -> Dict:
         """
@@ -99,7 +89,7 @@ class GroupAssignment(PolicySetting):
 
         This dictionary is designed for use with CrowdStrike API policy verbs (i.e., policy
         creation (POST) and modification (PATCH), and therefore is limited only to the content
-        required to execute these actions. 
+        required to execute these actions.
         """
         return {
             "assignment_rule": self.assignment_rule,
@@ -130,12 +120,10 @@ class ChangeablePolicySetting(PolicySetting, ABC):
 
         Examples: toggle, mlslider.
         """
-        pass
 
     @abstractmethod
     def _dump_value(self) -> Dict[str, str]:
         """Generate the setting type-specific value dictionary."""
-        pass
 
     def _load_data_dict(self, data_dict: Dict):
         super()._load_data_dict(data_dict)
@@ -165,7 +153,7 @@ class ChangeablePolicySetting(PolicySetting, ABC):
 
         This dictionary is designed for use with CrowdStrike API policy verbs (i.e., policy
         creation (POST) and modification (PATCH), and therefore is limited only to the content
-        required to execute these actions. 
+        required to execute these actions.
         """
         return {
             "id": self.setting_id,
@@ -260,7 +248,7 @@ class PolicySettingGroup(PolicySetting):
 
         This dictionary is designed for use with CrowdStrike API policy verbs (i.e., policy
         creation (POST) and modification (PATCH), and therefore is limited only to the content
-        required to execute these actions. 
+        required to execute these actions.
         """
         return {
             "settings": [x.flat_dump() for x in self.settings],
@@ -371,7 +359,7 @@ class Policy:
 
         This dictionary is designed for use with CrowdStrike API policy verbs (i.e., policy
         creation (POST) and modification (PATCH), and therefore is limited only to the content
-        required to execute these actions. 
+        required to execute these actions.
         """
         settings: List[Dict] = []
         for settings_group in self.settings_groups:
