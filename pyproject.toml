@@ -33,7 +33,7 @@ max-line-length = 100
 disable = [
     # Disable duplicate-code as our policies modules will have lots of overlap, by design.
     # It is not really practical to try to appease this rule when creating an SDK wrapper.
-    "duplicate-code",    
+    "duplicate-code",
 
     # Disable pointless-string-statement as per this GitHub thread / GVR's Tweet
     # https://github.com/PyCQA/pylint/issues/2864#issuecomment-642398573
