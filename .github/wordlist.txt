@@ -13,6 +13,7 @@ BatchGetCmd
 BatchGetCmdStatus
 BatchInitSessions
 BatchRefreshSessions
+Caracara
 CCID
 CID
 CIDs
