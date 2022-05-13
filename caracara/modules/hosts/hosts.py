@@ -224,12 +224,12 @@ class HostsApiModule(FalconApiModule):
                                         )["resources"]
 
     def _perform_action(self, action_name: str, device_ids: List[str]) -> Dict:
-        """Performs the specified action against the list of targets."""
+        """Perform the specified action against the list of targets."""
         return self.hosts_api.perform_action(ids=device_ids, action_name=action_name)["body"]
 
     @staticmethod
     def _create_tag_list(potential_list: List[str] or str) -> List[str]:
-        """Creates a properly formatted list from a list, a string or a comma-delimited string."""
+        """Create a properly formatted list from a list, a string or a comma-delimited string."""
         tag_list = potential_list
         if not isinstance(potential_list, list):
             tag_list = potential_list.split(",")

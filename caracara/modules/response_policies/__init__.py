@@ -1,4 +1,4 @@
-"""Caracara PoliciesApiModule"""
+"""Caracara PoliciesApiModule."""
 __all__ = [
     'ResponsePoliciesApiModule',
 ]

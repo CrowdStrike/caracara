@@ -1,3 +1,4 @@
+"""Filter-Related Function Decorators."""
 from functools import wraps
 from inspect import signature
 from typing import Callable
@@ -6,7 +7,7 @@ from caracara.filters import FalconFilter
 
 
 def filter_string(func: Callable):
-    """Decorates a function to ensure that a Falcon Filter object to converted to an FQL string"""
+    """Decorate a function to ensure that a Falcon Filter object is converted to an FQL string."""
     # Load the function's signature, and confirm that self and filters are present
     sig = signature(func)
     if 'filters' not in sig.parameters:

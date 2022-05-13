@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Caracara Examples Collection
+Caracara Examples Collection.
+
 list_windows_devices.py
 
 This example will use the API credentials configured in your config.yml file to
@@ -17,7 +18,7 @@ from examples.common import caracara_example
 
 @caracara_example
 def list_windows_devices(**kwargs):
-    """List Windows Devices Example"""
+    """List Windows Devices."""
     client: Client = kwargs['client']
     logger: logging.Logger = kwargs['logger']
 

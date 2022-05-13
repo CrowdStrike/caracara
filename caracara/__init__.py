@@ -1,6 +1,4 @@
-"""
-Main Caracara module. Exposes an API Client to interface with Falcon.
-"""
+"""Main Caracara module. Exposes an API Client to interface with Falcon."""
 __all__ = ["Client", "Policy"]
 
 from caracara.client import Client

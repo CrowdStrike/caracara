@@ -1,5 +1,6 @@
 """
 Falcon Query Language (FQL) filter string builder module.
+
 Allows for the automatic creation of FQL strings.
 """
 

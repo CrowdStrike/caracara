@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Caracara Examples Collection
+Caracara Examples Collection.
+
 create_response_policy.py
 
 This example will create a Windows response policy based on the included template.
@@ -13,7 +14,7 @@ from examples.common import caracara_example, pretty_print
 
 @caracara_example
 def create_response_policy(**kwargs):
-    """Creates a new Windows response policy with everything enabled"""
+    """Create a new Windows response policy with everything enabled."""
     client: Client = kwargs['client']
 
     response_policy = client.response_policies.new_policy("Windows")

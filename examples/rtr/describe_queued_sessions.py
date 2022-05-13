@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Caracara Examples Collection
+Caracara Examples Collection.
+
 list_queued_sessions.py
 
 This example will use the API credentials configuration in your config.yml file to
@@ -15,7 +16,7 @@ from examples.common import caracara_example, pretty_print
 
 @caracara_example
 def describe_queued_sessions(**kwargs):
-    """Desctibe all currently queued RTR sessions and write the output to the log"""
+    """Describe all currently queued RTR sessions and write the output to the log."""
     client: Client = kwargs['client']
     logger: logging.Logger = kwargs['logger']
 

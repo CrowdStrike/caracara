@@ -1,5 +1,4 @@
-"""RTR Batch GET abstraction module"""
-
+"""RTR Batch GET abstraction module."""
 from __future__ import annotations
 
 import os
@@ -19,9 +18,13 @@ if TYPE_CHECKING:
 @dataclass
 class GetFile:
     """
-    Class that represents a file uploaded to Falcon via a GET command, potentially
-    having been executed against a batch session.
+    Represents a file uploaded to Falcon via a GET command.
+
+    This class may be instantiated many times, with each object stored in a common list,
+    in order to represent many files retrieved from a GET comamnd executed against a
+    batch session.
     """
+
     device_id: str = None
     filename: str = None
     session_id: str = None
@@ -37,6 +40,7 @@ class GetFile:
     ):
         """
         Download a file to a specified path.
+
         If the path is a folder, the filename will be auto generated.
         If the path is a file, it'll be downloaded to that path and name.
         """
@@ -96,4 +100,5 @@ class GetFile:
                 os.unlink(full_output_path_7z)
 
     def __str__(self):
+        """Return a loggable string representing the contents of the object."""
         return f"Filename {self.filename} | Session ID: {self.session_id} | SHA256: {self.sha256}"

@@ -1,4 +1,4 @@
-"""Falcon Response Policies API"""
+"""Falcon Response Policies API."""
 from functools import partial
 from typing import Dict, List
 
@@ -18,14 +18,17 @@ from caracara.modules.response_policies.template import generate_response_templa
 
 
 class ResponsePoliciesApiModule(FalconApiModule):
-    """The ResponsePoliciesApiModule represents interactions with the Falcon Response
-    Policies APIs"""
+    """
+    Response Policies API module.
+
+    This module provides the logic to interact with the Falcon Response Policies API.
+    """
 
     name = "CrowdStrike Response Policies API Module"
     help = "Describe, create, delete and edit Falcon Response policies"
 
     def __init__(self, api_authentication: OAuth2):
-        """Construct an instance of the ResponsePoliciesApiModule class"""
+        """Construct an instance of the ResponsePoliciesApiModule class."""
         super().__init__(api_authentication)
         self.logger.debug("Configuring the FalconPy Response Policies API")
         self.response_policies_api = ResponsePolicies(auth_object=self.api_authentication)
@@ -34,8 +37,7 @@ class ResponsePoliciesApiModule(FalconApiModule):
     def describe_policies_raw(
         self, filters: str or FalconFilter = None, sort: str = SORT_ASC
     ) -> List[Dict]:
-        """Returns a list of dictionaries containing all response policies in the Falcon
-        tenant."""
+        """Return a list of dictionaries containing all response policies in the Falcon tenant."""
         if sort not in SORTING_OPTIONS:
             raise ValueError("Sort must be SORT_ASC or SORT_DESC")
 
@@ -53,7 +55,7 @@ class ResponsePoliciesApiModule(FalconApiModule):
     def describe_policies(
         self, filters: str or FalconFilter = None, sort: str = SORT_ASC
     ) -> List[Policy]:
-        """Returns a list of all response policies packaged as custom Python Policy objects"""
+        """Return a list of all response policies packaged as custom Python Policy objects."""
         raw_policies_dict = self.describe_policies_raw(filters=filters, sort=sort)
         policies: List[Policy] = []
         for policy_dict in raw_policies_dict:
@@ -64,12 +66,15 @@ class ResponsePoliciesApiModule(FalconApiModule):
 
     @platform_name_check
     def new_policy(self, platform_name: str) -> Policy:
-        """Returns a platform-specific response policy template ready for customisation. To
-        create the policy in the CrowdStrike cloud, use the push_policy function."""
+        """
+        Return a platform-specific response policy template ready for customisation.
+
+        To create the policy in the CrowdStrike cloud, use the push_policy function.
+        """
         return generate_response_template(platform_name=platform_name)
 
     def push_policy(self, policy: Policy) -> Policy:
-        """Pushes a policy to the CrowdStrike Cloud, and returns the resultant policy"""
+        """Push a policy to the CrowdStrike Cloud, and return the resultant policy."""
         self.logger.info("Creating the response policy named %s", policy.name)
         response = self.response_policies_api.create_policies(body={
             "resources": [
@@ -80,8 +85,11 @@ class ResponsePoliciesApiModule(FalconApiModule):
         return new_policy
 
     def add_policy_to_group(self, policy: Policy or str, group: str) -> Policy:
-        """Adds a policy to a group. Takes a policy object or policy ID and a group object or group
-        ID as parameters"""
+        """
+        Add a policy to a group.
+
+        Takes a policy object or policy ID and a group object or group ID as parameters.
+        """
         if isinstance(policy, Policy):
             policy_id = policy.policy_id
         else:
@@ -111,8 +119,12 @@ class ResponsePoliciesApiModule(FalconApiModule):
         return new_policy
 
     def modify_policy(self, policy: Policy) -> Policy:
-        """Accepts a Policy object and patches the policy in the CrowdStrike Cloud to match
-        the configuration of the passed Policy object."""
+        """
+        Modify a pre-existent policy in the CrowdStrike Cloud.
+
+        Accepts a Policy object and patches the policy in the CrowdStrike Cloud to match
+        the configuration of the passed Policy object.
+        """
         if policy.policy_id is None:
             raise Exception(
                 "You must supply a policy containing an ID. To retrieve a complete policy,"

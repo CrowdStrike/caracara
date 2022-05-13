@@ -1,4 +1,4 @@
-"""Policies: Sorting Options"""
+"""Caracara Policies: Sorting Options."""
 SORT_ASC = "precedence.asc"
 SORT_DESC = "precedence.desc"
 

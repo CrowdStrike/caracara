@@ -1,6 +1,4 @@
-"""
-Common constants to be shared throughout Caracara
-"""
+"""Common constants to be shared throughout Caracara."""
 
 FILTER_OPERATORS = {
     "EQUAL": '',

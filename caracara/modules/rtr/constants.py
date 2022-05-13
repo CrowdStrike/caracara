@@ -1,4 +1,4 @@
-"""Real Time Response (RTR) Constants"""
+"""Real Time Response (RTR) Constants."""
 RTR_COMMANDS = {
     "cat": "read_only",
     "cd": "read_only",

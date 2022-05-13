@@ -1,6 +1,8 @@
-"""Caracara: Prevention Policies
+"""
+Caracara: Prevention Policies.
 
-This file contains platform-specific templates representing standard, blank Prevention policies"""
+This file contains platform-specific templates representing standard, blank Prevention policies.
+"""
 from caracara.common.policy_wrapper import (
     ChangeablePolicySetting,
     Policy,
@@ -734,6 +736,12 @@ OPTION_PLATFORM_MAPPING = {
 
 
 def generate_prevention_template(platform_name: str) -> Policy:
+    """
+    Generate a blank prevention policy object.
+
+    This policy contains all settings in their default disabled states, ready for
+    user or developer modification.
+    """
     if platform_name not in OPTION_PLATFORM_MAPPING:
         raise Exception(f"The platform name {platform_name} is not valid")
 
