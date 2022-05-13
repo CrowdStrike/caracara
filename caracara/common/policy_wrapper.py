@@ -53,7 +53,7 @@ class GroupAssignment(PolicySetting):
     """Represents an assignment rule that maps a policy to a host group."""
 
     def _load_data_dict(self, data_dict: Dict):
-        super()._load_data_dict(data_dict)
+        super().__init__(data_dict)
 
         self.assignment_rule: str = data_dict.get("assignment_rule")
         self.created_by: str = data_dict.get("created_by")
@@ -126,7 +126,7 @@ class ChangeablePolicySetting(PolicySetting, ABC):
         """Generate the setting type-specific value dictionary."""
 
     def _load_data_dict(self, data_dict: Dict):
-        super()._load_data_dict(data_dict)
+        super().__init__(data_dict)
         self.description = data_dict.get("description")
         self.setting_id = data_dict.get("id")
         self.setting_type = data_dict.get("type")

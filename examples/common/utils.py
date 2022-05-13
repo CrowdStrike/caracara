@@ -17,5 +17,5 @@ def pretty_print(data: List or Dict, rewrite_new_lines: bool = False):
     """Print dictionaries and lists nicely, and optionally rewrite new line characters."""
     pretty_data = prettify_json(data)
     if rewrite_new_lines:
-        data = pretty_data.replace("\\n", "\n")
+        pretty_data = pretty_data.replace("\\n", "\n")
     print(pretty_data)
