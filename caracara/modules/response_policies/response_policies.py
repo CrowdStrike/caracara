@@ -65,12 +65,14 @@ class ResponsePoliciesApiModule(FalconApiModule):
         return policies
 
     @platform_name_check
-    def new_policy(self, platform_name: str) -> Policy:
+    def new_policy(self, platform_name: str) -> Policy:  # pylint: disable=R0201
         """
         Return a platform-specific response policy template ready for customisation.
 
         To create the policy in the CrowdStrike cloud, use the push_policy function.
         """
+        # We disable pylint rule R0201 as the decorator existence means that this function
+        # cannot be a @staticmethod. The decorator expects the self parameter.
         return generate_response_template(platform_name=platform_name)
 
     def push_policy(self, policy: Policy) -> Policy:
@@ -95,7 +97,7 @@ class ResponsePoliciesApiModule(FalconApiModule):
         else:
             policy_id = policy
 
-        # TODO: have support for host group objects and handle them here
+        # Eventually we will likely have support for host group objects and handle them here
         group_id = group
 
         action_parameters = [

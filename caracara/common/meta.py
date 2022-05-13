@@ -13,7 +13,7 @@ _pkg_version = pkg_resources.get_distribution("caracara").version
 def user_agent_string():
     """
     Return the default Caracara user agent.
-    
+
     This user agent will be sent to CrowdStrike with API requests, including Caracara's version,
     unless the developer overrides this when instantiating a Client object.
     """
