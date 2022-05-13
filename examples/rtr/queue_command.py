@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Caracara Examples Collection
+Caracara Examples Collection.
+
 queue_command.py
 
 This example will use the API credentials configuration in your config.yml file to
@@ -26,7 +27,7 @@ from examples.common import caracara_example, parse_filter_list, pretty_print
 
 @caracara_example
 def queue_command(**kwargs):
-    """Run a single RTR command against all hosts matching the filter, even if offline"""
+    """Run a single RTR command against all hosts matching the filter, even if offline."""
     client: Client = kwargs['client']
     logger: logging.Logger = kwargs['logger']
     settings: Dict = kwargs['settings']

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Caracara Example Collection
+Caracara Example Collection.
+
 download_event_log.py
 
 This example will use the API credentials configuration in your config.yml file to
@@ -43,6 +44,8 @@ def download_loop(
     logger: logging.Logger,
 ):
     """
+    File download loop.
+
     Keeps checking how many files have finished uploading to the CrowdStrike Cloud,
     decides when to download, and then carries out the downloads.
     """
@@ -78,7 +81,7 @@ def download_loop(
 
 @caracara_example
 def download_event_log(**kwargs):  # pylint: disable=too-many-locals
-    """Download a specified Windows Event Log from all online systems"""
+    """Download a specified Windows Event Log from all online systems."""
     client: Client = kwargs['client']
     logger: logging.Logger = kwargs['logger']
     settings: Dict = kwargs['settings']

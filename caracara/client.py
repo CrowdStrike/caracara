@@ -1,6 +1,5 @@
-"""
-Caracara API Client
-"""
+"""Caracara API Client."""
+
 import logging
 
 try:
@@ -32,8 +31,12 @@ class Client:
     This class exposes all available Falcon API commands, and proxies requests through
     the FalconPy library.
     """
+
     class FalconFilter(FalconFilter):
-        """Create a sub-class of the FalconFilter class which we own locally within
+        """
+        Falcon Filter wrapper class.
+
+        Create a sub-class of the FalconFilter class which we own locally within
         the client. This allows us to dynamically calculate the FQL filter attributes
         that we hava available and make them available at runtime.
         """
@@ -51,6 +54,7 @@ class Client:
         verbose: bool = False,
         falconpy_authobject: OAuth2 = None,
     ):
+        """Configure a Caracara Falcon API Client object."""
         self.logger = logging.getLogger(__name__)
 
         if client_id is None and client_secret is None and falconpy_authobject is None:

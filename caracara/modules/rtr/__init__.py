@@ -1,6 +1,4 @@
-"""
-Caracara Real Time Response (RTR) module
-"""
+"""Caracara Real Time Response (RTR) module."""
 __all__ = [
     'BatchGetCmdRequest',
     'FILTER_ATTRIBUTES',

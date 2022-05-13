@@ -1,6 +1,4 @@
-"""
-Real Time Response (RTR) batch session abstraction class
-"""
+"""Real Time Response (RTR) batch session abstraction class."""
 import concurrent.futures
 from dataclasses import dataclass
 import logging
@@ -40,9 +38,14 @@ def _batch_session_required(func):
 
 class InnerRTRBatchSession:  # pylint: disable=too-few-public-methods
     """
-    Container class representing a singular batch session.
-    Many of these may be used in parallel to support > 10,000 system batches.
+    Container class representing a single batch session of up to 10,000 systems.
+
+    Many of these may be used in parallel to support batches of > 10,000 systems.
+    These are referred to colloquially as "batches of batches. In other words,
+    a batch of batches an RTRBatchSession object, which itself contains 
+    a list of InnerRTRBatchSession objects.
     """
+
     batch_id: str = None
     devices: Dict = None
     expiry: datetime = None
@@ -55,18 +58,21 @@ class InnerRTRBatchSession:  # pylint: disable=too-few-public-methods
         expiry: datetime,
         logger: logging.Logger
     ):
+        """Configure an inner batch of RTR sessions."""
         self.batch_id = batch_id
         self.devices = devices
         self.expiry = expiry
         self.logger = logger.getChild(batch_id)
 
     def __str__(self):
+        """Return a loggable string showing the RTR batch ID and system count."""
         return f"{self.batch_id}: {len(self.devices)} devices"
 
 
 @dataclass
 class BatchGetCmdRequest:
-    """A batch get request targeted to a specific set of devices within a batch RTR session"""
+    """A batch get request targeted to a specific set of devices within a batch RTR session."""
+
     batch_get_cmd_req_id: str
     devices: Dict
 
@@ -78,8 +84,10 @@ def generic_rtr_worker(
     device_ids: List[str] = None,
 ):
     """
-    Generic function to be used by a ThreadPoolExecutor to execute a partial
-    function against an RTR batch session
+    Execute a partial function against an RTR batch session.
+
+    This is a generic function designed to be used by a ThreadPoolExecutor
+    to execute a partial function against an RTR batch session.
     """
     thread_name = current_thread().name
     logger = logger.getChild(__name__)
@@ -102,7 +110,14 @@ class RTRBatchSession:
     Real Time Response (RTR) Batch Session.
 
     Enables interactions with one or more systems via the RTR API.
+    One RTRBatchSession object can connect to an unlimited number of systems by abstracting
+    away a list of InnerRTRBatchSession objects.
+    Each InnerRTRBatchSession object behind the scenes can communicate with up to 10,000
+    individual systems (known as a "batch"). An RTRBatchSession can then multiplex these
+    to command "batches of batches" of systems, thus removing the cloud-enforced connection
+    limit.
     """
+    
     admin_api: RealTimeResponseAdmin = None
     api: RealTimeResponse = None
     batch_sessions: List[InnerRTRBatchSession] = None
@@ -111,7 +126,7 @@ class RTRBatchSession:
 
     @_batch_session_required
     def device_ids(self) -> List[str]:
-        """Returns a list of device IDs from all inner batch sessions"""
+        """Return a list of device IDs from all inner batch sessions."""
         return [x.devices.keys() for x in self.batch_sessions]
 
     def connect(
@@ -122,6 +137,7 @@ class RTRBatchSession:
     ):
         """
         Establish a connection to one or more hosts.
+
         This function must be executed before any other commands can be run.
         """
         self.logger.info("Establishing an RTR batch session with %d systems", len(device_ids))
@@ -173,7 +189,7 @@ class RTRBatchSession:
 
     @_batch_session_required
     def disconnect(self):
-        """Disconnect the RTR batch session"""
+        """Disconnect the RTR batch session."""
         for session in self.batch_sessions:
             self.logger.info("Disconnecting batch RTR session with ID %s", session.batch_id)
             self.api.delete_session(session.batch_id)
@@ -186,8 +202,10 @@ class RTRBatchSession:
         timeout: int = default_timeout,
     ) -> List[BatchGetCmdRequest]:
         """
-        Upload a file to the Falcon cloud from the path specified, from every host
-        in the batch session.
+        Upload a file to the Falcon cloud from the path specified.
+
+        This function will execute the GET command against every system within every inner batch
+        session. This allows you to retrieve a file at the same path from every connected system.
         Returns a tuple containing the batch get request ID and the responses
         """
         self.logger.info("Using a batch GET to retrieve the file at path %s", file_path)
@@ -225,7 +243,10 @@ class RTRBatchSession:
         timeout: int = default_timeout
     ) -> List[GetFile]:
         """
-        Get a list of the files that have successfully uploaded as a result of a batch get command
+        Get a list of successful file uploads based on a list of batch get command requests.
+        
+        Each returned GetFile object will represent a file that has been successfully uploaded as a
+        result of a batch get command.
         """
         self.logger.info("Checking the status of %d batch get requests", len(batch_get_cmd_reqs))
 
@@ -275,9 +296,7 @@ class RTRBatchSession:
         batch_get_cmd_req_id: str,
         timeout: int = default_timeout,
     ) -> List[GetFile]:
-        """
-        Get a list of the files that have successfully uploaded as a result of a batch get command
-        """
+        """Get a list of successful file uploads based on an individual batch request ID."""
         self.logger.info("Checking the status of a batch get with ID %s", batch_get_cmd_req_id)
         response = self.api.batch_get_command_status(
             batch_get_cmd_req_id=batch_get_cmd_req_id,
@@ -308,7 +327,7 @@ class RTRBatchSession:
 
     @_batch_session_required
     def refresh_sessions(self, timeout: int = default_timeout):
-        """Refresh a batch RTR session, resetting the timeout back to 10 minutes"""
+        """Refresh a batch RTR session, resetting the timeout back to 10 minutes."""
         self.logger.info("Refreshing batch RTR session")
 
         def worker(session: InnerRTRBatchSession, func: partial):
@@ -338,7 +357,7 @@ class RTRBatchSession:
         device_ids: List[str] = None,
         timeout: int = default_timeout,
     ) -> Dict:
-        """Execute an RTR command against all systems in the batch session"""
+        """Execute an RTR command against all systems in the batch session."""
         base_command = command_string.split(' ')[0]
         if base_command not in RTR_COMMANDS:
             raise Exception(f"{base_command} is not a valid RTR command")
@@ -398,9 +417,7 @@ class RTRBatchSession:
         device_ids: List[str] = None,
         timeout: int = None,
     ) -> Dict:
-        """
-        Execute a raw RTR script on all systems in the batch session
-        """
+        """Execute a raw RTR script on all systems in the batch session."""
         if not timeout:
             timeout = script_timeout + 10
 
@@ -416,6 +433,8 @@ class RTRBatchSession:
 
     def auto_refresh_sessions(self, timeout: int = default_timeout):
         """
+        Automatically refresh every RTR batch session if they are going to expire soon.
+
         This function gets called by every function that makes an API request
         to the RTR API. This is done to attempt to ensure that we do not lose
         an active RTR session due to it expiring.
@@ -440,6 +459,13 @@ class RTRBatchSession:
         queueing: bool = False,
         timeout: int = default_timeout,
     ):
+        """
+        Create an RTRBatchSession object, representing a batch of remote systems.
+
+        If you pass a list of Device Agent IDs (AIDs), this constructor will automatically
+        call the inner connect() function, thus establishing as many batch sessions as required
+        to establish remote connections to these systems.
+        """
         self.api = rtr_api
         self.admin_api = rtr_admin_api
         self.default_timeout = default_timeout
@@ -453,6 +479,7 @@ class RTRBatchSession:
             )
 
     def __enter__(self):
+        """Treat an RTR batch session as a context manager."""
         if not self.batch_sessions:
             raise Exception(
                 "You should pass device_ids to the constructor to automatically "
@@ -460,4 +487,5 @@ class RTRBatchSession:
             )
 
     def __exit__(self, *args, **kwargs):
+        """Disconnect from all systems when leaving the context manager."""
         self.disconnect()

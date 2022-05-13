@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Caracara Examples Collection
+Caracara Examples Collection.
+
 describe_prevention_policies.py
 
 This example will use the API credentials configured in your config.yml file to
@@ -20,7 +21,7 @@ from examples.common import caracara_example, pretty_print
 
 @caracara_example
 def describe_prevention_policies(**kwargs):
-    """List Prevention Policies Example"""
+    """List Prevention Policies."""
     client: Client = kwargs['client']
     logger: logging.Logger = kwargs['logger']
 

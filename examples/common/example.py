@@ -1,4 +1,4 @@
-"""Caracara Examples: Common Backend"""
+"""Caracara Examples: Common Backend."""
 # pylint: disable=duplicate-code
 import logging
 import os
@@ -19,7 +19,7 @@ _config_path = os.path.join(
 
 
 def _select_profile(profile_names: str) -> str:
-    """Displays a selection menu for the user to choose a profile from config.yml"""
+    """Display a selection menu for the user to choose a profile from config.yml."""
     cli = Bullet(
         prompt="Choose a profile from your examples config.yml",
         choices=profile_names,
@@ -31,7 +31,7 @@ def _select_profile(profile_names: str) -> str:
 
 
 def _get_profile() -> Dict:
-    """Loads a profile from config.yml and returns its settings as a Dictionary"""
+    """Load a profile from config.yml and return its settings as a Dictionary."""
     if not os.path.exists(_config_path):
         raise Exception(f"You must create the file {_config_path}")
 
@@ -48,7 +48,7 @@ def _get_profile() -> Dict:
 
 
 def _configure_logging(profile: Dict) -> None:
-    """Sets up the logger based on the configuration in config.yml"""
+    """Set up the logger based on the configuration in config.yml."""
     log_format = "%(name)s: %(message)s"
     log_level = logging.INFO
 
@@ -68,7 +68,7 @@ def _configure_logging(profile: Dict) -> None:
 
 
 def _get_example_settings(profile: Dict, example_abs_path: str) -> Dict:
-    """Loads example-specific settings from config.yml based on the filename"""
+    """Load example-specific settings from config.yml based on the filename."""
     if 'examples' not in profile:
         return None
 
@@ -107,7 +107,7 @@ def _get_example_settings(profile: Dict, example_abs_path: str) -> Dict:
 
 
 def caracara_example(example_func):
-    """Caracara Example Decorator"""
+    """Caracara Example Decorator."""
     @wraps(example_func)
     def wrapped(*args, **kwargs):
         profile = _get_profile()

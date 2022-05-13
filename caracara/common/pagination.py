@@ -1,5 +1,5 @@
 """
-Caraca: Pagination functions
+Caraca: Pagination functions.
 
 This file contains code for all types of pagination styles used by the
 Falcon APIs, to avoid code repetition within the individual modules.
@@ -69,7 +69,7 @@ def all_pages_numbered_offset(
     body: Dict = None,
     limit: int = PAGINATION_LIMIT,
 ):
-    """Grab all pages from a paginated call in Style 1 (numerical offset)"""
+    """Grab all pages from a paginated call in Style 1 (numerical offset)."""
     logger = logger.getChild("pagination_numbered_offset")
     logger.info(f"Grabbing all pages from the {func.__name__} function (limit: {limit})")
 
@@ -134,7 +134,7 @@ def all_pages_numbered_offset_parallel(
     logger: logging.Logger,
     limit: int = PAGINATION_LIMIT,
 ) -> List[Dict]:
-    """Grab all pages from a paginated call in Style 1 (numerical offset), super charged"""
+    """Grab all pages from a paginated call in Style 1 (numerical offset), super charged."""
     logger = logger.getChild(__name__)
     if isinstance(func, partial):
         logger.info(
@@ -203,7 +203,7 @@ def all_pages_token_offset(
     logger: logging.Logger,
     limit: int = SCROLL_BATCH_SIZE,
 ) -> List:
-    """Grab all pages from a token offset-based pagination endpoint (Style 2)"""
+    """Grab all pages from a token offset-based pagination endpoint (Style 2)."""
     logger = logger.getChild(__name__)
     if isinstance(func, partial):
         logger.info(

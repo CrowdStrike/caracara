@@ -20,8 +20,8 @@ A friendly wrapper to help you interact with the CrowdStrike Falcon API. Less co
 - [Documentation](#documentation)
 - [Contributing](#contributing)
 
-
 ## Features
+
 A few of the developer experience enhancements provided by the Caracara toolkit include:
 | Feature | Details |
 | :---  | :--- |
@@ -149,9 +149,9 @@ poetry run examples/get_devices/list_windows_devices.py
 </details>
 
 ## Documentation
+
 __*Coming soon!*__
 
-
-
 ## Contributing
+
 Interested in taking part in the development of the Caracara project? Start [here](CONTRIBUTING.md).

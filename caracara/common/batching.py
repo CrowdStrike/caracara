@@ -1,5 +1,6 @@
-""""
+"""
 Caracara batching support.
+
 This module contains all the required code to generically parallelise retrieval of data batches.
 
 The endpoints handled here typically look for a list of IDs in the body
@@ -23,7 +24,8 @@ BATCH_LOGGER = logging.getLogger(__name__)
 
 def batch_data_pull_threads() -> int:
     """
-    Returns maximum number of threads to spin up in a thread pool.
+    Return maximum number of threads to spin up in a thread pool.
+
     Result is either 20, or 2x the number of cores, whichever is smallest.
     """
     cores = multiprocessing.cpu_count()

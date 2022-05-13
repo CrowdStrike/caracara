@@ -1,6 +1,8 @@
-"""Caracara: Response Policies
+"""
+Caracara: Response Policies.
 
-This file contains platform-specific templates representing standard, blank Response policies"""
+This file contains platform-specific templates representing standard, blank Response policies.
+"""
 from caracara.common.policy_wrapper import (
     ChangeablePolicySetting,
     Policy,
@@ -136,6 +138,12 @@ OPTION_PLATFORM_MAPPING = {
 
 
 def generate_response_template(platform_name: str) -> Policy:
+    """
+    Generate a blank response policy object.
+
+    This policy contains all settings in their default disabled states, ready for
+    user or developer modification.
+    """
     if platform_name not in OPTION_PLATFORM_MAPPING:
         raise Exception(f"The platform name {platform_name} is not valid")
 

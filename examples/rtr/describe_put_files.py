@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Caracara Examples Collection
+Caracara Examples Collection.
+
 describe_put_files.py
 
 This example will use the API credentials configuration in your config.yml file to
@@ -15,7 +16,7 @@ from examples.common import caracara_example, pretty_print
 
 @caracara_example
 def describe_put_files(**kwargs):
-    """Desctibe all available PUT files and and write the output to the log"""
+    """Describe all available PUT files and and write the output to the log."""
     client: Client = kwargs['client']
     logger: logging.Logger = kwargs['logger']
 

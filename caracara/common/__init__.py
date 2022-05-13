@@ -1,6 +1,4 @@
-"""
-Caracara: Common functions and data
-"""
+"""Caracara: Common functions and data imports."""
 from caracara.common.common_filters import FILTER_ATTRIBUTES
 from caracara.common.constants import FILTER_OPERATORS, SCROLL_BATCH_SIZE, DATA_BATCH_SIZE
 from caracara.common.policy_wrapper import Policy

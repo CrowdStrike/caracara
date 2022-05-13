@@ -1,6 +1,4 @@
-"""
-Caracara Real Time Response (RTR) module
-"""
+"""Caracara Real Time Response (RTR) module."""
 import os
 
 from datetime import datetime
@@ -22,21 +20,24 @@ from caracara.modules.rtr.batch_session import RTRBatchSession
 
 
 class RTRApiModule(FalconApiModule):
-    """RTR API Module"""
+    """Real Time Response (RTR) API Module."""
+
     name = "RTR API Module"
     help = "Interface with hosts via the Real Time Response (RTR) API"
 
     default_timeout = 30
 
     def __init__(self, api_authentication: OAuth2):
+        """Create an RTR module object and configure it with a FalconPy OAuth2 object."""
         super().__init__(api_authentication)
         self.rtr_api = RealTimeResponse(auth_object=self.api_authentication)
         self.rtr_admin_api = RealTimeResponseAdmin(auth_object=self.api_authentication)
 
     def batch_session(self) -> RTRBatchSession:
         """
-        Create a new RTR batch session abstraction object. Once created,
-        use the connect() function to establish a connection to a list
+        Create a new RTR batch session abstraction object.
+
+        Once created, use the connect() function to establish a connection to a list
         of Falcon device IDs.
 
         Returns
@@ -52,7 +53,7 @@ class RTRApiModule(FalconApiModule):
     @filter_string
     def _search_sessions(self, filters: str or FalconFilter = None):
         """
-        Get for RTR Session IDs based on filters
+        Get RTR Session IDs based on filters.
 
         Arguments
         ---------
@@ -70,7 +71,7 @@ class RTRApiModule(FalconApiModule):
 
     def _get_queued_session_ids(self) -> List[str]:
         """
-        Get a list of queued RTR Session IDs
+        Get a list of queued RTR Session IDs.
 
         Returns
         -------
@@ -83,7 +84,7 @@ class RTRApiModule(FalconApiModule):
 
     def describe_queued_sessions(self) -> Dict:
         """
-        Show the contents of all queued RTR sessions
+        Show the contents of all queued RTR sessions.
 
         Returns
         -------
@@ -96,7 +97,7 @@ class RTRApiModule(FalconApiModule):
 
     def delete_queued_session(self, session_id: str):
         """
-        Delete a queued session by ID
+        Delete a queued session by ID.
 
         Arguments
         ---------
@@ -111,7 +112,7 @@ class RTRApiModule(FalconApiModule):
         self.rtr_api.delete_session(session_id)
 
     def delete_queued_session_command(self, session_id: str, cloud_request_id: str):
-        """Delete a specific command within a queued session"""
+        """Delete a specific command within a queued session."""
         self.logger.info(
             "Deleting command with ID %s from queued session %s",
             cloud_request_id, session_id,
@@ -123,7 +124,7 @@ class RTRApiModule(FalconApiModule):
 
     def clear_queued_sessions(self):
         """
-        Clear all sessions from the RTR queue
+        Clear all sessions from the RTR queue.
 
         This is a shortcut function provided for a common operation, and can be done
         manually without this function.
@@ -165,7 +166,7 @@ class RTRApiModule(FalconApiModule):
 
     def create_put_file(self, file_path: str, name: str = None, description: str = None):
         """
-        Create a PUT file within the Falcon cloud for later use
+        Create a PUT file within the Falcon cloud for later use.
 
         Arguments
         ---------
@@ -210,7 +211,7 @@ class RTRApiModule(FalconApiModule):
 
     def delete_put_file(self, put_file_id: str):
         """
-        Delete a PUT file
+        Delete a PUT file.
 
         Arguments
         ---------

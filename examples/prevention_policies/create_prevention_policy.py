@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Caracara Examples Collection
+Caracara Examples Collection.
+
 create_prevention_policy.py
 
 This example will create a Windows prevention rolicy based on the included template.
@@ -13,7 +14,7 @@ from examples.common import caracara_example, pretty_print
 
 @caracara_example
 def create_prevention_policy(**kwargs):
-    """Creates a new Windows prevention policy with everything enabled"""
+    """Create a new Windows prevention policy with everything enabled."""
     client: Client = kwargs['client']
 
     prevention_policy = client.prevention_policies.new_policy("Windows")

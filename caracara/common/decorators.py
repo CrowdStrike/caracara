@@ -1,3 +1,4 @@
+"""Caracara module-agnostic decorators."""
 from functools import wraps
 from inspect import signature
 from typing import Callable
@@ -6,7 +7,7 @@ from caracara.common.constants import PLATFORMS
 
 
 def platform_name_check(func: Callable):
-    """Decorates a function to ensure that a platform_name argument is within the specified list"""
+    """Decorate a function to ensure that a platform_name argument is within the specified list."""
     # Load the function's signature, and confirm that the platform_name parameter has been added
     sig = signature(func)
     if 'platform_name' not in sig.parameters:

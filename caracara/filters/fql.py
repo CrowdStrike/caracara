@@ -1,4 +1,4 @@
-"""Falcon Query Language (FQL) generation code"""
+"""Falcon Query Language (FQL) generation code."""
 from abc import ABC, abstractmethod
 from typing import List
 
@@ -7,20 +7,22 @@ from caracara.common.constants import FILTER_OPERATORS
 
 class FalconFilterAttribute(ABC):
     """
+    Generic Falcon Filter Attribute.
+
     Class to represent an something that can be filtered on, such as a
-    computer domain, OS or computer role (e.g. Server, DC, Workstation)
+    computer domain, OS or computer role (e.g. Server, DC, Workstation).
     """
+
     @property
     @abstractmethod
     def name(self) -> str:
-        """
-        A friendly name for the filter. Cannot include spaces. Example: OS
-        """
+        """Store the friendly name for the filter. Cannot include spaces. Example: OS."""
 
     @property
     def description(self) -> str:
         """
-        A short description of the filter and what it can be used for.
+        Store a short description of the filter and what it can be used for.
+
         Defaults to returning the doc string.
         """
         return __doc__
@@ -28,14 +30,13 @@ class FalconFilterAttribute(ABC):
     @property
     @abstractmethod
     def fql(self) -> str:
-        """
-        The name of the attribute as it will be written when converted to FQL
-        """
+        """Return the name of the attribute as it will be written when converted to FQL."""
 
     def example(self) -> str:
         """
-        Generated example usage of the filter. Auto-generated based
-        on options, but can be overridden with a simple string function.
+        Store example usage of the filter.
+
+        Auto-generated based on options, but can be overridden with a simple string function.
         """
         if not hasattr(self, 'options'):
             raise NotImplementedError(
@@ -86,6 +87,7 @@ class FalconFilterAttribute(ABC):
     operator = "EQUAL"
 
     def __str__(self):
+        """Convert a filter attribute to a valid FQL string."""
         return f'{self.name}: {self.operator} {self.value}'
 
     def _options_is_dict(self) -> bool:
@@ -119,10 +121,7 @@ class FalconFilterAttribute(ABC):
         return False
 
     def _check_value(self, value) -> bool:
-        """
-        Check whether a certain value will fulfill
-        the criteria given
-        """
+        """Check whether a certain value will fulfill the criteria given."""
         # If the type of the value is invalid then the value is automatically
         # marked as invalid
         if not any((isinstance(value, x) for x in self.types)):
@@ -155,9 +154,7 @@ class FalconFilterAttribute(ABC):
         )
 
     def set_value(self, value):
-        """
-        Set the filter value utilising internal sanity checks
-        """
+        """Set the filter value utilising internal sanity checks."""
         if self._check_value(value):
             self.value = value
         else:
@@ -167,7 +164,7 @@ class FalconFilterAttribute(ABC):
             )
 
     def set_operator(self, operator: str):
-        """Sets the operator to be applied to the filter (e.g., =, >)"""
+        """Set the operator to be applied to the filter (e.g., =, >)."""
         if operator in self.valid_operators:
             self.operator = operator
         else:
@@ -179,9 +176,10 @@ class FalconFilterAttribute(ABC):
 
     def get_fql(self) -> str:
         """
-        Convert the internal data structure to useful FQL. For different types
-        of filters this function may need to be overridden. It will work for
-        str and list(str) filters out the box.
+        Convert the internal data structure to useful FQL.
+
+        For different types of filters this function may need to be overridden.
+        It will work for str and list(str) filters out the box.
         """
         operator_symbol = FILTER_OPERATORS[self.operator]
 

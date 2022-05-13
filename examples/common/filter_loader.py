@@ -1,5 +1,5 @@
 """
-Caracara Examples: Filter Loader
+Caracara Examples: Filter Loader.
 
 This module loads a list of filter dictionaries (K->V pairs) and
 imports them them into a pre-existing FalconFilter object.
@@ -14,7 +14,7 @@ from caracara.filters import FalconFilter
 
 
 def parse_filter_list(filter_list: List[Dict], filters: FalconFilter) -> None:
-    """Loads a list or dictionary of filters from a YAML file into a FalconFilter object"""
+    """Load a list or dictionary of filters from a YAML file into a FalconFilter object."""
     if filter_list is None:
         return
 

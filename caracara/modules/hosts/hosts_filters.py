@@ -10,9 +10,9 @@ from caracara.filters.fql import FalconFilterAttribute
 
 
 class HostContainedFilterAttribute(FalconFilterAttribute):
-    """Filter attribute: Contained"""
+    """Filter hosts based on containment status."""
+
     name = "Contained"
-    description = "Filter hosts based on containment status"
     fql = "status"
     options = {
         "Contained": "contained",
@@ -23,12 +23,13 @@ class HostContainedFilterAttribute(FalconFilterAttribute):
 
 
 class HostDomainFqlFilterAttribute(FalconFilterAttribute):
-    """Filter attribute: Domain"""
+    """Filter by host AD domain."""
+
     name = "Domain"
-    description = "Filter by host AD domains"
     fql = "machine_domain"
 
     def example(self) -> str:
+        """Show filter example."""
         return (
             "This filter accepts an AD domain, e.g. GOODDOMAIN or "
             "gooddomain.company.com. You can also provide multiple "
@@ -37,12 +38,13 @@ class HostDomainFqlFilterAttribute(FalconFilterAttribute):
 
 
 class HostGroupIdFilterAttribute(FalconFilterAttribute):
-    """Filter attribute: Group ID"""
+    """Filter by host group ID."""
+
     name = "GroupID"
-    description = "Filter by group ID"
     fql = "groups"
 
     def example(self) -> str:
+        """Show filter example."""
         return (
             "This filter accepts one or more Group IDs as either one "
             "string, or as a comma delimited list of strings. For example, "
@@ -53,12 +55,13 @@ class HostGroupIdFilterAttribute(FalconFilterAttribute):
 
 
 class HostHostnameFilterAttribute(FalconFilterAttribute):
-    """Filter attribute: Hostname"""
+    """Filter by system hostname."""
+
     name = "Hostname"
-    description = "Filter on one or most hostnames in Falcon"
     fql = "hostname"
 
     def example(self) -> str:
+        """Show filter example."""
         return (
             "Provide either a single hostname string, or a list of hostnames "
             "via a comma delimited string or Python list. For example, "
@@ -67,9 +70,9 @@ class HostHostnameFilterAttribute(FalconFilterAttribute):
 
 
 class HostLastSeenFilterAttrribute(FalconFilterAttribute):
-    """Filter attribute: Last Seen"""
+    """Filter for hosts last seen within a given timeframe."""
+
     name = "LastSeen"
-    description = "Filter for hosts last seen within a given timeframe"
     fql = "last_seen"
     types = [str]
     valid_operators = [
@@ -132,10 +135,10 @@ class HostLastSeenFilterAttrribute(FalconFilterAttribute):
 
 
 class HostFirstSeenFilterAttribute(HostLastSeenFilterAttrribute):
-    """Filter attribute: First Seen"""
-    # Inherit from Last Seen to avoid tonnes of duplicated code
+    """Filter for hosts first seen by Falcon within a given timeframe."""
+
+    # NB: this filter inherits from Last Seen to avoid tonnes of duplicated code
     name = "FirstSeen"
-    description = "Filter by when the host was first seen by Falcon"
     fql = "first_seen"
 
     def example(self) -> str:
@@ -151,12 +154,13 @@ class HostFirstSeenFilterAttribute(HostLastSeenFilterAttrribute):
 
 
 class HostLocalIPFilterAttribute(FalconFilterAttribute):
-    """Filter attribute: Local IP address"""
+    """Filter by host local IP addresses."""
+
     name = "LocalIP"
-    description = "Filter by host local IP addresses"
     fql = "local_ip"
 
     def example(self) -> str:
+        """Show filter example."""
         return (
             "This filter accepts an IP address string associated with a "
             "network card, e.g. 172.16.1.2 or 172.16.* to cover the /16 "
@@ -167,24 +171,26 @@ class HostLocalIPFilterAttribute(FalconFilterAttribute):
 
 
 class HostOSFqlFilterAttribute(FalconFilterAttribute):
-    """Filter attribute: Operating System"""
+    """
+    Filter by host operating system types.
+
+    Current valid options are Windows, Mac and Linux.
+    """
+
     name = "OS"
-    description = "Filter by host operating system types"
     fql = "platform_name"
     options = PLATFORMS
     restrict = True
 
 
 class HostOSVersionFqlFilterAttribute(FalconFilterAttribute):
-    """Filter attribute: Operating System version"""
+    """Filter by Operating System version (e.g., Windows 7, RHEL 7.9, etc.)."""
+
     name = "OSVersion"
-    description = (
-        "Filter by Operating System version (e.g., Windows 7, "
-        "RHEL 7.9, etc.)"
-    )
     fql = "os_version"
 
     def example(self) -> str:
+        """Show filter example."""
         return (
             "This filter accepts a name of an operating system version "
             "and can be supplied many times. For example, Windows 7, "
@@ -193,9 +199,13 @@ class HostOSVersionFqlFilterAttribute(FalconFilterAttribute):
 
 
 class HostRoleFilterAttribute(FalconFilterAttribute):
-    """Filter attribute: Product Type Description / Role"""
+    """
+    Filter by host role.
+
+    Current valid options are DC, Server and Workstation.
+    """
+
     name = "Role"
-    description = "Filter by host roles (e.g. Workstation)"
     fql = "product_type_desc"
     options = {
         "DC": "Domain Controller",
@@ -206,12 +216,13 @@ class HostRoleFilterAttribute(FalconFilterAttribute):
 
 
 class HostSiteFilterAttribute(FalconFilterAttribute):
-    """Filter attribute: Site"""
+    """Filter by site name."""
+
     name = "Site"
-    description = "Filter by site name"
     fql = "site_name"
 
     def example(self) -> str:
+        """Show filter example."""
         return (
             "This filter accepts one or more site names as either one "
             "string, or as a comma delimtied list of strings. For example, "
@@ -221,12 +232,20 @@ class HostSiteFilterAttribute(FalconFilterAttribute):
 
 
 class HostTagFilterAttribute(FalconFilterAttribute):
-    """Filter attribute: Falcon Grouping Tag"""
+    """
+    Filter by sensor tag.
+
+    - Tags created in Falcon should be prepended with FalconGroupingTag/
+    - Tags created during the Sensor installion, or added to the restriry sould be prepended with
+      SensorGroupingTag/
+    """
+
     name = "Tag"
     description = "Filter by sensor tag"
     fql = "tags"
 
     def example(self) -> str:
+        """Show filter example."""
         return (
             "This filter accepts one or more sensor tags as either one "
             "string, or as a comma delimited list of strings. For example, "
@@ -235,12 +254,13 @@ class HostTagFilterAttribute(FalconFilterAttribute):
 
 
 class HostOUFilterAttribute(FalconFilterAttribute):
-    """Filter attribute: Organizational Unit"""
+    """Filter by Organisational Unit (OU)."""
+
     name = "OU"
-    description = "Filter by Organisational Unit (OU)"
     fql = "ou"
 
     def example(self) -> str:
+        """Show filter example."""
         return (
             "This filter accepts an Organisational Unit (OU) name as a "
             "string. You can also comma delimit OUs for multiple matches, "

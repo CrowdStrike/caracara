@@ -1,4 +1,4 @@
-"""Caracara Examples: Common Module"""
+"""Caracara Examples: Common Module."""
 __all__ = [
     'caracara_example',
     'parse_filter_list',

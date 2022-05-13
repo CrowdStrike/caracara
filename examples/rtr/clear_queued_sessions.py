@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Caracara Examples Collection
+Caracara Examples Collection.
+
 clear_queued_sessions.py
 
 This example will use the API credentials configuration in your config.yml file to
@@ -18,7 +19,7 @@ from examples.common import caracara_example
 
 @caracara_example
 def clear_queued_sessions(**kwargs):
-    """Clear all RTR sessions queued up by this API client"""
+    """Clear all RTR sessions queued up by this API client."""
     client: Client = kwargs['client']
     logger: logging.Logger = kwargs['logger']
 

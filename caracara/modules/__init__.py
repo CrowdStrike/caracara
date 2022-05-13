@@ -1,5 +1,6 @@
 """
 Falcon Host module.
+
 Exposes functions to get host data and perform actions on hosts, such as network containment.
 """
 __all__ = [
