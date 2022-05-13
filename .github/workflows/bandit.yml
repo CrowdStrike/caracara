@@ -26,9 +26,9 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         python -m pip install poetry
-        poetry export --dev --without-hashes -f requirements.txt |  cut -f1 -d";" | xargs pip install
+        poetry install
     - name: Analyze package with bandit
       run: |
-        bandit -r caracara --configfile .bandit
-        bandit -r examples --configfile examples/.bandit
-        bandit -r tests --configfile tests/.bandit
+        poetry run bandit -r caracara --configfile .bandit
+        poetry run bandit -r examples --configfile examples/.bandit
+        poetry run bandit -r tests --configfile tests/.bandit
