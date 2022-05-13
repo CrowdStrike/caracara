@@ -13,6 +13,27 @@
 
 A friendly wrapper to help you interact with the CrowdStrike Falcon API. Less code, less fuss, better performance, and full interoperability with [FalconPy](https://github.com/CrowdStrike/falconpy/).
 
+- [Features](#features)
+- [Installation](#installation-instructions)
+- [Basic Usage](#basic-usage-example)
+- [Examples](#examples-collection)
+- [Documentation](#documentation)
+- [Contributing](#contributing)
+
+
+## Features
+A few of the developer experience enhancements provided by the Caracara toolkit include:
+| Feature | Details |
+| :---  | :--- |
+| __Automatic pagination with concurrency__ | Caracara will handle all request pagination for you, so you do not have to think about things like batch sizes, batch tokens or parallelisation. Caracara will even multithread batch data retrieval requests where possible, hugely increasing data retrieval times for large datasets such as host lists. |
+| __Friendly to your IDE (and you!)__ | Caracara is written with full support for IDE autocomplete in mind. We have tested autocomplete in Visual Studio Code and PyCharm, and will accept issues and patches for more IDE support where needed. Furthermore, all code, where possible, is written with type hints so you can be confident in parameters and return values. |
+| __Logging__ | Caracara is built with the in-box `logging` library provided with Python 3. Simply set up your logging handlers in your main code file, and Caracara will forward over `debug`, `info` and `error` logs as they are produced. Note that the `debug` logs are very verbose, and we recommend writing these outputs to file as opposed to the console when retrieving large amounts of lightly filtered data. |
+| __Real Time Response (RTR) batch session abstraction__ | Caracara provides a rich interface to RTR session batching, allowing you to connect to as many hosts as possible. Want to download a specific file from every system in your Falcon tenant? Caracara will even extract it from the `.7z` container for you. |
+| __Rich and detailed sample code__ | Every module of Caracara comes bundled with executable, fully configurable code samples that address frequent use cases. All samples are built around a common strcuture allowing for code reuse and easy reading. Just add your API credentials to `config.yml`, and all samples will be ready to go. |
+| __Simple filter syntax__ | Caracara provides an object-orientated Falcon Query Language (FQL) generator. The `FalconFilter` object lets you specify filters such as `Hostname`, `OS` and `Role`, which get automatically converted to valid FQL. Never write an FQL filter yourself again! |
+| __Single authentication point of entry__ | Authenticate once and have access to every module. |
+| __100% FalconPy compatibility__ | Caracara is built on FalconPy, and can even be configured with a FalconPy `OAuth2` object via the `auth_object` constructor parameter, allowing you to reuse FalconPy authentication objects across Caracara and FalconPy. Authenticate once with FalconPy, and access every feature of FalconPy and Caracara. |
+
 ## Installation Instructions
 
 Caracara supports all major Python packaging solutions. Instructions for [Poetry](https://python-poetry.org) and [Pip](https://pypi.org/project/pip/) are provided below.
@@ -126,3 +147,11 @@ poetry run examples/get_devices/list_windows_devices.py
 ```
 
 </details>
+
+## Documentation
+__*Coming soon!*__
+
+
+
+## Contributing
+Interested in taking part in the development of the Caracara project? Start [here](CONTRIBUTING.md).
