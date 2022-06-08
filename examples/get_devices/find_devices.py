@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
-"""
-Caracara Examples Collection.
+r"""Caracara Examples Collection - find_devices.py.
 
-find_devices.py
+____ _ _  _ ___     ___  ____ _  _ _ ____ ____
+|___ | |\ | |  \    |  \ |___ |  | | |    |___
+|    | | \| |__/    |__/ |___  \/  | |___ |___
+
+___  _   _    _  _ ____ ____ ___ _  _ ____ _  _ ____
+|__]  \_/     |__| |  | [__   |  |\ | |__| |\/| |___
+|__]   |      |  | |__| ___]  |  | \| |  | |  | |___
 
 This example will use the API credentials configured in your config.yml file to
 find a specified device within your Falcon tenant. When no search is provided, all
@@ -11,7 +16,7 @@ hosts are returned.
 The example demonstrates how to use the Hosts API.
 """
 import logging
-from argparse import ArgumentParser
+from argparse import ArgumentParser, RawTextHelpFormatter
 
 from caracara import Client
 
@@ -44,7 +49,7 @@ def find_devices(**kwargs):
 
 
 if __name__ == '__main__':
-    parser = ArgumentParser(description="Search for a device within your Falcon tenant")
+    parser = ArgumentParser(description=__doc__, formatter_class=RawTextHelpFormatter)
     parser.add_argument("-f", "--find",
                         help="String to match against a device hostname within your tenant",
                         required=False,
