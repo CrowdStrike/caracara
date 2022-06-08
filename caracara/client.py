@@ -3,7 +3,7 @@
 import logging
 import os
 import re
-from ast import literal_eval
+
 try:
     from falconpy import (
         OAuth2,
@@ -43,7 +43,7 @@ class Client:
         that we hava available and make them available at runtime.
         """
 
-    def __init__(  # pylint: disable=too-many-arguments,too-many-locals
+    def __init__(  # pylint: disable=R0912,R0913,R0914,R0915
         self,
         client_id: str = None,
         client_secret: str = None,
