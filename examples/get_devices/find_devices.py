@@ -5,7 +5,7 @@ Caracara Examples Collection.
 find_devices.py
 
 This example will use the API credentials configured in your config.yml file to
-find a specified device within your Falcon tenant. When no search is provide, all
+find a specified device within your Falcon tenant. When no search is provided, all
 hosts are returned.
 
 The example demonstrates how to use the Hosts API.
