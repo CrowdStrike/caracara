@@ -12,7 +12,8 @@ the required code to pull this data down as quickly as possible.
 import concurrent.futures
 import logging
 import multiprocessing
-
+from math import ceil
+from functools import partial
 from threading import current_thread
 from typing import Callable, Dict, List
 
@@ -49,20 +50,16 @@ def batch_get_data(lookup_ids: str, func: Callable[[object, List[str], str], Dic
     dict: A dictionary of all results returned.
     """
     resources = []
-    batches = []
 
     BATCH_LOGGER.info("Batch data retrieval for %s (%d items)", func.__name__, len(lookup_ids))
     BATCH_LOGGER.debug(str(lookup_ids))
 
-    for i in range(0, len(lookup_ids), DATA_BATCH_SIZE):
-        batches.append(lookup_ids[i:i+DATA_BATCH_SIZE])
+    BATCH_LOGGER.info("Divided the item IDs into %d batches", ceil(len(lookup_ids) / DATA_BATCH_SIZE))
 
-    BATCH_LOGGER.info("Divided the item IDs into %d batches", len(batches))
-    BATCH_LOGGER.debug(batches)
-
+    batches = [lookup_ids[i:i+DATA_BATCH_SIZE] for i in range(0, len(lookup_ids), DATA_BATCH_SIZE)]
     threads = batch_data_pull_threads()
 
-    def worker(worker_lookup_ids: List[str], batch_func: Callable[[List[str]], Dict]) -> Dict:
+    def worker(batch_func: Callable[[List[str]], Dict], worker_lookup_ids: List[str]) -> Dict:
         thread_name = current_thread().name
         BATCH_LOGGER.info(
             "%s | Batch worker started with a list of %d items. Function: %s",
@@ -75,7 +72,8 @@ def batch_get_data(lookup_ids: str, func: Callable[[object, List[str], str], Dic
         return resources
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
-        completed = executor.map(worker, batches, [func])
+        partial_worker = partial(worker, func)
+        completed = executor.map(partial_worker, batches)
 
     for complete in completed:
         BATCH_LOGGER.debug("Completed a batch")
