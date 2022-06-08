@@ -2,6 +2,7 @@
 # pylint: disable=duplicate-code
 import logging
 import os
+import re
 
 from functools import wraps
 from typing import Dict
@@ -121,6 +122,14 @@ def caracara_example(example_func):
             )
 
         falcon_config: Dict = profile['falcon']
+        pattern = re.compile('.*?\${(\w+)}.*?')
+
+        for key, val in falcon_config.items():
+            match = pattern.findall(val)
+            if match:
+                for g in match:
+                    falcon_config[key] = falcon_config[key].replace(f"${{{g}}}", os.environ.get(g, g))
+
         if 'client_id' not in falcon_config or 'client_secret' not in falcon_config:
             raise Exception("You must include, at minimum, a client_id and client_secret")
 
