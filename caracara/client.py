@@ -60,7 +60,7 @@ class Client:
         self.logger = logging.getLogger(__name__)
 
         def _interpolate_auth_keys():
-            """Helper method to handle environment variable interpolation."""
+            """Handle environment variable interpolation."""
             provided_keys = {
                 "ssl_verify": ssl_verify,
                 "timeout": timeout,
