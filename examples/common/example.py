@@ -127,10 +127,10 @@ def caracara_example(example_func):
         for key, val in falcon_config.items():
             match = pattern.findall(val)
             if match:
-                for g in match:
+                for hit in match:
                     falcon_config[key] = falcon_config[key].replace(
-                        f"${{{g}}}",
-                        os.environ.get(g, g)
+                        f"${{{hit}}}",
+                        os.environ.get(hit, hit)
                         )
 
         if 'client_id' not in falcon_config or 'client_secret' not in falcon_config:
