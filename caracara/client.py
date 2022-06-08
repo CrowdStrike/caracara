@@ -1,7 +1,9 @@
 """Caracara API Client."""
 
 import logging
-
+import os
+import re
+from ast import literal_eval
 try:
     from falconpy import (
         OAuth2,
@@ -73,8 +75,31 @@ class Client:
             )
 
         self.logger.info("Setting up the Caracara client and configuring authentication")
-
+        auth_keys = {
+            "ssl_verify": ssl_verify,
+            "timeout": timeout,
+            "proxy": proxy,
+        }
         if client_id:
+            # Convert any environment variable representations to their actual values
+            pattern = re.compile('.*?\\${(\\w+)}.*?')
+            for item in [["client_id", client_id],
+                         ["client_secret", client_secret],
+                         ["cloud_name", cloud_name],
+                         ["user_agent", user_agent],
+                         ["member_cid", member_cid]]:
+                if item[0] == "cloud_name":
+                    item[0] = "base_url"
+                auth_keys[item[0]] = item[1]
+                if item[1]:
+                    match = pattern.findall(str(item[1]))
+                    if match:
+                        for hit in match:
+                            auth_keys[item[0]] = item[1].replace(
+                                f"${{{hit}}}",
+                                os.environ.get(hit, hit)
+                                )
+
             self.logger.info(
                 "Client ID: %s; Cloud: %s; Member CID: %s",
                 client_id, cloud_name, member_cid
@@ -94,16 +119,7 @@ class Client:
             self.logger.info("Base URL: %s", base_url)
 
             self.logger.debug("Configuring api_authentication object as an OAuth2 object")
-            self.api_authentication = OAuth2(
-                base_url=base_url,
-                client_id=client_id,
-                client_secret=client_secret,
-                member_cid=member_cid,
-                ssl_verify=ssl_verify,
-                proxy=proxy,
-                timeout=timeout,
-                user_agent=user_agent,
-            )
+            self.api_authentication = OAuth2(**auth_keys)
         elif falconpy_authobject:
             self.logger.info(
                 "Using pre-created FalconPy OAuth2 object. All other options will be ignored"
