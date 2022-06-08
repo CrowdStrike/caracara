@@ -16,11 +16,11 @@ hosts are returned.
 The example demonstrates how to use the Hosts API.
 """
 import logging
-from argparse import ArgumentParser, RawTextHelpFormatter
+from typing import Dict, List
 
 from caracara import Client
 
-from examples.common import caracara_example, pretty_print
+from examples.common import caracara_example, parse_filter_list, pretty_print
 
 
 @caracara_example
@@ -28,16 +28,16 @@ def find_devices(**kwargs):
     """Find devices by hostname."""
     client: Client = kwargs['client']
     logger: logging.Logger = kwargs['logger']
-    target: str = kwargs.get("target", None)
+    settings: Dict = kwargs['settings']
 
     filters = None
-    if target:
-        logger.info("Searching tenant for %s", target)
-        filters = client.FalconFilter()
-        filters.create_new_filter("Hostname", target)
-        logger.info("Using the FQL filter: %s", filters.get_fql())
+    filters = client.FalconFilter()
+    filter_list: List[Dict] = settings.get("filters") if settings else [{}]
+    parse_filter_list(filter_list, filters)
+    if filters.filters:
+        logger.info("Getting a list of hosts that match the FQL string %s", filters.get_fql())
     else:
-        logger.info("Grabbing all devices within the tenant")
+        logger.info("No filter provided, getting a list of all devices within the tenant")
 
     response_data = client.hosts.describe_devices(filters)
     logger.info("Found %d devices", len(response_data.keys()))
@@ -49,10 +49,4 @@ def find_devices(**kwargs):
 
 
 if __name__ == '__main__':
-    parser = ArgumentParser(description=__doc__, formatter_class=RawTextHelpFormatter)
-    parser.add_argument("-f", "--find",
-                        help="String to match against a device hostname within your tenant",
-                        required=False,
-                        default=None
-                        )
-    find_devices(target=parser.parse_args().find)
+    find_devices()
