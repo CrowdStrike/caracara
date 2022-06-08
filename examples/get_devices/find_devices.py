@@ -12,10 +12,10 @@ The example demonstrates how to use the Hosts API.
 """
 import logging
 from argparse import ArgumentParser
-import json
+
 from caracara import Client
 
-from examples.common import caracara_example
+from examples.common import caracara_example, pretty_print
 
 
 @caracara_example
@@ -38,7 +38,7 @@ def find_devices(**kwargs):
     logger.info("Found %d devices", len(response_data.keys()))
 
     for _, device_data in response_data.items():
-        logger.info("%s", json.dumps(device_data, indent=4))
+        logger.info("%s", pretty_print(device_data))
 
     logger.info(f"{len(response_data.items())} devices found.")
 
