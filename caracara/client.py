@@ -43,7 +43,7 @@ class Client:
         that we hava available and make them available at runtime.
         """
 
-    def __init__(  # pylint: disable=R0912,R0913,R0914,R0915
+    def __init__(  # pylint: disable=R0913,R0914,R0915
         self,
         client_id: str = None,
         client_secret: str = None,
@@ -58,6 +58,33 @@ class Client:
     ):
         """Configure a Caracara Falcon API Client object."""
         self.logger = logging.getLogger(__name__)
+
+        def _interpolate_auth_keys():
+            """Helper method to handle environment variable interpolation."""
+            provided_keys = {
+                "ssl_verify": ssl_verify,
+                "timeout": timeout,
+                "proxy": proxy,
+            }
+            # Convert any environment variable representations to their actual values
+            pattern = re.compile('.*?\\${(\\w+)}.*?')
+            for item in [["client_id", client_id],
+                         ["client_secret", client_secret],
+                         ["cloud_name", cloud_name],
+                         ["user_agent", user_agent],
+                         ["member_cid", member_cid]]:
+                if item[0] == "cloud_name":
+                    item[0] = "base_url"
+                provided_keys[item[0]] = item[1]
+                if item[1]:
+                    match = pattern.findall(str(item[1]))
+                    if match:
+                        for hit in match:
+                            provided_keys[item[0]] = item[1].replace(
+                                f"${{{hit}}}",
+                                os.environ.get(hit, hit)
+                                )
+            return provided_keys
 
         if client_id is None and client_secret is None and falconpy_authobject is None:
             raise Exception(
@@ -75,31 +102,9 @@ class Client:
             )
 
         self.logger.info("Setting up the Caracara client and configuring authentication")
-        auth_keys = {
-            "ssl_verify": ssl_verify,
-            "timeout": timeout,
-            "proxy": proxy,
-        }
-        if client_id:
-            # Convert any environment variable representations to their actual values
-            pattern = re.compile('.*?\\${(\\w+)}.*?')
-            for item in [["client_id", client_id],
-                         ["client_secret", client_secret],
-                         ["cloud_name", cloud_name],
-                         ["user_agent", user_agent],
-                         ["member_cid", member_cid]]:
-                if item[0] == "cloud_name":
-                    item[0] = "base_url"
-                auth_keys[item[0]] = item[1]
-                if item[1]:
-                    match = pattern.findall(str(item[1]))
-                    if match:
-                        for hit in match:
-                            auth_keys[item[0]] = item[1].replace(
-                                f"${{{hit}}}",
-                                os.environ.get(hit, hit)
-                                )
 
+        if client_id:
+            auth_keys = _interpolate_auth_keys()
             self.logger.info(
                 "Client ID: %s; Cloud: %s; Member CID: %s",
                 client_id, cloud_name, member_cid
