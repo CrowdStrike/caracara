@@ -23,7 +23,7 @@ def find_devices(**kwargs):
     """Find devices by hostname."""
     client: Client = kwargs['client']
     logger: logging.Logger = kwargs['logger']
-    target: ArgumentParser = kwargs.get("target", None)
+    target: str = kwargs.get("target", None)
 
     filters = None
     if target:
