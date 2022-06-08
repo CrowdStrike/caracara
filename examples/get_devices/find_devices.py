@@ -30,7 +30,6 @@ def find_devices(**kwargs):
     logger: logging.Logger = kwargs['logger']
     settings: Dict = kwargs['settings']
 
-    filters = None
     filters = client.FalconFilter()
     filter_list: List[Dict] = settings.get("filters") if settings else [{}]
     parse_filter_list(filter_list, filters)
