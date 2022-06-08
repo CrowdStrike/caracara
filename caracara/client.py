@@ -107,7 +107,7 @@ class Client:
             auth_keys = _interpolate_auth_keys()
             self.logger.info(
                 "Client ID: %s; Cloud: %s; Member CID: %s",
-                client_id, cloud_name, member_cid
+                auth_keys["client_id"], auth_keys["base_url"], auth_keys["member_cid"]
             )
             self.logger.debug("SSL verification is %s", ssl_verify)
             self.logger.debug("Timeout: %f", timeout)
