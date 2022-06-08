@@ -35,7 +35,7 @@ def list_windows_devices(**kwargs):
         hostname = device_data.get("hostname", "Unknown Hostname")
         logger.info("%s (%s)", device_id, hostname)
 
-    logger.info("Done!")
+    logger.info(f"{len(response_data.items())} devices found.")
 
 
 if __name__ == '__main__':
