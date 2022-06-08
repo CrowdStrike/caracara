@@ -133,6 +133,7 @@ class Client:
         else:
             raise Exception("Impossible authentication scenario")
 
+        self.logger.info("Resolved Base URL: %s", self.api_authentication.base_url)
         # Configure modules here so that IDEs can pick them up
         self.logger.debug("Setting up Hosts module")
         self.hosts = HostsApiModule(self.api_authentication)
