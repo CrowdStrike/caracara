@@ -56,7 +56,9 @@ def batch_get_data(lookup_ids: str, func: Callable[[object, List[str], str], Dic
 
     BATCH_LOGGER.info("Divided the item IDs into %d batches", ceil(len(lookup_ids) / DATA_BATCH_SIZE))
 
-    batches = [lookup_ids[i:i+DATA_BATCH_SIZE] for i in range(0, len(lookup_ids), DATA_BATCH_SIZE)]
+    batches = [
+        lookup_ids[i:i+DATA_BATCH_SIZE] for i in range(0, len(lookup_ids), DATA_BATCH_SIZE)
+        ]
     threads = batch_data_pull_threads()
 
     def worker(batch_func: Callable[[List[str]], Dict], worker_lookup_ids: List[str]) -> Dict:
