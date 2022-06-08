@@ -122,7 +122,7 @@ def caracara_example(example_func):
             )
 
         falcon_config: Dict = profile['falcon']
-        pattern = re.compile('.*?\\${(\w+)}.*?')
+        pattern = re.compile('.*?\\${(\\w+)}.*?')
 
         for key, val in falcon_config.items():
             match = pattern.findall(val)
