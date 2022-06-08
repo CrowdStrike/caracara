@@ -33,7 +33,7 @@ def find_devices(**kwargs):
         logger.info("Using the FQL filter: %s", filters.get_fql())
     else:
         logger.info("Grabbing all devices within the tenant")
-    
+
     response_data = client.hosts.describe_devices(filters)
     logger.info("Found %d devices", len(response_data.keys()))
 
@@ -45,5 +45,9 @@ def find_devices(**kwargs):
 
 if __name__ == '__main__':
     parser = ArgumentParser(description="Search for a device within your Falcon tenant")
-    parser.add_argument("-f", "--find", help="String to match against a device hostname within your tenant", required=False, default=None)
+    parser.add_argument("-f", "--find",
+                        help="String to match against a device hostname within your tenant",
+                        required=False,
+                        default=None
+                        )
     find_devices(target=parser.parse_args().find)
