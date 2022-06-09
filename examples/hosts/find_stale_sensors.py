@@ -17,7 +17,7 @@ from typing import Dict
 from datetime import datetime, timezone
 from dateutil import parser as dparser
 from caracara import Client
-from examples.common import caracara_example
+from examples.common import caracara_example, NoDevicesFound
 
 
 @caracara_example
@@ -48,12 +48,19 @@ def find_stale_sensors(**kwargs):
                     f"[{device_id}] {device_data['hostname']} "
                     f"({_get_stale_period(device_data['last_seen'])} days)"
                     )
+            total_devices = len(response_data)
+            logger.info(f"{total_devices} devices found.")
 
-            logger.info(f"{len(response_data.items())} devices found.")
         else:
             logger.info("%s sensors hidden.", len(client.hosts.hide(filters)))
 
+    if not total_devices:
+        raise NoDevicesFound(filters.get_fql())
+
 
 if __name__ in ["__main__", "examples.hosts.find_stale_sensors"]:
-    find_stale_sensors()
-    raise SystemExit
+    try:
+        find_stale_sensors()
+        raise SystemExit
+    except NoDevicesFound as no_devices:
+        raise SystemExit(no_devices) from no_devices
