@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Caracara Examples Collection.
+"""Caracara Examples Collection.
 
 list_all_devices.py
 
