@@ -84,6 +84,10 @@ class Client:
             member_cid = interpolator.interpolate(member_cid)
             user_agent = interpolator.interpolate(user_agent)
             proxy = interpolator.interpolate(proxy)
+            if not user_agent:
+                user_agent = user_agent_string()
+            self.logger.debug("User agent: %s", user_agent)
+
             auth_keys = {
                 "base_url": cloud_name,
                 "client_id": client_id,
@@ -107,10 +111,6 @@ class Client:
             for k in list(auth_keys.keys()):
                 if auth_keys[k] is None:
                     del auth_keys[k]
-
-            if not user_agent:
-                user_agent = user_agent_string()
-            self.logger.debug("User agent: %s", user_agent)
 
             self.verbose = verbose
             self.logger.debug("Verbose mode: %s", verbose)
