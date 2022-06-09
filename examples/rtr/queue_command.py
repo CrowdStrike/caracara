@@ -38,7 +38,7 @@ def queue_command(**kwargs):
     logger: logging.Logger = kwargs['logger']
     settings: Dict = kwargs['settings']
 
-    cmd = settings.get("command", None) if settings else None 
+    cmd = settings.get("command", None) if settings else None
     if not cmd:
         error_message = "".join([
             "You must configure the 'cmd' argument within your "
@@ -78,7 +78,7 @@ def queue_command(**kwargs):
         logger.info("[%s] Task queued: %s", device_id, device_result["task_id"])
 
 
-if __name__ == "__main__" or __name__ == "examples.rtr.queue_command":
+if __name__ in ["__main__", "examples.rtr.queue_command"]:
     try:
         queue_command()
         print("Command queued for execution across specified hosts.")

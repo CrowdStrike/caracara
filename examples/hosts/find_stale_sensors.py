@@ -8,7 +8,7 @@ ____ _ _  _ ___     ____ ___ ____ _    ____    ____ ____ _  _ ____ ____ ____ ___
 |    | | \| |__/    ___]  |  |  | |___ |___    ___] |___ | \| ___] |__| |  \ ___]
 
 This example will use the API credentials configured in your config.yml file to
-find stale sensors deployments within your Falcon tenant. 
+find stale sensors deployments within your Falcon tenant.
 
 The example demonstrates how to use the Hosts API and a FalconFilter using a date.
 """

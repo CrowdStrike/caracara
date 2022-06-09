@@ -1,6 +1,8 @@
+"""Caracara Examples custom error handlers."""
+
 class BaseError(Exception):
     """Base error class."""
-    pass
+
 
 class MissingArgument(BaseError):
     """A required argument was not provided. Check YAML configuration."""
@@ -13,6 +15,7 @@ class MissingArgument(BaseError):
     def __str__(self):
         return f"No '{self.argument_name}' provided -> {self.message}"
 
+
 class NoDevicesFound(BaseError):
     """No devices were found matching the filter provided."""
 
@@ -23,6 +26,7 @@ class NoDevicesFound(BaseError):
 
     def __str__(self):
         return f"{self.filter_fql} -> {self.message}"
+
 
 class NoSessionsConnected(BaseError):
     """No successful connections were made for the RTR batch request."""

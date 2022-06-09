@@ -25,7 +25,6 @@ def list_all_devices(**kwargs):
 
     with client:
         response_data = client.hosts.describe_devices()
-    
 
     for device_id, device_data in response_data.items():
         hostname = device_data.get("hostname", "Unknown Hostname")
