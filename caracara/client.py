@@ -79,29 +79,34 @@ class Client:
             # Load all parameters for the FalconPy authentication object into a dictionary
             # and handle environment variable interpolation
             interpolator = VariableInterpolator()
-            fungobat = {
-                "base_url": interpolator.interpolate(cloud_name),
-                "client_id": interpolator.interpolate(client_id),
+            cloud_name = interpolator.interpolate(cloud_name)
+            client_id = interpolator.interpolate(client_id)
+            member_cid = interpolator.interpolate(member_cid)
+            user_agent = interpolator.interpolate(user_agent)
+            proxy = interpolator.interpolate(proxy)
+            auth_keys = {
+                "base_url": cloud_name,
+                "client_id": client_id,
                 "client_secret": interpolator.interpolate(client_secret),
-                "member_cid": interpolator.interpolate(member_cid),
-                "proxy": interpolator.interpolate(proxy),
-                "user_agent": interpolator.interpolate(user_agent),
+                "member_cid": member_cid,
+                "proxy": proxy,
+                "user_agent": user_agent,
                 "ssl_verify": ssl_verify,
                 "timeout": timeout,
             }
 
             self.logger.info(
                 "Client ID: %s; Cloud: %s; Member CID: %s",
-                fungobat["client_id"], fungobat["base_url"], fungobat["member_cid"],
+                client_id, cloud_name, member_cid,
             )
             self.logger.debug("SSL verification is %s", ssl_verify)
             self.logger.debug("Timeout: %s", str(timeout))
             self.logger.debug("Configured proxy: %s", proxy)
 
             # Remove all None values, as we do not wish to override any FalconPy defaults
-            for k in list(fungobat.keys()):
-                if fungobat[k] is None:
-                    del fungobat[k]
+            for k in list(auth_keys.keys()):
+                if auth_keys[k] is None:
+                    del auth_keys[k]
 
             if not user_agent:
                 user_agent = user_agent_string()
@@ -114,7 +119,7 @@ class Client:
             self.logger.info("Base URL: %s", base_url)
 
             self.logger.debug("Configuring api_authentication object as an OAuth2 object")
-            self.api_authentication = OAuth2(**fungobat)
+            self.api_authentication = OAuth2(**auth_keys)
         elif falconpy_authobject:
             self.logger.info(
                 "Using pre-created FalconPy OAuth2 object. All other options will be ignored"
