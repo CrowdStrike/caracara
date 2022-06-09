@@ -29,13 +29,11 @@ def list_windows_devices(**kwargs):
     logger.info("Using the FQL filter: %s", filters.get_fql())
 
     response_data = client.hosts.describe_devices(filters)
-    logger.info("Found %d devices running Windows", len(response_data.keys()))
+    logger.info("Found %d devices running Windows", len(response_data))
 
     for device_id, device_data in response_data.items():
         hostname = device_data.get("hostname", "Unknown Hostname")
         logger.info("%s (%s)", device_id, hostname)
-
-    logger.info(f"{len(response_data.items())} devices found.")
 
 
 if __name__ == '__main__':
