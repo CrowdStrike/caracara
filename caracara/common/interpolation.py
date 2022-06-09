@@ -72,4 +72,7 @@ class VariableInterpolator:  # pylint: disable=too-few-public-methods
                 os.environ.get(match, match)
             )
 
+        # Unescape by replacing double dollar signs with single dollar signs
+        output_string = output_string.replace("$$", "$")
+
         return output_string
