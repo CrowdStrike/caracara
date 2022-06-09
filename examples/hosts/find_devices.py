@@ -55,6 +55,7 @@ def find_devices(**kwargs):
     if not response_data:
         raise NoDevicesFound(filters.get_fql())
 
+
 if __name__ in ["__main__", "examples.hosts.find_devices"]:
     try:
         find_devices()

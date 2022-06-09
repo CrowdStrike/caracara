@@ -12,7 +12,7 @@ import logging
 
 from caracara import Client
 
-from examples.common import caracara_example
+from examples.common import caracara_example, NoDevicesFound
 
 
 @caracara_example
@@ -31,8 +31,13 @@ def list_all_devices(**kwargs):
         logger.info("%s (%s)", device_id, hostname)
 
     logger.info("Found %d devices", len(response_data))
+    if not response_data:
+        raise NoDevicesFound
 
 
 if __name__ in ["__main__", "examples.hosts.list_all_devices"]:
-    list_all_devices()
-    raise SystemExit
+    try:
+        list_all_devices()
+        raise SystemExit
+    except NoDevicesFound as no_devices:
+        raise SystemExit(no_devices) from no_devices

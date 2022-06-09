@@ -19,7 +19,7 @@ from tabulate import tabulate
 
 from caracara import Client
 
-from examples.common import caracara_example
+from examples.common import caracara_example, NoDevicesFound
 
 
 @caracara_example
@@ -47,8 +47,13 @@ def show_agent_versions(**kwargs):
     logger.info("\n%s", tabulate(devices, headers=elements, tablefmt="simple"))
     # Report our total found
     logger.info("Found %d devices", len(devices))
+    if not devices:
+        raise NoDevicesFound
 
 
 if __name__ in ["__main__", "examples.hosts.show_agent_versions"]:
-    show_agent_versions()
-    raise SystemExit
+    try:
+        show_agent_versions()
+        raise SystemExit
+    except NoDevicesFound as no_devices:
+        raise SystemExit(no_devices) from no_devices
