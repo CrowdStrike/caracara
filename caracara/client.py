@@ -79,7 +79,7 @@ class Client:
             # Load all parameters for the FalconPy authentication object into a dictionary
             # and handle environment variable interpolation
             interpolator = VariableInterpolator()
-            env_keys = {
+            fungobat = {
                 "base_url": interpolator.interpolate(cloud_name),
                 "client_id": interpolator.interpolate(client_id),
                 "client_secret": interpolator.interpolate(client_secret),
@@ -92,16 +92,16 @@ class Client:
 
             self.logger.info(
                 "Client ID: %s; Cloud: %s; Member CID: %s",
-                env_keys["client_id"], env_keys["base_url"], env_keys["member_cid"],
+                fungobat["client_id"], fungobat["base_url"], fungobat["member_cid"],
             )
             self.logger.debug("SSL verification is %s", ssl_verify)
             self.logger.debug("Timeout: %s", str(timeout))
             self.logger.debug("Configured proxy: %s", proxy)
 
             # Remove all None values, as we do not wish to override any FalconPy defaults
-            for k in list(env_keys.keys()):
-                if env_keys[k] is None:
-                    del env_keys[k]
+            for k in list(fungobat.keys()):
+                if fungobat[k] is None:
+                    del fungobat[k]
 
             if not user_agent:
                 user_agent = user_agent_string()
@@ -114,7 +114,7 @@ class Client:
             self.logger.info("Base URL: %s", base_url)
 
             self.logger.debug("Configuring api_authentication object as an OAuth2 object")
-            self.api_authentication = OAuth2(**env_keys)
+            self.api_authentication = OAuth2(**fungobat)
         elif falconpy_authobject:
             self.logger.info(
                 "Using pre-created FalconPy OAuth2 object. All other options will be ignored"
