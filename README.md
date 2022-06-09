@@ -122,10 +122,10 @@ into your CrowdStrike tenant within the past 7 days.
 
 from caracara import Client
 
-filters = client.FalconFilter()
-filters.create_new_filter("LastSeen", "-7d", "LTE")
 
 with Client(client_id="${CLIENT_ID_ENV_VARIABLE}", client_secret="${CLIENT_SECRET_ENV_VARIABLE}"):
+    filters = client.FalconFilter()
+    filters.create_new_filter("LastSeen", "-7d", "LTE")
     response_data = client.hosts.describe_devices(filters)
 
 print(f"Found {len(response_data)} devices running Windows")
@@ -169,6 +169,12 @@ If you do not want to enter the Caracara virtual environment (e.g., because you 
 
 ```shell
 poetry run examples/get_devices/list_windows_devices.py
+```
+
+All examples are also configured in the `pyproject.toml` file as scripts, allowing them to be executed simply.
+
+```shell
+poetry run stale-sensors
 ```
 
 </details>
