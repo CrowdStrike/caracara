@@ -53,6 +53,23 @@ class NoLoginsFound(BaseError):
         return f"{self.filter_fql} -> {self.message}"
 
 
+class NoAddressesFound(BaseError):
+    """No network address changes were found matching the filter provided."""
+
+    def __init__(self,
+                 filter_fql="Recent network addresses",
+                 message="No logins matched the provided Falcon Filter."
+                 ):
+        """Initialize a NoAddressesFound error."""
+        self.filter_fql = filter_fql
+        self.message = message
+        super().__init__(self.message)
+
+    def __str__(self):
+        """Return the FQL filter along with the message."""
+        return f"{self.filter_fql} -> {self.message}"
+
+
 class NoSessionsConnected(BaseError):
     """No successful connections were made for the RTR batch request."""
 
