@@ -25,5 +25,6 @@ def describe_scripts(**kwargs):
         for script_id, script_data in client.rtr.describe_scripts().items():
             logger.info("%s\n%s", script_id, pretty_print(script_data))
 
+
 if __name__ == "__main__":
     describe_scripts()

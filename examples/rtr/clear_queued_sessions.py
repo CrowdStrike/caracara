@@ -26,5 +26,6 @@ def clear_queued_sessions(**kwargs):
     logger.info("Clearing all queued RTR sessions")
     client.rtr.clear_queued_sessions()
 
+
 if __name__ == "__main__":
     clear_queued_sessions()

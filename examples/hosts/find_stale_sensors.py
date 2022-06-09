@@ -53,6 +53,7 @@ def find_stale_sensors(**kwargs):
         else:
             logger.info("%s sensors hidden.", len(client.hosts.hide(filters)))
 
+
 if __name__ in ["__main__", "examples.hosts.find_stale_sensors"]:
     find_stale_sensors()
     raise SystemExit

@@ -51,5 +51,6 @@ def list_sensor_versions():
 
     echo_via_pager(tabulate(devices, headers=HEADERS, tablefmt="simple"))
 
+
 if __name__ == '__main__':
     list_sensor_versions()

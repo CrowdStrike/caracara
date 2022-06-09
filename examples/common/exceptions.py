@@ -1,5 +1,6 @@
 """Caracara Examples custom error handlers."""
 
+
 class BaseError(Exception):
     """Base error class."""
 
