@@ -56,6 +56,7 @@ disable = [
 agent-versions = "examples.hosts.show_agent_versions:show_agent_versions"
 find-devices = "examples.hosts.find_devices:find_devices"
 list-all-devices = "examples.hosts.list_all_devices:list_all_devices"
+list-hidden-devices = "examples.hosts.list_hidden_devices:list_hidden_devices"
 list-windows-devices = "examples.hosts.list_windows_devices:list_windows_devices"
 stale-sensors = "examples.hosts.find_stale_sensors:find_stale_sensors"
 
