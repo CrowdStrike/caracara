@@ -79,21 +79,28 @@ class Client:
             # Load all parameters for the FalconPy authentication object into a dictionary
             # and handle environment variable interpolation
             interpolator = VariableInterpolator()
+            client_id = interpolator.interpolate(client_id)
+            base_url = interpolator.interpolate(cloud_name)
+            member_cid = interpolator.interpolate(member_cid)
+            proxy = interpolator.interpolate(proxy)
+            user_agent = interpolator.interpolate(user_agent)
+
+            self.logger.info(
+                "Client ID: %s; Cloud: %s; Member CID: %s",
+                client_id, base_url, member_cid,
+            )
+
             auth_keys = {
-                "base_url": interpolator.interpolate(cloud_name),
-                "client_id": interpolator.interpolate(client_id),
+                "base_url": base_url,
+                "client_id": client_id,
                 "client_secret": interpolator.interpolate(client_secret),
-                "member_cid": interpolator.interpolate(member_cid),
-                "proxy": interpolator.interpolate(proxy),
-                "user_agent": interpolator.interpolate(user_agent),
+                "member_cid": member_cid,
+                "proxy": proxy,
+                "user_agent": user_agent,
                 "ssl_verify": ssl_verify,
                 "timeout": timeout,
             }
 
-            self.logger.info(
-                "Client ID: %s; Cloud: %s; Member CID: %s",
-                auth_keys["client_id"], auth_keys["base_url"], auth_keys["member_cid"],
-            )
             self.logger.debug("SSL verification is %s", ssl_verify)
             self.logger.debug("Timeout: %s", str(timeout))
             self.logger.debug("Configured proxy: %s", proxy)
