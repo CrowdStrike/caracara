@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-r"""Caracara Examples Collection - find_devices.py.
+r"""Caracara Examples Collection.
+
+find_devices.py
 
 ____ _ _  _ ___     ___  ____ _  _ _ ____ ____ ____
 |___ | |\ | |  \    |  \ |___ |  | | |    |___ [__
@@ -16,11 +18,16 @@ hosts are returned.
 The example demonstrates how to use the Hosts API.
 """
 import logging
+
 from typing import Dict, List
 
 from caracara import Client
 
-from examples.common import caracara_example, parse_filter_list, pretty_print
+from examples.common import (
+    caracara_example,
+    parse_filter_list,
+    pretty_print,
+)
 
 
 @caracara_example
@@ -39,12 +46,10 @@ def find_devices(**kwargs):
         logger.info("No filter provided, getting a list of all devices within the tenant")
 
     response_data = client.hosts.describe_devices(filters)
-    logger.info("Found %d devices", len(response_data.keys()))
+    logger.info("Found %d devices", len(response_data))
 
     for _, device_data in response_data.items():
         logger.info("%s", pretty_print(device_data))
-
-    logger.info(f"{len(response_data.items())} devices found.")
 
 
 if __name__ == '__main__':

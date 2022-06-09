@@ -12,7 +12,7 @@ the required code to pull this data down as quickly as possible.
 import concurrent.futures
 import logging
 import multiprocessing
-from math import ceil
+
 from functools import partial
 from threading import current_thread
 from typing import Callable, Dict, List
@@ -54,11 +54,10 @@ def batch_get_data(lookup_ids: str, func: Callable[[object, List[str], str], Dic
     BATCH_LOGGER.info("Batch data retrieval for %s (%d items)", func.__name__, len(lookup_ids))
     BATCH_LOGGER.debug(str(lookup_ids))
 
-    BATCH_LOGGER.info(
-        "Divided the item IDs into %d batches", ceil(len(lookup_ids) / DATA_BATCH_SIZE)
-        )
-
+    # Divide the list of item IDs into a list of lists, each of size DATA_BATCH_SIZE
     batches = [lookup_ids[i:i+DATA_BATCH_SIZE] for i in range(0, len(lookup_ids), DATA_BATCH_SIZE)]
+    BATCH_LOGGER.info("Divided the item IDs into %d batches", len(batches))
+
     threads = batch_data_pull_threads()
 
     def worker(batch_func: Callable[[List[str]], Dict], worker_lookup_ids: List[str]) -> Dict:

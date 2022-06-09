@@ -1,5 +1,5 @@
 """
-Caraca: Pagination functions.
+Caracara: Pagination functions.
 
 This file contains code for all types of pagination styles used by the
 Falcon APIs, to avoid code repetition within the individual modules.

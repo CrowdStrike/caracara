@@ -1,8 +1,6 @@
 """Caracara API Client."""
 
 import logging
-import os
-import re
 
 try:
     from falconpy import (
@@ -14,6 +12,7 @@ except ImportError as no_falconpy:
     raise SystemExit("The crowdstrike-falconpy library is not installed.") from no_falconpy
 
 from caracara.common import FILTER_ATTRIBUTES as common_filter_attributes
+from caracara.common.interpolation import VariableInterpolator
 from caracara.common.meta import user_agent_string
 from caracara.filters.falcon_filter import FalconFilter
 from caracara.filters.fql import FalconFilterAttribute
@@ -49,7 +48,7 @@ class Client:
         client_secret: str = None,
         cloud_name: str = "auto",
         member_cid: str = None,
-        ssl_verify: str = True,
+        ssl_verify: bool = True,
         timeout: float = None,
         proxy: str = None,
         user_agent: str = None,
@@ -58,33 +57,6 @@ class Client:
     ):
         """Configure a Caracara Falcon API Client object."""
         self.logger = logging.getLogger(__name__)
-
-        def _interpolate_auth_keys():
-            """Handle environment variable interpolation."""
-            provided_keys = {
-                "ssl_verify": ssl_verify,
-                "timeout": timeout,
-                "proxy": proxy,
-            }
-            # Convert any environment variable representations to their actual values
-            pattern = re.compile('.*?\\${(\\w+)}.*?')
-            for item in [["client_id", client_id],
-                         ["client_secret", client_secret],
-                         ["cloud_name", cloud_name],
-                         ["user_agent", user_agent],
-                         ["member_cid", member_cid]]:
-                if item[0] == "cloud_name":
-                    item[0] = "base_url"
-                provided_keys[item[0]] = item[1]
-                if item[1]:
-                    match = pattern.findall(str(item[1]))
-                    if match:
-                        for hit in match:
-                            provided_keys[item[0]] = item[1].replace(
-                                f"${{{hit}}}",
-                                os.environ.get(hit, hit)
-                                )
-            return provided_keys
 
         if client_id is None and client_secret is None and falconpy_authobject is None:
             raise Exception(
@@ -104,14 +76,32 @@ class Client:
         self.logger.info("Setting up the Caracara client and configuring authentication")
 
         if client_id:
-            auth_keys = _interpolate_auth_keys()
+            # Load all parameters for the FalconPy authentication object into a dictionary
+            # and handle environment variable interpolation
+            interpolator = VariableInterpolator()
+            auth_keys = {
+                "base_url": interpolator.interpolate(cloud_name),
+                "client_id": interpolator.interpolate(client_id),
+                "client_secret": interpolator.interpolate(client_secret),
+                "member_cid": interpolator.interpolate(member_cid),
+                "proxy": interpolator.interpolate(proxy),
+                "user_agent": interpolator.interpolate(user_agent),
+                "ssl_verify": ssl_verify,
+                "timeout": timeout,
+            }
+
             self.logger.info(
                 "Client ID: %s; Cloud: %s; Member CID: %s",
-                auth_keys["client_id"], auth_keys["base_url"], auth_keys["member_cid"]
+                auth_keys["client_id"], auth_keys["base_url"], auth_keys["member_cid"],
             )
             self.logger.debug("SSL verification is %s", ssl_verify)
-            self.logger.debug("Timeout: %f", timeout)
+            self.logger.debug("Timeout: %s", str(timeout))
             self.logger.debug("Configured proxy: %s", proxy)
+
+            # Remove all None values, as we do not wish to override any FalconPy defaults
+            for k in list(auth_keys.keys()):
+                if auth_keys[k] is None:
+                    del auth_keys[k]
 
             if not user_agent:
                 user_agent = user_agent_string()
