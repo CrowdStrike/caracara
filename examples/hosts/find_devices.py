@@ -27,6 +27,7 @@ from examples.common import (
     caracara_example,
     parse_filter_list,
     pretty_print,
+    NoDevicesFound,
 )
 
 
@@ -51,7 +52,12 @@ def find_devices(**kwargs):
     for _, device_data in response_data.items():
         logger.info("%s", pretty_print(device_data))
 
+    if not response_data:
+        raise NoDevicesFound(filters.get_fql())
 
 if __name__ in ["__main__", "examples.hosts.find_devices"]:
-    find_devices()
-    raise SystemExit
+    try:
+        find_devices()
+        raise SystemExit
+    except NoDevicesFound as no_devices:
+        raise SystemExit(no_devices) from no_devices
