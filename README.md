@@ -88,8 +88,8 @@ python3 -m pip uninstall caracara
 ```python
 """List Windows devices.
 
-This example will use the API credentials provided as keywords to
-list the names of all systems within your Falcon tenant that run Windows.
+This example will use the API credentials provided as keywords to list the
+IDs and hostnames of all systems within your Falcon tenant that run Windows.
 """
 
 from caracara import Client
@@ -117,7 +117,7 @@ You can also leverage the built in context manager and environment variables.
 
 This example will use the API credentials set in the environment to list the
 hostnames and IDs of all systems within your Falcon tenant that have not checked
-into your CrowdStrike tenant within the past 7 days.
+into the CrowdStrike cloud within the past 7 days.
 """
 
 from caracara import Client
@@ -128,7 +128,7 @@ with Client(client_id="${CLIENT_ID_ENV_VARIABLE}", client_secret="${CLIENT_SECRE
     filters.create_new_filter("LastSeen", "-7d", "LTE")
     response_data = client.hosts.describe_devices(filters)
 
-print(f"Found {len(response_data)} devices running Windows")
+print(f"Found {len(response_data)} stale devices")
 
 for device_id, device_data in response_data.items():
     hostname = device_data.get("hostname", "Unknown Hostname")
