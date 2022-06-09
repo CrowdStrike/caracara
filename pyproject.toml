@@ -21,6 +21,9 @@ pylint = "^2.12.2"
 pytest = "^7.0.1"
 PyYAML = "^6.0"
 toml = "^0.10.2"
+tabulate = "^0.8.9"
+click = "^8.1.3"
+python-dateutil = "^2.8.2"
 
 [build-system]
 build-backend = "poetry.core.masonry.api"
@@ -46,3 +49,28 @@ disable = [
     # with @staticmethod.
     "R0201",
 ]
+
+
+[tool.poetry.scripts]
+# Hosts
+agent-versions = "examples.hosts.show_agent_versions:show_agent_versions"
+find-devices = "examples.hosts.find_devices:find_devices"
+list-all-devices = "examples.hosts.list_all_devices:list_all_devices"
+list-windows-devices = "examples.hosts.list_windows_devices:list_windows_devices"
+stale-sensors = "examples.hosts.find_stale_sensors:find_stale_sensors"
+
+# Prevention Policies
+create-prevention-policy = "examples.prevention_policies.create_prevention_policy:create_prevention_policy"
+describe-prevention-policies = "examples.prevention_policies.describe_prevention_policies:describe_prevention_policies"
+
+# Response Policies
+create-response-policy = "examples.response_policies.create_response_policy:create_response_policy"
+describe-response-policies = "examples.response_policies.describe_response_policies:describe_response_policies"
+
+# RTR
+clear-queued-sessions = "examples.rtr.clear_queued_sessions:clear_queued_sessions"
+describe-put-files = "examples.rtr.describe_put_files:describe_put_files"
+describe-queued-sessions = "examples.rtr.describe_queued_sessions:describe_queued_sessions"
+describe-scripts = "examples.rtr.describe_scripts:describe_scripts"
+download-event-log = "examples.rtr.download_event_log:download_event_log"
+queue-command = "examples.rtr.queue_command:queue_command"

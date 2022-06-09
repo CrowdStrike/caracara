@@ -148,4 +148,5 @@ def download_event_log(**kwargs):  # pylint: disable=too-many-locals
     )
 
 
-download_event_log()
+if __name__ == "__main__":
+    download_event_log()

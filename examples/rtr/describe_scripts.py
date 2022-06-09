@@ -20,9 +20,10 @@ def describe_scripts(**kwargs):
     client: Client = kwargs['client']
     logger: logging.Logger = kwargs['logger']
 
-    logger.info("Listing available PUT files")
-    scripts = client.rtr.describe_scripts()
-    pretty_print(scripts)
+    with client:
+        logger.info("Listing available PUT files")
+        for script_id, script_data in client.rtr.describe_scripts().items():
+            logger.info("%s\n%s", script_id, pretty_print(script_data))
 
-
-describe_scripts()
+if __name__ == "__main__":
+    describe_scripts()

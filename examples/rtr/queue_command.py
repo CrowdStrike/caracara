@@ -69,4 +69,5 @@ def queue_command(**kwargs):
     pretty_print(data=result, rewrite_new_lines=True)
 
 
-queue_command()
+if __name__ == "__main__":
+    queue_command()
