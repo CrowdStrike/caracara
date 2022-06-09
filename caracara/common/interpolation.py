@@ -1,5 +1,5 @@
 """
-Caracara: Variable Interpolation Logic
+Caracara: Variable Interpolation Logic.
 
 The functions within this file allow for interpolation of variables based on
 the contents of environment variables, similar to how Docker allows for
@@ -30,6 +30,7 @@ class VariableInterpolator:  # pylint: disable=too-few-public-methods
     compile the regex pattern ones. This gives a (very slight) performance gain when performing
     interpolation against a long list of variables.
     """
+
     def __init__(self):
         """
         Configure the interpolation regex pattern.
