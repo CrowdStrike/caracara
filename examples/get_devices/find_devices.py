@@ -44,9 +44,9 @@ def find_devices(**kwargs):
         logger.info("Getting a list of hosts that match the FQL string %s", filters.get_fql())
     else:
         logger.info("No filter provided, getting a list of all devices within the tenant")
-
-    response_data = client.hosts.describe_devices(filters)
-    logger.info("Found %d devices", len(response_data))
+    with client:
+        response_data = client.hosts.describe_devices(filters)
+        logger.info("Found %d devices", len(response_data))
 
     for _, device_data in response_data.items():
         logger.info("%s", pretty_print(device_data))

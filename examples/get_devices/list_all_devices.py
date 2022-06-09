@@ -24,13 +24,15 @@ def list_all_devices(**kwargs):
 
     logger.info("Listing all devices within the tenant")
 
-    response_data = client.hosts.describe_devices()
-    logger.info("Found %d devices", len(response_data))
+    with client:
+        response_data = client.hosts.describe_devices()
+    
 
     for device_id, device_data in response_data.items():
         hostname = device_data.get("hostname", "Unknown Hostname")
         logger.info("%s (%s)", device_id, hostname)
 
+    logger.info("Found %d devices", len(response_data))
 
 if __name__ == '__main__':
     list_all_devices()
