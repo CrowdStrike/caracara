@@ -20,7 +20,7 @@ class MissingArgument(BaseError):
 class NoDevicesFound(BaseError):
     """No devices were found matching the filter provided."""
 
-    def __init__(self, filter_fql, message="No devices were matched the provided Falcon Filter."):
+    def __init__(self, filter_fql, message="No devices were matched to the provided Falcon Filter."):
         self.filter_fql = filter_fql
         self.message = message
         super().__init__(self.message)
