@@ -83,14 +83,13 @@ python3 -m pip uninstall caracara
 
 </details>
 
-## Basic Usage Example
+## Basic Usage Examples
 
 ```python
-"""
-This example will use the API credentials provided as parameters to
-list the names of all systems within your Falcon tenant that run Windows.
+"""List Windows devices.
 
-The example demonstrates how to use the FalconFilter() class and the Hosts API.
+This example will use the API credentials provided as keywords to
+list the names of all systems within your Falcon tenant that run Windows.
 """
 
 from caracara import Client
@@ -104,12 +103,38 @@ filters = client.FalconFilter()
 filters.create_new_filter("OS", "Windows")
 
 response_data = client.hosts.describe_devices(filters)
-print(f"Found {len(response_data.keys())} devices running Windows")
+print(f"Found {len(response_data)} devices running Windows")
 
 for device_id, device_data in response_data.items():
     hostname = device_data.get("hostname", "Unknown Hostname")
     print(f"{device_id} - {hostname}")
 ```
+
+You can also leverage the built in context manager and environment variables.
+
+```python
+"""List stale sensors.
+
+This example will use the API credentials set in the environment to list the
+hostnames and IDs of all systems within your Falcon tenant that have not checked
+into your CrowdStrike tenant within the past 7 days.
+"""
+
+from caracara import Client
+
+filters = client.FalconFilter()
+filters.create_new_filter("LastSeen", "-7d", "LTE")
+
+with Client(client_id="${CLIENT_ID_ENV_VARIABLE}", client_secret="${CLIENT_SECRET_ENV_VARIABLE}"):
+    response_data = client.hosts.describe_devices(filters)
+
+print(f"Found {len(response_data)} devices running Windows")
+
+for device_id, device_data in response_data.items():
+    hostname = device_data.get("hostname", "Unknown Hostname")
+    print(f"{device_id} - {hostname}")
+```
+
 
 ## Examples Collection
 
