@@ -26,8 +26,14 @@ profiles:
             - Hostname: EXAMPLE-HOST-1
           command: ls
 
-  TestProfile2US2:
+  TestProfile2USGOV1:
     falcon:
-      client_id: clientid123456
-      client_secret: clientsecret123456
-      cloud_name: US2
+      client_id: ${CLIENT_ID_ENV_VARIABLE}
+      client_secret: ${CLIENT_SECRET_ENV_VARIABLE}
+      cloud_name: usgov1
+
+  TestProfile3EU1:
+    falcon:
+      client_id: ${CLIENT_ID_EU_ENV_VARIABLE}
+      client_secret: ${CLIENT_SECRET_EU_ENV_VARIABLE}
+      cloud_name: auto
