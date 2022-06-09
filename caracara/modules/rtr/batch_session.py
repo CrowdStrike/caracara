@@ -362,7 +362,7 @@ class RTRBatchSession:
         if base_command not in RTR_COMMANDS:
             raise Exception(f"{base_command} is not a valid RTR command")
 
-        self.logger.info("Executing a command via RTR:\n%s", command_string)
+        self.logger.info("Executing a command via RTR: %s", command_string)
 
         # Permissions level will either be a string (e.g. admin), or
         # a dictionary of further permission levels based on the first
