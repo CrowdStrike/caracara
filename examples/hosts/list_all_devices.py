@@ -32,5 +32,6 @@ def list_all_devices(**kwargs):
 
     logger.info("Found %d devices", len(response_data))
 
-if __name__ == '__main__':
+if __name__ in ["__main__", "examples.hosts.list_all_devices"]:
     list_all_devices()
+    raise SystemExit

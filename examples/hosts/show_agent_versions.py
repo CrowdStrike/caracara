@@ -49,5 +49,6 @@ def show_agent_versions(**kwargs):
     logger.info("Found %d devices", len(devices))
 
 
-if __name__ == '__main__':
+if __name__ in ["__main__", "examples.hosts.show_agent_versions"]:
     show_agent_versions()
+    raise SystemExit

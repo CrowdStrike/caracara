@@ -52,5 +52,6 @@ def find_devices(**kwargs):
         logger.info("%s", pretty_print(device_data))
 
 
-if __name__ == '__main__':
+if __name__ in ["__main__", "examples.hosts.find_devices"]:
     find_devices()
+    raise SystemExit
