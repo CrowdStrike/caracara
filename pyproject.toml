@@ -59,6 +59,7 @@ list-all-devices = "examples.hosts.list_all_devices:list_all_devices"
 list-hidden-devices = "examples.hosts.list_hidden_devices:list_hidden_devices"
 list-windows-devices = "examples.hosts.list_windows_devices:list_windows_devices"
 list-device-logins = "examples.hosts.list_login_history:list_login_history"
+list-device-address-changes = "examples.hosts.list_network_history:list_network_history"
 stale-sensors = "examples.hosts.find_stale_sensors:find_stale_sensors"
 
 # Prevention Policies
