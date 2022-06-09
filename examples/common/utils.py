@@ -18,4 +18,4 @@ def pretty_print(data: List or Dict, rewrite_new_lines: bool = False):
     pretty_data = prettify_json(data)
     if rewrite_new_lines:
         pretty_data = pretty_data.replace("\\n", "\n")
-    print(pretty_data)
+    return pretty_data
