@@ -1,5 +1,13 @@
-"""
-Caracara: Pagination functions.
+"""Caracara: Pagination functions.
+
+MM"""""""`YM                   oo                     dP
+MM  mmmmm  M                                          88
+M'        .M .d8888b. .d8888b. dP 88d888b. .d8888b. d8888P .d8888b. 88d888b.
+MM  MMMMMMMM 88'  `88 88'  `88 88 88'  `88 88'  `88   88   88'  `88 88'  `88
+MM  MMMMMMMM 88.  .88 88.  .88 88 88    88 88.  .88   88   88.  .88 88
+MM  MMMMMMMM `88888P8 `8888P88 dP dP    dP `88888P8   dP   `88888P' dP
+MMMMMMMMMMMM               .88
+                       d8888P                       for CrowdStrike Caracara
 
 This file contains code for all types of pagination styles used by the
 Falcon APIs, to avoid code repetition within the individual modules.
@@ -31,7 +39,6 @@ Pages are structured like this
 }
 
 
-
 Style 2 (Token Offset)
 In this style, a token is returned by the server. When we send the token
 to the server, we get the next page of content as well as another token.
@@ -50,7 +57,7 @@ Pages are structured like this
 }
 
 Style 3
-Used in Intel. TBC.
+Used in Intel. TBC.     (╯°□°)╯︵ ┻━┻
 """
 import concurrent.futures
 import logging

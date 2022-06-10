@@ -5,7 +5,7 @@ r"""Hosts and Host Group API.
 |.  1   |  _  |__ --|   _|__ --||.      |  _  |     |  _  |  _  |  -__|        |  -__|     |   _|
 |.  _   |_____|_____|____|_____||. \_/  |___._|__|__|___._|___  |_____|__|__|__|_____|__|__|____|
 |:  |   |                       |:  |   |                 |_____|
-|::.|:. |                       |::.|:. |
+|::.|:. |                       |::.|:. |                                   CrowdStrike Caracara
 `--- ---'                       `--- ---'
 
 This module handles interactions with the CrowdStrike Falcon Hosts and Host Group APIs.

@@ -1,4 +1,13 @@
-"""Caracara API Client."""
+r"""Caracara base API interface client.
+
+      _______ __ __             __
+     |   _   |  |__.-----.-----|  |_
+     |.  1___|  |  |  -__|     |   _|
+     |.  |___|__|__|_____|__|__|____|
+     |:  1   |
+     |::.. . |   CrowdStrike Caracara
+     `-------'
+"""
 
 import logging
 
@@ -26,16 +35,14 @@ from caracara.modules import (
 
 
 class Client:
-    """
-    Falcon API client.
+    """Falcon API client.
 
     This class exposes all available Falcon API commands, and proxies requests through
     the FalconPy library.
     """
 
     class FalconFilter(FalconFilter):
-        """
-        Falcon Filter wrapper class.
+        """Falcon Filter wrapper class.
 
         Create a sub-class of the FalconFilter class which we own locally within
         the client. This allows us to dynamically calculate the FQL filter attributes

@@ -1,5 +1,4 @@
-"""
-Caracara batching support.
+"""Caracara batching support.
 
 This module contains all the required code to generically parallelise retrieval of data batches.
 

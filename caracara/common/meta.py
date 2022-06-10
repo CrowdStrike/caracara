@@ -1,5 +1,4 @@
-"""
-Caracara meta class.
+"""Caracara meta class.
 
 Returns information about Caracara itself, such as its package version and
 a custom user agent string based on Caracara's version.

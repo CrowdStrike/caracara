@@ -1,5 +1,4 @@
-"""
-Caracara wrapper for Policies API.
+"""Caracara wrapper for Policies API.
 
 This file contains wrapper classes that can represent policies in a generic way.
 It is to be extended by the respective modules (response_policies, prevention_policies, etc.)
@@ -31,8 +30,7 @@ class PolicySetting(ABC):
 
     @abstractmethod
     def dump(self) -> Dict:
-        """
-        Return a dictionary encompassing all Policy object content.
+        """Return a dictionary encompassing all Policy object content.
 
         This dictionary is compliant with the CrowdStrike API specification, and therefore
         can replicate the exact response sent back by the CrowdStrike API.
@@ -40,8 +38,7 @@ class PolicySetting(ABC):
 
     @abstractmethod
     def flat_dump(self) -> Dict:
-        """
-        Return a stripped down dictionary representing all settings and their values.
+        """Return a stripped down dictionary representing all settings and their values.
 
         This dictionary is designed for use with CrowdStrike API policy verbs (i.e., policy
         creation (POST) and modification (PATCH), and therefore is limited only to the content
@@ -65,8 +62,7 @@ class GroupAssignment(PolicySetting):
         self.modified_timestamp: str = data_dict.get("modified_timestamp")
 
     def dump(self) -> Dict:
-        """
-        Return a dictionary representing a group assignment.
+        """Return a dictionary representing a group assignment.
 
         This dictionary is compliant with the CrowdStrike API specification, and therefore
         can replicate the exact response sent back by the CrowdStrike API.
@@ -84,8 +80,7 @@ class GroupAssignment(PolicySetting):
         }
 
     def flat_dump(self) -> Dict:
-        """
-        Return a stripped down dictionary representing a group assignment.
+        """Return a stripped down dictionary representing a group assignment.
 
         This dictionary is designed for use with CrowdStrike API policy verbs (i.e., policy
         creation (POST) and modification (PATCH), and therefore is limited only to the content
@@ -101,8 +96,7 @@ class GroupAssignment(PolicySetting):
 
 
 class ChangeablePolicySetting(PolicySetting, ABC):
-    """
-    Policy setting with an attribbute that can be changed.
+    """Policy setting with an attribbute that can be changed.
 
     The actual type of setting must be derived from this (e.g., a toggle setting).
     """
@@ -115,8 +109,7 @@ class ChangeablePolicySetting(PolicySetting, ABC):
     @property
     @abstractmethod
     def setting_type(self) -> str:
-        """
-        Store the type of setting.
+        """Store the type of setting.
 
         Examples: toggle, mlslider.
         """
@@ -132,8 +125,7 @@ class ChangeablePolicySetting(PolicySetting, ABC):
         self.setting_type = data_dict.get("type")
 
     def dump(self) -> Dict:
-        """
-        Return a dictionary representing a policy setting.
+        """Return a dictionary representing a policy setting.
 
         This dictionary is compliant with the CrowdStrike API specification, and therefore
         can replicate the exact response sent back by the CrowdStrike API if this policy
@@ -148,8 +140,7 @@ class ChangeablePolicySetting(PolicySetting, ABC):
         }
 
     def flat_dump(self) -> Dict:
-        """
-        Return a stripped down dictionary representing a policy setting.
+        """Return a stripped down dictionary representing a policy setting.
 
         This dictionary is designed for use with CrowdStrike API policy verbs (i.e., policy
         creation (POST) and modification (PATCH), and therefore is limited only to the content
@@ -179,8 +170,7 @@ class TogglePolicySetting(ChangeablePolicySetting):
 
 
 class MLSliderPolicySetting(ChangeablePolicySetting):
-    """
-    Machine Learning (ML) policy setting.
+    """Machine Learning (ML) policy setting.
 
     Each ML slider has string values for detection and prevention.
     """
@@ -230,8 +220,7 @@ class PolicySettingGroup(PolicySetting):
                 raise Exception(f"Setting type {setting_template_name} is not yet supported")
 
     def dump(self) -> Dict:
-        """
-        Return a dictionary representing a policy settings group.
+        """Return a dictionary representing a policy settings group.
 
         This dictionary is compliant with the CrowdStrike API specification, and therefore
         can replicate the exact response sent back by the CrowdStrike API if this policy
@@ -243,8 +232,7 @@ class PolicySettingGroup(PolicySetting):
         }
 
     def flat_dump(self) -> Dict:
-        """
-        Return a stripped down dictionary representing a policy settings group.
+        """Return a stripped down dictionary representing a policy settings group.
 
         This dictionary is designed for use with CrowdStrike API policy verbs (i.e., policy
         creation (POST) and modification (PATCH), and therefore is limited only to the content
@@ -256,8 +244,7 @@ class PolicySettingGroup(PolicySetting):
 
 
 class Policy:
-    """
-    A generic policy class.
+    """A generic policy class.
 
     Each policy object is comprised of one or more policy settings groups. These groups in turn
     contain individual policy settings that correspond to settings available within the Falcon
@@ -282,8 +269,7 @@ class Policy:
     settings_key_name = "settings"
 
     def __init__(self, data_dict: Dict = None, style: str = "response"):
-        """
-        Return a completely built Policy object.
+        """Return a completely built Policy object.
 
         The object can be created blank, or populated based on a Falcon API response dictionary.
         """
@@ -331,8 +317,7 @@ class Policy:
             self.settings_groups.append(PolicySettingGroup(data_dict=settings_group_dict))
 
     def dump(self) -> Dict:
-        """
-        Return a dictionary representing a full policy.
+        """Return a dictionary representing a full policy.
 
         This dictionary is compliant with the CrowdStrike API specification, and therefore
         can replicate the exact response sent back by the CrowdStrike API if this policy
@@ -354,8 +339,7 @@ class Policy:
         }
 
     def flat_dump(self) -> Dict:
-        """
-        Return a stripped down dictionary representing a full policy.
+        """Return a stripped down dictionary representing a full policy.
 
         This dictionary is designed for use with CrowdStrike API policy verbs (i.e., policy
         creation (POST) and modification (PATCH), and therefore is limited only to the content
