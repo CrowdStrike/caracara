@@ -9,17 +9,17 @@ class Timer():
 
     def __init__(self):
         """Initialize the timer."""
-        self.start = datetime.utcnow()
+        self.start = datetime.now()
         self.divider = 1000000
 
     def __str__(self):
         """Return current progressed time in seconds as a string."""
-        return f"{float((datetime.utcnow() - self.start).microseconds / self.divider)}"
+        return f"{float((datetime.now() - self.start).microseconds / self.divider)}"
 
     def __float__(self):
         """Return current progressed time in seconds as a float."""
-        return float((datetime.utcnow() - self.start).microseconds / self.divider)
+        return float((datetime.now() - self.start).microseconds / self.divider)
 
     def __int__(self):
         """Return current progressed time in seconds as an integer (rounded up)."""
-        return ceil((datetime.utcnow() - self.start).microseconds / self.divider)
+        return ceil((datetime.now() - self.start).microseconds / self.divider)
