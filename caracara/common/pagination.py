@@ -1,4 +1,4 @@
-"""Caracara: Pagination functions.
+r"""Caracara: Pagination functions.
 
 MM"""""""`YM                   oo                     dP
 MM  mmmmm  M                                          88

@@ -1,4 +1,4 @@
-"""Caracara: Environment Variable Interpolator.
+r"""Caracara: Environment Variable Interpolator.
 
      _______                ___ ___ __          __   _____
     |   _   .---.-.--.--.  |   Y   |  |--.---.-|  |_|__   |
