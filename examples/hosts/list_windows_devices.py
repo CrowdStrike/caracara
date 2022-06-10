@@ -40,6 +40,7 @@ def list_windows_devices(**kwargs):
 
     logger.info("Found %d devices running Windows in %s seconds", len(response_data), float(timer))
 
+
 if __name__ in ["__main__", "examples.hosts.list_windows_devices"]:
     try:
         list_windows_devices()

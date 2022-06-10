@@ -1,5 +1,8 @@
+"""Caracara Example execution timer."""
+
 from datetime import datetime
 from math import ceil
+
 
 class Timer():
     """Timer class to track example execution times."""

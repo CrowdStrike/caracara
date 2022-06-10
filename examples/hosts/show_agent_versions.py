@@ -14,7 +14,7 @@ scrolling tabular format listing Device ID, Hostname, IP addresses and agent ver
 The example demonstrates how to use the Hosts API and the Client context.
 """
 import logging
-from datetime import datetime, timedelta
+
 from tabulate import tabulate
 
 from caracara import Client
