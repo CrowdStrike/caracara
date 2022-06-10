@@ -50,7 +50,7 @@ class HostsApiModule(FalconApiModule):
         self.host_group_api = HostGroup(auth_object=self.api_authentication)
 
     def describe_devices(self, filters: FalconFilter or str = None) -> Dict:
-        """Return a dictionary containing details for every device in your Falcon tenant.
+        """Return a dictionary containing details for every device matching the provided filter.
 
         Arguments
         ---------
@@ -67,6 +67,25 @@ class HostsApiModule(FalconApiModule):
         device_data = batch_get_data(device_ids, self.hosts_api.get_device_details)
 
         return device_data
+
+    def describe_groups(self, filters: FalconFilter or str = None) -> Dict:
+        """Return a dictionary containing details for every host group matching the provided filter.
+        
+        Arguments
+        ---------
+        filters: FalconFilter or str, optional
+            Filters to apply to the host group search.
+
+        Returns
+        -------
+        dict: A dictionary containing details for every host group discovered.
+        """
+        self.logger.info("Describing devices according to the filter string %s", filters)
+        group_ids = self.get_group_ids(filters)
+        group_data = batch_get_data(group_ids, self.host_group_api.get_host_groups)
+
+        return group_data
+
 
     def describe_hidden_devices(self, filters: FalconFilter or str = None) -> Dict:
         """Return a dictionary containing details for every hidden device in your Falcon tenant.
@@ -264,8 +283,8 @@ class HostsApiModule(FalconApiModule):
         """
         self.logger.info("Searching for device IDs using the filter string %s", filters)
         func = partial(self.hosts_api.query_devices_by_filter_scroll, filter=filters)
-        device_ids: List[str] = all_pages_token_offset(func=func, logger=self.logger)
-        return device_ids
+        id_list: List[str] = all_pages_token_offset(func=func, logger=self.logger)
+        return id_list
 
     @filter_string
     def get_hidden_ids(self, filters: FalconFilter or str = None) -> List[str]:
@@ -282,9 +301,31 @@ class HostsApiModule(FalconApiModule):
         """
         self.logger.info("Getting the IDs of all hidden devices using the filter: %s", filters)
         func = partial(self.hosts_api.query_hidden_devices, filter=filters)
-        device_ids = all_pages_numbered_offset_parallel(
+        id_list: List[str] = all_pages_numbered_offset_parallel(
             func=func,
             logger=self.logger,
             limit=SCROLL_BATCH_SIZE
         )
-        return device_ids
+        return id_list
+
+    @filter_string
+    def get_group_ids(self, filters: FalconFilter or str = None) -> List[str]:
+        """Return a lsit of IDs (string) for every host group within your Falcon tentant.
+        
+        Arguments
+        ---------
+        filters: FalconFilter or str, optional
+            Filters to apply to the host group search.
+
+        Returns
+        -------
+        List[str]: A list of all host group IDs discovered.
+        """
+        self.logger.info("Searching for host group IDs using the filter string %s", filters)
+        func = partial(self.host_group_api.query_host_groups, filter=filters)
+        id_list: List[str] = all_pages_numbered_offset_parallel(
+            func=func,
+            logger=self.logger,
+            limit=SCROLL_BATCH_SIZE
+        )
+        return id_list
