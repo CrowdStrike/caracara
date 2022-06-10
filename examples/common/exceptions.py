@@ -36,6 +36,23 @@ class NoDevicesFound(BaseError):
         return f"{self.filter_fql} -> {self.message}"
 
 
+class NoGroupsFound(BaseError):
+    """No groups were found matching the filter provided."""
+
+    def __init__(self,
+                 filter_fql="No filters applied",
+                 message="No groups matched the provided Falcon Filter."
+                 ):
+        """Initialize a NoGroupsFound error."""
+        self.filter_fql = filter_fql
+        self.message = message
+        super().__init__(self.message)
+
+    def __str__(self):
+        """Return the FQL filter along with the message."""
+        return f"{self.filter_fql} -> {self.message}"
+
+
 class NoLoginsFound(BaseError):
     """No logins were found matching the filter provided."""
 
