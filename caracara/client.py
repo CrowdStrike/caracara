@@ -6,7 +6,7 @@ CrowdStrike Caracara
    |.  1___|  |  |  -__|     |   _|
    |.  |___|__|__|_____|__|__|____|
    |:  1   |
-   |::.. . |
+   |::.. . |     for FalconPy
    `-------'
 """
 
@@ -94,6 +94,9 @@ class Client:
             proxy = interpolator.interpolate(proxy)
             if not user_agent:
                 user_agent = user_agent_string()
+            else:
+                user_agent = f"{user_agent} ({user_agent_string()})"
+
             self.logger.debug("User agent: %s", user_agent)
 
             auth_keys = {
