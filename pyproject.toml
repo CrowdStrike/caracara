@@ -61,15 +61,12 @@ list-windows-devices = "examples.hosts.list_windows_devices:list_windows_devices
 list-device-logins = "examples.hosts.list_login_history:list_login_history"
 list-device-address-changes = "examples.hosts.list_network_history:list_network_history"
 stale-sensors = "examples.hosts.find_stale_sensors:find_stale_sensors"
-
 # Prevention Policies
 create-prevention-policy = "examples.prevention_policies.create_prevention_policy:create_prevention_policy"
 describe-prevention-policies = "examples.prevention_policies.describe_prevention_policies:describe_prevention_policies"
-
 # Response Policies
 create-response-policy = "examples.response_policies.create_response_policy:create_response_policy"
 describe-response-policies = "examples.response_policies.describe_response_policies:describe_response_policies"
-
 # RTR
 clear-queued-sessions = "examples.rtr.clear_queued_sessions:clear_queued_sessions"
 describe-put-files = "examples.rtr.describe_put_files:describe_put_files"
