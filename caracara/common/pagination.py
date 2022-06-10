@@ -1,6 +1,6 @@
 r"""Caracara: Pagination functions.
 
-MM"""""""`YM                   oo                     dP
+MM'''''''`YM                   oo                     dP
 MM  mmmmm  M                                          88
 M'        .M .d8888b. .d8888b. dP 88d888b. .d8888b. d8888P .d8888b. 88d888b.
 MM  MMMMMMMM 88'  `88 88'  `88 88 88'  `88 88'  `88   88   88'  `88 88'  `88
