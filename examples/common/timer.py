@@ -1,6 +1,6 @@
 """Caracara Example execution timer."""
 
-from datetime import datetime
+import time
 from math import ceil
 
 
@@ -9,17 +9,17 @@ class Timer():
 
     def __init__(self):
         """Initialize the timer."""
-        self.start = datetime.now()
+        self.start = time.perf_counter()
         self.divider = 1000000
 
     def __str__(self):
         """Return current progressed time in seconds as a string."""
-        return f"{float((datetime.now() - self.start).microseconds / self.divider)}"
+        return f"{time.perf_counter() - self.start}"
 
     def __float__(self):
         """Return current progressed time in seconds as a float."""
-        return float((datetime.now() - self.start).microseconds / self.divider)
+        return float(time.perf_counter() - self.start)
 
     def __int__(self):
         """Return current progressed time in seconds as an integer (rounded up)."""
-        return ceil((datetime.now() - self.start).microseconds / self.divider)
+        return ceil(time.perf_counter() - self.start)
