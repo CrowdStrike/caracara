@@ -142,7 +142,7 @@ Each API wrapper is provided alongside example code. Cloning or downloading/extr
 
 Using the examples collection requires that you install our Python packaging tool of choice, [Poetry](https://python-poetry.org). Please refer to the Poetry project's [installation guide](https://python-poetry.org/docs/#installation) if you do not yet have Poetry installed.
 
-Once Poetry is installed, make sure you run `poetry install` within the `caracara` folder to set up the Python virtual environment.
+Once Poetry is installed, make sure you run `poetry install` within the root repository folder to set up the Python virtual environment.
 
 To configure the examples, first copy `examples/config.example.yml` to `examples/config.yml`. Then, add your API credentials and example-specific settings to `examples/config.yml`. Once you have set up profiles for each Falcon tenant you want to test with, execute examples using one of the two options below.
 
@@ -176,6 +176,8 @@ All examples are also configured in the `pyproject.toml` file as scripts, allowi
 ```shell
 poetry run stale-sensors
 ```
+
+> To get a complete list of available examples, execute the command `util/list-examples.sh` from the root of the repository folder.
 
 </details>
 
