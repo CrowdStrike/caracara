@@ -70,7 +70,7 @@ class HostsApiModule(FalconApiModule):
 
     def describe_groups(self, filters: FalconFilter or str = None) -> Dict:
         """Return a dictionary containing details for every host group matching the provided filter.
-        
+
         Arguments
         ---------
         filters: FalconFilter or str, optional
@@ -85,7 +85,6 @@ class HostsApiModule(FalconApiModule):
         group_data = batch_get_data(group_ids, self.host_group_api.get_host_groups)
 
         return group_data
-
 
     def describe_hidden_devices(self, filters: FalconFilter or str = None) -> Dict:
         """Return a dictionary containing details for every hidden device in your Falcon tenant.
@@ -311,7 +310,7 @@ class HostsApiModule(FalconApiModule):
     @filter_string
     def get_group_ids(self, filters: FalconFilter or str = None) -> List[str]:
         """Return a lsit of IDs (string) for every host group within your Falcon tentant.
-        
+
         Arguments
         ---------
         filters: FalconFilter or str, optional
