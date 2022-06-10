@@ -22,3 +22,7 @@ class Timer():
     def __int__(self):
         """Return current progressed time in seconds as an integer (rounded up)."""
         return ceil(time.perf_counter() - self.start)
+
+    def __call__(self):
+        """Reset the timer."""
+        self.__init__()
