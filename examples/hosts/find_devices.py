@@ -28,6 +28,7 @@ from examples.common import (
     parse_filter_list,
     pretty_print,
     NoDevicesFound,
+    Timer
 )
 
 
@@ -37,6 +38,7 @@ def find_devices(**kwargs):
     client: Client = kwargs['client']
     logger: logging.Logger = kwargs['logger']
     settings: Dict = kwargs['settings']
+    timer: Timer = Timer()
 
     filters = client.FalconFilter()
     filter_list: List[Dict] = settings.get("filters") if settings else [{}]
@@ -47,11 +49,11 @@ def find_devices(**kwargs):
         logger.info("No filter provided, getting a list of all devices within the tenant")
     with client:
         response_data = client.hosts.describe_devices(filters)
-        logger.info("Found %d devices", len(response_data))
 
     for _, device_data in response_data.items():
         logger.info("%s", pretty_print(device_data))
 
+    logger.info("Found %d devices in %f seconds", len(response_data), float(timer))
     if not response_data:
         raise NoDevicesFound(filters.get_fql())
 

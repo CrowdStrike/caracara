@@ -12,7 +12,7 @@ import logging
 
 from caracara import Client
 
-from examples.common import caracara_example, NoDevicesFound
+from examples.common import caracara_example, NoDevicesFound, Timer
 
 
 @caracara_example
@@ -20,6 +20,7 @@ def list_hidden_devices(**kwargs):
     """List All Devices."""
     client: Client = kwargs['client']
     logger: logging.Logger = kwargs['logger']
+    timer: Timer = Timer()
 
     logger.info("Listing all hidden devices within the tenant")
 
@@ -30,7 +31,7 @@ def list_hidden_devices(**kwargs):
         hostname = device_data.get("hostname", "Unknown Hostname")
         logger.info("%s (%s)", device_id, hostname)
 
-    logger.info("Found %d devices", len(response_data))
+    logger.info("Found %d devices in %f seconds", len(response_data), float(timer))
     if not response_data:
         raise NoDevicesFound("Hidden devices")
 

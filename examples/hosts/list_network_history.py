@@ -12,7 +12,7 @@ import logging
 
 from caracara import Client
 
-from examples.common import caracara_example, NoDevicesFound, NoAddressesFound
+from examples.common import caracara_example, NoDevicesFound, NoAddressesFound, Timer
 
 
 @caracara_example
@@ -20,6 +20,7 @@ def list_network_history(**kwargs):
     """List All Devices."""
     client: Client = kwargs['client']
     logger: logging.Logger = kwargs['logger']
+    timer: Timer = Timer()
 
     logger.info("Listing all network address changes within the tenant")
 
@@ -42,7 +43,7 @@ def list_network_history(**kwargs):
             changes = ", ".join(found)
         logger.info("%s (%s)", device_id, changes)
 
-    logger.info("Found %d devices", len(response_data))
+    logger.info("Found %d devices in %f seconds", len(response_data), float(timer))
     if not response_data:
         raise NoDevicesFound
     if not found:

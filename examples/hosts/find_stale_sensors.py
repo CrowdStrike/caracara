@@ -17,7 +17,7 @@ from typing import Dict
 from datetime import datetime, timezone
 from dateutil import parser as dparser
 from caracara import Client
-from examples.common import caracara_example, NoDevicesFound
+from examples.common import caracara_example, NoDevicesFound, Timer
 
 
 @caracara_example
@@ -26,6 +26,7 @@ def find_stale_sensors(**kwargs):
     client: Client = kwargs['client']
     logger: logging.Logger = kwargs['logger']
     settings: Dict = kwargs['settings']
+    timer: Timer = Timer()
 
     def _get_stale_period(timestamp):
         right_now = dparser.parse(str(datetime.now(timezone.utc)))
@@ -49,10 +50,13 @@ def find_stale_sensors(**kwargs):
                     f"({_get_stale_period(device_data['last_seen'])} days)"
                     )
             total_devices = len(response_data)
-            logger.info(f"{total_devices} devices found.")
+            logger.info("%d devices found in %f seconds.", total_devices, float(timer))
 
         else:
-            logger.info("%s sensors hidden.", len(client.hosts.hide(filters)))
+            logger.info("%d sensors hidden in %f seconds.",
+                        len(client.hosts.hide(filters)),
+                        float(timer)
+                        )
 
     if not total_devices:
         raise NoDevicesFound(filters.get_fql())

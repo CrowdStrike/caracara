@@ -12,7 +12,7 @@ import logging
 
 from caracara import Client
 
-from examples.common import caracara_example, NoDevicesFound, NoLoginsFound
+from examples.common import caracara_example, NoDevicesFound, NoLoginsFound, Timer
 
 
 @caracara_example
@@ -20,8 +20,9 @@ def list_login_history(**kwargs):
     """List All Devices."""
     client: Client = kwargs['client']
     logger: logging.Logger = kwargs['logger']
+    timer: Timer = Timer()
 
-    logger.info("Listing all hidden devices within the tenant")
+    logger.info("Listing login history for all devices within the tenant")
 
     with client:
         response_data = client.hosts.describe_login_history()
@@ -41,7 +42,7 @@ def list_login_history(**kwargs):
             logins = ", ".join(found)
         logger.info("%s (%s)", device_id, logins)
 
-    logger.info("Found %d devices", len(response_data))
+    logger.info("Found %d devices in %f seconds", len(response_data), float(timer))
     if not response_data:
         raise NoDevicesFound
     if not found:

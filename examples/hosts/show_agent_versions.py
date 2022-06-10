@@ -14,12 +14,12 @@ scrolling tabular format listing Device ID, Hostname, IP addresses and agent ver
 The example demonstrates how to use the Hosts API and the Client context.
 """
 import logging
-
+from datetime import datetime, timedelta
 from tabulate import tabulate
 
 from caracara import Client
 
-from examples.common import caracara_example, NoDevicesFound
+from examples.common import caracara_example, NoDevicesFound, Timer
 
 
 @caracara_example
@@ -27,6 +27,7 @@ def show_agent_versions(**kwargs):
     """List all devices and agent versions."""
     client: Client = kwargs['client']
     logger: logging.Logger = kwargs['logger']
+    timer: Timer = Timer()
 
     logger.info("Grabbing all devices within the tenant")
 
@@ -45,8 +46,9 @@ def show_agent_versions(**kwargs):
 
     # Display a scrollable table containing our results
     logger.info("\n%s", tabulate(devices, headers=elements, tablefmt="simple"))
+
     # Report our total found
-    logger.info("Found %d devices", len(devices))
+    logger.info("Found %d devices in %f seconds", len(devices), float(timer))
     if not devices:
         raise NoDevicesFound
 
