@@ -18,7 +18,7 @@ of data dictionaries returned in response to a list of IDs, the batching
 code file contains the required code to pull this data down as quickly
 as possible.
 
-Three types of paginator are in use:
+Four types of paginator are in use:
 
 Style 1 (Numerical Offset)
 We paginate by providing a limit (default: 100), and grabbing pages with
@@ -56,8 +56,13 @@ Pages are structured like this
     }
 }
 
-Style 3
-Used in Intel. TBC.     (╯°□°)╯︵ ┻━┻
+
+Style 3 (Token After)
+This style works exactly the same as Style 2, except the token is stored in
+an attribute named `after`.
+
+Style 4 (Token _marker)
+Used in Intel. TBC.      (╯°□°)╯︵ ┻━┻
 """
 import concurrent.futures
 import logging
