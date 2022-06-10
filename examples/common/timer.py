@@ -10,7 +10,6 @@ class Timer():
     def __init__(self):
         """Initialize the timer."""
         self.start = time.perf_counter()
-        self.divider = 1000000
 
     def __str__(self):
         """Return current progressed time in seconds as a string."""
