@@ -18,6 +18,9 @@ PAGINATION_LIMIT = 100
 # Batch size of data downloaded from scrolled endpoints
 SCROLL_BATCH_SIZE = 5000
 
+# Host group batch size
+HOST_GROUP_SCROLL_BATCH_SIZE = 100
+
 # List of all platforms supported by Falcon
 PLATFORMS = [
     "Linux",
