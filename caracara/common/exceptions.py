@@ -29,3 +29,26 @@ class GenericAPIError(BaseCaracaraError):
     def __float__(self):
         """Return the first error code as a float."""
         return float(self.errors[0]["code"])
+
+
+class MustProvideFilterOrID(GenericAPIError):
+    """You must provide either a Falcon Filter or an ID to use this method."""
+
+    def __init__(self):
+        """Construct an instance of the MustProvideFitlerOrID class."""
+        self.errors = [{
+            "code": 500,
+            "message": "You must provide either a Falcon Filter or an ID to use this method"
+        }]
+        super().__init__(self.errors)
+
+class HostGroupNotFound(GenericAPIError):
+    """The host group you specified is not found."""
+
+    def __init__(self):
+        """Construct an instance of the HostGroupNotFound class."""
+        self.errors = [{
+            "code": 404,
+            "message": "The Falcon Filter you provided returned no Host Group matches"
+        }]
+        super().__init__(self.errors)
