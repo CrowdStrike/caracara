@@ -13,11 +13,18 @@ find stale sensors deployments within your Falcon tenant.
 The example demonstrates how to use the Hosts API and a FalconFilter using a date.
 """
 import logging
-from typing import Dict
+
 from datetime import datetime, timezone
-from dateutil import parser as dparser
+from typing import Dict
+
 from caracara import Client
-from examples.common import caracara_example, NoDevicesFound, Timer
+from dateutil import parser as dparser
+
+from examples.common import (
+    caracara_example,
+    NoDevicesFound,
+    Timer,
+)
 
 
 @caracara_example
@@ -28,38 +35,42 @@ def find_stale_sensors(**kwargs):
     settings: Dict = kwargs['settings']
     timer: Timer = Timer()
 
-    def _get_stale_period(timestamp):
-        right_now = dparser.parse(str(datetime.now(timezone.utc)))
-        return (right_now - dparser.parse(timestamp)).days
+    days = 7
+    remove = False
+    if settings:
+        days = int(settings.get('days', days))
+        remove = bool(settings.get("remove", remove))
 
-    days = 7 if not settings else int(settings.get('days', 7))
-    remove = False if not settings else bool(settings.get("remove", False))
     filters = client.FalconFilter()
     filters.create_new_filter("LastSeen", f"-{days}d", "LTE")
 
     logger.info("Using the FQL filter: %s", filters.get_fql())
     with client:
         response_data = client.hosts.describe_devices(filters=filters)
-        logger.info("Found %d devices", len(response_data.keys()))
+        if not response_data:
+            raise NoDevicesFound(filters.get_fql())
 
-        if not remove:
-            for device_id, device_data in response_data.items():
-                logger.info(
-                    "%s",
-                    f"[{device_id}] {device_data['hostname']} "
-                    f"({_get_stale_period(device_data['last_seen'])} days)"
-                    )
-            total_devices = len(response_data)
-            logger.info("%d devices found in %f seconds.", total_devices, float(timer))
+        if remove:
+            remove_result = client.hosts.hide(filters)
+            logger.info(
+                "%d sensors hidden in %f seconds.",
+                len(remove_result),
+                float(timer),
+            )
 
-        else:
-            logger.info("%d sensors hidden in %f seconds.",
-                        len(client.hosts.hide(filters)),
-                        float(timer)
-                        )
+        time_now = datetime.now(timezone.utc)
 
-    if not total_devices:
-        raise NoDevicesFound(filters.get_fql())
+        for device_id, device_data in response_data.items():
+            last_seen = dparser.isoparse(device_data['last_seen'])
+            last_seen_days = (time_now - last_seen).days
+            logger.info(
+                "[%s] %s was last seen %d days ago",
+                device_id,
+                device_data['hostname'],
+                last_seen_days,
+            )
+
+        logger.info("%d devices found in %f seconds.", len(response_data), float(timer))
 
 
 if __name__ in ["__main__", "examples.hosts.find_stale_sensors"]:

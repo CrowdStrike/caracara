@@ -303,13 +303,13 @@ class HostsApiModule(FalconApiModule):
         id_list: List[str] = all_pages_numbered_offset_parallel(
             func=func,
             logger=self.logger,
-            limit=SCROLL_BATCH_SIZE
+            limit=SCROLL_BATCH_SIZE,
         )
         return id_list
 
     @filter_string
     def get_group_ids(self, filters: FalconFilter or str = None) -> List[str]:
-        """Return a lsit of IDs (string) for every host group within your Falcon tentant.
+        """Return a list of IDs (string) for every host group within your Falcon tentant.
 
         Arguments
         ---------
