@@ -1,16 +1,15 @@
 """Caracara exceptions."""
 
 
-class BaseException(Exception):
+class BaseCaracaraError(Exception):
     """Base exception class from which all other exceptions inherit."""
 
 
-class GenericAPIError(BaseException):
+class GenericAPIError(BaseCaracaraError):
     """A generic error from the API."""
 
     def __init__(self, error_list: list = None):
         """Construct an instance of the GenericAPIError class."""
-        
         self.errors = [{
             "code": 500,
             "message": "An unexpected error has occurred"

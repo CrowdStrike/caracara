@@ -24,6 +24,7 @@ from falconpy import (
 
 from caracara.common.batching import batch_get_data
 from caracara.common.constants import SCROLL_BATCH_SIZE, HOST_GROUP_SCROLL_BATCH_SIZE
+from caracara.common.exceptions import GenericAPIError
 from caracara.common.module import FalconApiModule
 from caracara.common.pagination import (
     all_pages_numbered_offset_parallel,
@@ -31,7 +32,7 @@ from caracara.common.pagination import (
 )
 from caracara.filters import FalconFilter
 from caracara.filters.decorators import filter_string
-from caracara.common.exceptions import GenericAPIError
+
 
 class HostsApiModule(FalconApiModule):
     """The HostsApiModule represents interactions with the Hosts and Host Group APIs."""
@@ -280,7 +281,7 @@ class HostsApiModule(FalconApiModule):
             Filters to apply to the device search. Not required if device_ids are provided.
         device_ids: List[str] or str, optional
             List of device IDs to add to the host group. Comma delimited strings are converted.
-            Not required if a device filter is provided. Takes precedence over provided device filters.
+            Not required if a device filter is provided. Takes precedence over device filters.
 
         Returns
         -------
@@ -316,7 +317,7 @@ class HostsApiModule(FalconApiModule):
             Filters to apply to the device search. Not required if device_ids are provided.
         device_ids: List[str] or str, optional
             List of device IDs to add to the host group. Comma delimited strings are converted.
-            Not required if a device filter is provided. Takes precedence over provided device filters.
+            Not required if a device filter is provided. Takes precedence over device filters.
 
         Returns
         -------
@@ -349,9 +350,9 @@ class HostsApiModule(FalconApiModule):
                               ) -> Dict:
         """Perform the specified action against the host group."""
         returned = self.host_group_api.perform_group_action(ids=group_ids,
-                                                        action_name=action_name,
-                                                        filter=f"(device_id:{device_ids})"
-                                                        )["body"]
+                                                            action_name=action_name,
+                                                            filter=f"(device_id:{device_ids})"
+                                                            )["body"]
         if returned["errors"]:
             raise GenericAPIError(error_list=returned["errors"])
 
