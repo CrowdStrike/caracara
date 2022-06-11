@@ -54,8 +54,6 @@ def list_login_history(**kwargs):
     logger.info("Found %d devices in %f seconds", len(response_data), float(timer))
     if not response_data:
         raise NoDevicesFound
-    if not found:
-        raise NoLoginsFound
 
 
 if __name__ in ["__main__", "examples.hosts.list_login_history"]:
@@ -64,5 +62,3 @@ if __name__ in ["__main__", "examples.hosts.list_login_history"]:
         raise SystemExit
     except NoDevicesFound as no_devices:
         raise SystemExit(no_devices) from no_devices
-    except NoLoginsFound as no_logins:
-        raise SystemExit(no_logins) from no_logins
