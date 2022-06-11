@@ -15,8 +15,9 @@ The example demonstrates how to use the Hosts API and the Client context.
 """
 import logging
 
-from caracara import Client
 from tabulate import tabulate
+
+from caracara import Client
 
 from examples.common import (
     caracara_example,

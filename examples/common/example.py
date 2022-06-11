@@ -4,10 +4,10 @@ import logging
 import os
 import sys
 
-import yaml
-
 from functools import wraps
 from typing import Dict
+
+import yaml
 
 from bullet import Bullet
 from caracara import Client

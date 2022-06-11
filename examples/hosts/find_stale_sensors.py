@@ -17,8 +17,9 @@ import logging
 from datetime import datetime, timezone
 from typing import Dict
 
-from caracara import Client
 from dateutil import parser as dparser
+
+from caracara import Client
 
 from examples.common import (
     caracara_example,
