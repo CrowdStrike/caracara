@@ -120,13 +120,15 @@ You can also leverage the built in context manager and environment variables.
 
 This example will use the API credentials set in the environment to list the
 hostnames and IDs of all systems within your Falcon tenant that have not checked
-into the CrowdStrike cloud within the past 7 days.
+into your CrowdStrike tenant within the past 7 days.
+
+This is determined based on the filter LastSeen less than or equal (LTE) to 7 days ago (-7d).
 """
 
 from caracara import Client
 
 
-with Client(client_id="${CLIENT_ID_ENV_VARIABLE}", client_secret="${CLIENT_SECRET_ENV_VARIABLE}"):
+with Client(client_id="${CLIENT_ID_ENV_VARIABLE}", client_secret="${CLIENT_SECRET_ENV_VARIABLE}") as client:
     filters = client.FalconFilter()
     filters.create_new_filter("LastSeen", "-7d", "LTE")
     response_data = client.hosts.describe_devices(filters)
@@ -137,7 +139,6 @@ for device_id, device_data in response_data.items():
     hostname = device_data.get("hostname", "Unknown Hostname")
     print(f"{device_id} - {hostname}")
 ```
-
 
 ## Examples Collection
 

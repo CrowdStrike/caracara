@@ -28,7 +28,7 @@ from examples.common import (
     parse_filter_list,
     pretty_print,
     NoDevicesFound,
-    Timer
+    Timer,
 )
 
 
@@ -47,6 +47,7 @@ def find_devices(**kwargs):
         logger.info("Getting a list of hosts that match the FQL string %s", filters.get_fql())
     else:
         logger.info("No filter provided, getting a list of all devices within the tenant")
+
     with client:
         response_data = client.hosts.describe_devices(filters)
 

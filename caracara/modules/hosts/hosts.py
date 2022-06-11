@@ -450,7 +450,7 @@ class HostsApiModule(FalconApiModule):
         id_list: List[str] = all_pages_numbered_offset_parallel(
             func=func,
             logger=self.logger,
-            limit=SCROLL_BATCH_SIZE
+            limit=SCROLL_BATCH_SIZE,
         )
         return id_list
 
