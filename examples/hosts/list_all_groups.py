@@ -17,7 +17,7 @@ from examples.common import caracara_example, NoGroupsFound, Timer
 
 @caracara_example
 def list_all_groups(**kwargs):
-    """List All Devices."""
+    """List All Host Groups."""
     client: Client = kwargs['client']
     logger: logging.Logger = kwargs['logger']
     timer: Timer = Timer()
@@ -26,7 +26,6 @@ def list_all_groups(**kwargs):
 
     with client:
         response_data = client.hosts.describe_groups()
-        print(response_data)
         for group_id, group_data in response_data.items():
             groupname = group_data.get("name", "Unnamed")
             logger.info("%s (%s)", group_id, groupname)
