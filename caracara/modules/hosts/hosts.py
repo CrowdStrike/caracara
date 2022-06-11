@@ -23,7 +23,10 @@ from falconpy import (
 )
 
 from caracara.common.batching import batch_get_data
-from caracara.common.constants import SCROLL_BATCH_SIZE, HOST_GROUP_SCROLL_BATCH_SIZE
+from caracara.common.constants import (
+    SCROLL_BATCH_SIZE,
+    HOST_GROUP_SCROLL_BATCH_SIZE,
+)
 from caracara.common.exceptions import GenericAPIError
 from caracara.common.module import FalconApiModule
 from caracara.common.pagination import (
@@ -50,6 +53,7 @@ class HostsApiModule(FalconApiModule):
         self.logger.debug("Configuring the FalconPy Host Group API")
         self.host_group_api = HostGroup(auth_object=self.api_authentication)
 
+    @filter_string
     def describe_devices(self, filters: FalconFilter or str = None) -> Dict:
         """Return a dictionary containing details for every device matching the provided filter.
 
@@ -69,6 +73,7 @@ class HostsApiModule(FalconApiModule):
 
         return device_data
 
+    @filter_string
     def describe_groups(self, filters: FalconFilter or str = None) -> Dict:
         """Return a dictionary containing detail for every host group matching the provided filter.
 
@@ -87,6 +92,7 @@ class HostsApiModule(FalconApiModule):
 
         return group_data
 
+    @filter_string
     def describe_group_members(self, filters: FalconFilter or str = None) -> Dict:
         """Return a dictionary with member detail for all host groups matching the provided filter.
 
@@ -107,6 +113,7 @@ class HostsApiModule(FalconApiModule):
 
         return group_members
 
+    @filter_string
     def describe_hidden_devices(self, filters: FalconFilter or str = None) -> Dict:
         """Return a dictionary containing details for every hidden device in your Falcon tenant.
 
@@ -124,6 +131,7 @@ class HostsApiModule(FalconApiModule):
         device_data = batch_get_data(device_ids, self.hosts_api.get_device_details)
         return device_data
 
+    @filter_string
     def describe_login_history(self, filters: FalconFilter or str = None) -> Dict:
         """Return a dictionary containing login history for every device in your Falcon tenant.
 
@@ -141,6 +149,7 @@ class HostsApiModule(FalconApiModule):
         device_data = batch_get_data(device_ids, self.hosts_api.query_device_login_history)
         return device_data
 
+    @filter_string
     def describe_network_address_history(self, filters: FalconFilter or str = None) -> Dict:
         """Return a dictionary of network address history for all devices in your Falcon tenant.
 
@@ -157,6 +166,7 @@ class HostsApiModule(FalconApiModule):
         device_data = batch_get_data(device_ids, self.hosts_api.query_network_address_history)
         return device_data
 
+    @filter_string
     def contain(self, filters: FalconFilter or str = None) -> Dict:
         """Contain a host or list of hosts within your Falcon tenant.
 
@@ -174,6 +184,7 @@ class HostsApiModule(FalconApiModule):
             device_ids=self.get_device_ids(filters),
         )["resources"]
 
+    @filter_string
     def release(self, filters: FalconFilter or str = None) -> Dict:
         """Lift containment for a host or list of hosts within your Falcon tenant.
 
@@ -191,6 +202,7 @@ class HostsApiModule(FalconApiModule):
             device_ids=self.get_device_ids(filters),
         )["resources"]
 
+    @filter_string
     def hide(self, filters: FalconFilter or str = None) -> Dict:
         """Hide a host or list of hosts within your Falcon tenant.
 
@@ -208,6 +220,7 @@ class HostsApiModule(FalconApiModule):
             device_ids=self.get_device_ids(filters),
         )["resources"]
 
+    @filter_string
     def unhide(self, filters: FalconFilter or str = None) -> Dict:
         """Unhide a host or list of hosts within your Falcon tenant.
 
@@ -220,10 +233,12 @@ class HostsApiModule(FalconApiModule):
         -------
         dict: A dictionary containing details for the device unhide result.
         """
-        return self._perform_action(action_name="unhide_host",
-                                    device_ids=self.get_hidden_ids(filters)
-                                    )["resources"]
+        return self._perform_action(
+            action_name="unhide_host",
+            device_ids=self.get_hidden_ids(filters),
+        )["resources"]
 
+    @filter_string
     def tag(self, tags: List[str] or str, filters: FalconFilter or str = None) -> Dict:
         """Tag a host or list of hosts within your Falcon tenant.
 
@@ -238,11 +253,13 @@ class HostsApiModule(FalconApiModule):
         -------
         dict: A dictionary containing details for the device tagging result.
         """
-        return self._update_device_tags(action_name="add",
-                                        tag_list=self._create_tag_list(tags),
-                                        device_ids=self.get_device_ids(filters)
-                                        )["resources"]
+        return self._update_device_tags(
+            action_name="add",
+            tag_list=self._create_tag_list(tags),
+            device_ids=self.get_device_ids(filters),
+        )["resources"]
 
+    @filter_string
     def untag(self, tags: List[str] or str, filters: FalconFilter or str = None) -> Dict:
         """Untag a host or list of hosts within your Falcon tenant.
 
@@ -257,17 +274,20 @@ class HostsApiModule(FalconApiModule):
         -------
         dict: A dictionary containing details for the device tagging result.
         """
-        return self._update_device_tags(action_name="remove",
-                                        tag_list=self._create_tag_list(tags),
-                                        device_ids=self.get_device_ids(filters)
-                                        )["resources"]
+        return self._update_device_tags(
+            action_name="remove",
+            tag_list=self._create_tag_list(tags),
+            device_ids=self.get_device_ids(filters),
+        )["resources"]
 
-    def add_to_group(self,
-                     filters: FalconFilter or str = None,
-                     group_ids: List[str] or str = None,
-                     device_filters: FalconFilter or str = None,
-                     device_ids: List[str] or str = None
-                     ) -> Dict:
+    @filter_string
+    def add_to_group(
+        self,
+        filters: FalconFilter or str = None,
+        group_ids: List[str] or str = None,
+        device_filters: FalconFilter or str = None,
+        device_ids: List[str] or str = None,
+    ) -> Dict:
         """Add a host or list of hosts to a host group within your Falcon tenant.
 
         Arguments
@@ -298,12 +318,14 @@ class HostsApiModule(FalconApiModule):
             device_ids=device_ids if device_ids else self.get_device_ids(device_filters),
         )["resources"]
 
-    def remove_from_group(self,
-                          filters: FalconFilter or str = None,
-                          group_ids: List[str] or str = None,
-                          device_filters: FalconFilter or str = None,
-                          device_ids: List[str] or str = None
-                          ) -> Dict:
+    @filter_string
+    def remove_from_group(
+        self,
+        filters: FalconFilter or str = None,
+        group_ids: List[str] or str = None,
+        device_filters: FalconFilter or str = None,
+        device_ids: List[str] or str = None,
+    ) -> Dict:
         """Remove a host or list of hosts to a host group within your Falcon tenant.
 
         Arguments
@@ -343,16 +365,18 @@ class HostsApiModule(FalconApiModule):
 
         return returned
 
-    def _perform_group_action(self,
-                              action_name: str,
-                              group_ids: List[str],
-                              device_ids: List[str]
-                              ) -> Dict:
+    def _perform_group_action(
+        self,
+        action_name: str,
+        group_ids: List[str],
+        device_ids: List[str],
+    ) -> Dict:
         """Perform the specified action against the host group."""
-        returned = self.host_group_api.perform_group_action(ids=group_ids,
-                                                            action_name=action_name,
-                                                            filter=f"(device_id:{device_ids})"
-                                                            )["body"]
+        returned = self.host_group_api.perform_group_action(
+            ids=group_ids,
+            action_name=action_name,
+            filter=f"(device_id:{device_ids})",
+        )["body"]
         if returned["errors"]:
             raise GenericAPIError(error_list=returned["errors"])
 

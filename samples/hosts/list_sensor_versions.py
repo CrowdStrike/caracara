@@ -22,6 +22,7 @@ Requirements
 Created: 06.08.22, jshcodes@CrowdStrike
 """
 from argparse import ArgumentParser, RawTextHelpFormatter
+
 from caracara import Client
 from click import echo_via_pager
 from tabulate import tabulate
@@ -44,8 +45,7 @@ def list_sensor_versions():
         "agent_version": "Agent Version"
     }
     devices = []
-    with Client(client_id=args.client_id,
-                client_secret=args.client_secret) as client:
+    with Client(client_id=args.client_id, client_secret=args.client_secret) as client:
         for device in client.hosts.describe_devices().values():
             devices.append({item: device.get(item, "Unavailable") for item in HEADERS})
 

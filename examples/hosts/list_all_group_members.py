@@ -12,7 +12,11 @@ import logging
 
 from caracara import Client
 
-from examples.common import caracara_example, NoGroupsFound, Timer
+from examples.common import (
+    caracara_example,
+    NoGroupsFound,
+    Timer,
+)
 
 
 @caracara_example
@@ -35,11 +39,11 @@ def list_all_group_members(**kwargs):
             logger.info("%s (%s)", group_id, member_list)
             total_members_found += len(group_data)
 
-        logger.info("Found %d groups with %d total members in %f seconds",
-                    len(response_data),
-                    total_members_found,
-                    float(timer)
-                    )
+        logger.info(
+            "Found %d groups with %d total members in %f seconds",
+            len(response_data), total_members_found, float(timer),
+        )
+
         if not response_data:
             raise NoGroupsFound
 
