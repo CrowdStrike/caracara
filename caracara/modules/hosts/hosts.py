@@ -70,7 +70,6 @@ class HostsApiModule(FalconApiModule):
         dict: A dictionary containing details for every device discovered.
         """
         self.logger.info("Describing devices according to the filter string %s", filters)
-
         device_ids = self.get_device_ids(filters)
         device_data = batch_get_data(device_ids, self.hosts_api.get_device_details)
 
@@ -89,7 +88,7 @@ class HostsApiModule(FalconApiModule):
         -------
         dict: A dictionary containing details for every host group discovered.
         """
-        self.logger.info("Describing devices according to the filter string %s", filters)
+        self.logger.info("Describing host groups according to the filter string %s", filters)
         group_ids = self.get_group_ids(filters)
         group_data = batch_get_data(group_ids, self.host_group_api.get_host_groups)
 
@@ -108,7 +107,7 @@ class HostsApiModule(FalconApiModule):
         -------
         dict: A dictionary containing details for every host group discovered.
         """
-        self.logger.info("Describing devices according to the filter string %s", filters)
+        self.logger.info("Describing host group members according to the filter string %s", filters)
         group_ids = self.get_group_ids(filters)
         group_members = {}
         for group in group_ids:
@@ -132,6 +131,7 @@ class HostsApiModule(FalconApiModule):
         self.logger.info("Describing hidden devices based on the filter string %s", filters)
         device_ids = self.get_hidden_ids(filters)
         device_data = batch_get_data(device_ids, self.hosts_api.get_device_details)
+
         return device_data
 
     @filter_string
@@ -150,6 +150,7 @@ class HostsApiModule(FalconApiModule):
         self.logger.info("Describing login history for devices matching the filter: %s", filters)
         device_ids = self.get_device_ids(filters)
         device_data = batch_get_data(device_ids, self.hosts_api.query_device_login_history)
+
         return device_data
 
     @filter_string
@@ -167,6 +168,7 @@ class HostsApiModule(FalconApiModule):
         """
         device_ids = self.get_device_ids(filters)
         device_data = batch_get_data(device_ids, self.hosts_api.query_network_address_history)
+
         return device_data
 
     @filter_string
@@ -394,7 +396,7 @@ class HostsApiModule(FalconApiModule):
                      filters: FalconFilter or str = None
                      ) -> Dict:
         """Delete a host group from within your Falcon tenant.
-        
+
         Arguments
         ---------
         filters: FalconFilter or str, optional
