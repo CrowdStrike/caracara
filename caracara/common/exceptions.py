@@ -1,5 +1,5 @@
 """Caracara exceptions."""
-
+from typing import List
 
 class BaseCaracaraError(Exception):
     """Base exception class from which all other exceptions inherit."""
@@ -75,5 +75,38 @@ class DeviceNotFound(GenericAPIError):
         self.errors = [{
             "code": 404,
             "message": "The Falcon Filter you provided returned no device matches"
+        }]
+        super().__init__(self.errors)
+
+
+class MissingArgument(GenericAPIError):
+    """A required argument was not provided."""
+
+    def __init__(self, arg_name: str = None):
+        """Construct an instance of the MissingArgument class."""
+        if not arg_name:
+            arg_name = "A required argument"
+        else:
+            arg_name = f"The required argument {arg_name}"
+        arg_str = f"{arg_name} was not provided"
+        self.errors = [{
+            "code": 500,
+            "message": arg_str
+        }]
+        super().__init__(self.errors)
+
+class MissingArguments(GenericAPIError):
+    """A required argument was not provided."""
+
+    def __init__(self, arg_name: List[str] = None):
+        """Construct an instance of the MissingArguments class."""
+        if not arg_name:
+            arg_name = "Required arguments"
+        else:
+            arg_name = f"The required arguments {', '.join(arg_name)}"
+        arg_str = f"{arg_name} were not provided"
+        self.errors = [{
+            "code": 500,
+            "message": arg_str
         }]
         super().__init__(self.errors)
