@@ -23,7 +23,7 @@ from falconpy import (
 )
 
 from caracara.common.batching import batch_get_data
-from caracara.common.constants import SCROLL_BATCH_SIZE
+from caracara.common.constants import SCROLL_BATCH_SIZE, HOST_GROUP_SCROLL_BATCH_SIZE
 from caracara.common.module import FalconApiModule
 from caracara.common.pagination import (
     all_pages_numbered_offset_parallel,
@@ -31,7 +31,7 @@ from caracara.common.pagination import (
 )
 from caracara.filters import FalconFilter
 from caracara.filters.decorators import filter_string
-
+from caracara.common.exceptions import GenericAPIError
 
 class HostsApiModule(FalconApiModule):
     """The HostsApiModule represents interactions with the Hosts and Host Group APIs."""
@@ -69,7 +69,7 @@ class HostsApiModule(FalconApiModule):
         return device_data
 
     def describe_groups(self, filters: FalconFilter or str = None) -> Dict:
-        """Return a dictionary containing details for every host group matching the provided filter.
+        """Return a dictionary containing detail for every host group matching the provided filter.
 
         Arguments
         ---------
@@ -85,6 +85,26 @@ class HostsApiModule(FalconApiModule):
         group_data = batch_get_data(group_ids, self.host_group_api.get_host_groups)
 
         return group_data
+
+    def describe_group_members(self, filters: FalconFilter or str = None) -> Dict:
+        """Return a dictionary with member detail for all host groups matching the provided filter.
+
+        Arguments
+        ---------
+        filters: FalconFilter or str, optional
+            Filters to apply to the host group search.
+
+        Returns
+        -------
+        dict: A dictionary containing details for every host group discovered.
+        """
+        self.logger.info("Describing devices according to the filter string %s", filters)
+        group_ids = self.get_group_ids(filters)
+        group_members = {}
+        for group in group_ids:
+            group_members[group] = self.get_group_member_ids(group)
+
+        return group_members
 
     def describe_hidden_devices(self, filters: FalconFilter or str = None) -> Dict:
         """Return a dictionary containing details for every hidden device in your Falcon tenant.
@@ -241,9 +261,101 @@ class HostsApiModule(FalconApiModule):
                                         device_ids=self.get_device_ids(filters)
                                         )["resources"]
 
+    def add_to_group(self,
+                     filters: FalconFilter or str = None,
+                     group_ids: List[str] or str = None,
+                     device_filters: FalconFilter or str = None,
+                     device_ids: List[str] or str = None
+                     ) -> Dict:
+        """Add a host or list of hosts to a host group within your Falcon tenant.
+
+        Arguments
+        ---------
+        filters: FalconFilter or str, optional
+            Group filter to apply to the host group search. Not required if group_ids are provided.
+        group_ids: List[str] or str, optional
+            List of host group IDs to update. Comma delimited strings are converted.
+            Not required if a group filter is provided. Takes precedence over provided filters.
+        device_filters: FalconFilter or str, optional
+            Filters to apply to the device search. Not required if device_ids are provided.
+        device_ids: List[str] or str, optional
+            List of device IDs to add to the host group. Comma delimited strings are converted.
+            Not required if a device filter is provided. Takes precedence over provided device filters.
+
+        Returns
+        -------
+        dict: A dictionary containing details for the host group update result.
+        """
+        if isinstance(group_ids, str):
+            group_ids = group_ids.split(",")
+        if isinstance(device_ids, str):
+            device_ids = device_ids.split(",")
+
+        return self._perform_group_action(
+            action_name="add-hosts",
+            group_ids=group_ids if group_ids else self.get_group_ids(filters),
+            device_ids=device_ids if device_ids else self.get_device_ids(device_filters),
+        )["resources"]
+
+    def remove_from_group(self,
+                          filters: FalconFilter or str = None,
+                          group_ids: List[str] or str = None,
+                          device_filters: FalconFilter or str = None,
+                          device_ids: List[str] or str = None
+                          ) -> Dict:
+        """Remove a host or list of hosts to a host group within your Falcon tenant.
+
+        Arguments
+        ---------
+        filters: FalconFilter or str, optional
+            Group filter to apply to the host group search. Not required if group_ids are provided.
+        group_ids: List[str] or str, optional
+            List of host group IDs to update. Comma delimited strings are converted.
+            Not required if a group filter is provided. Takes precedence over provided filters.
+        device_filters: FalconFilter or str, optional
+            Filters to apply to the device search. Not required if device_ids are provided.
+        device_ids: List[str] or str, optional
+            List of device IDs to add to the host group. Comma delimited strings are converted.
+            Not required if a device filter is provided. Takes precedence over provided device filters.
+
+        Returns
+        -------
+        dict: A dictionary containing details for the host group update result.
+        """
+        if isinstance(group_ids, str):
+            group_ids = group_ids.split(",")
+        if isinstance(device_ids, str):
+            device_ids = device_ids.split(",")
+
+        return self._perform_group_action(
+            action_name="remove-hosts",
+            group_ids=group_ids if group_ids else self.get_group_ids(filters),
+            device_ids=device_ids if device_ids else self.get_device_ids(device_filters),
+        )["resources"]
+
     def _perform_action(self, action_name: str, device_ids: List[str]) -> Dict:
         """Perform the specified action against the list of targets."""
-        return self.hosts_api.perform_action(ids=device_ids, action_name=action_name)["body"]
+        returned = self.hosts_api.perform_action(ids=device_ids, action_name=action_name)["body"]
+
+        if returned["errors"]:
+            raise GenericAPIError(error_list=returned["errors"])
+
+        return returned
+
+    def _perform_group_action(self,
+                              action_name: str,
+                              group_ids: List[str],
+                              device_ids: List[str]
+                              ) -> Dict:
+        """Perform the specified action against the host group."""
+        returned = self.host_group_api.perform_group_action(ids=group_ids,
+                                                        action_name=action_name,
+                                                        filter=f"(device_id:{device_ids})"
+                                                        )["body"]
+        if returned["errors"]:
+            raise GenericAPIError(error_list=returned["errors"])
+
+        return returned
 
     @staticmethod
     def _create_tag_list(potential_list: List[str] or str) -> List[str]:
@@ -309,7 +421,7 @@ class HostsApiModule(FalconApiModule):
 
     @filter_string
     def get_group_ids(self, filters: FalconFilter or str = None) -> List[str]:
-        """Return a lsit of IDs (string) for every host group within your Falcon tentant.
+        """Return a list of IDs (string) for every host group within your Falcon tentant.
 
         Arguments
         ---------
@@ -325,6 +437,27 @@ class HostsApiModule(FalconApiModule):
         id_list: List[str] = all_pages_numbered_offset_parallel(
             func=func,
             logger=self.logger,
-            limit=SCROLL_BATCH_SIZE
+            limit=HOST_GROUP_SCROLL_BATCH_SIZE
+        )
+        return id_list
+
+    def get_group_member_ids(self, group_id: str = None) -> List[str]:
+        """Return a list of IDs (string) for every host group member for the specified host group.
+
+        Arguments
+        ---------
+        group_id: str, required
+            ID of the host group to return members for.
+
+        Returns
+        -------
+        List[str]: A list of all host group member IDs discovered.
+        """
+        self.logger.info("Searching for host group members using the group ID %s", group_id)
+        func = partial(self.host_group_api.query_group_members, id=group_id)
+        id_list: List[str] = all_pages_numbered_offset_parallel(
+            func=func,
+            logger=self.logger,
+            limit=HOST_GROUP_SCROLL_BATCH_SIZE
         )
         return id_list
