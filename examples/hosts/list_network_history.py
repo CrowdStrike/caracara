@@ -10,9 +10,16 @@ The example demonstrates how to use the Hosts API.
 """
 import logging
 
+from typing import Dict, List
+
 from caracara import Client
 
-from examples.common import caracara_example, NoDevicesFound, NoAddressesFound, Timer
+from examples.common import (
+    caracara_example, 
+    NoDevicesFound,
+    NoAddressesFound,
+    Timer,
+)
 
 
 @caracara_example
@@ -28,19 +35,20 @@ def list_network_history(**kwargs):
         response_data = client.hosts.describe_network_address_history()
 
     for device_id, device_data in response_data.items():
-        recents = device_data.get("history", "No recent changes")
-        changes = "No changes found"
+        recents: List[Dict] = device_data.get("history")
+        changes = "No recent changes"
         found = []
         if recents:
             for change in recents:
                 change_detail = "".join([
                     f"{change.get('ip_address', 'IP Unknown')} ",
                     f"({change.get('mac_address', 'MAC Unknown')}) on ",
-                    f"{change.get('timestamp', 'Unknown')}"
-                    ])
+                    f"{change.get('timestamp', 'Unknown')}",
+                ])
                 if change_detail not in found:
                     found.append(change_detail)
             changes = ", ".join(found)
+
         logger.info("%s (%s)", device_id, changes)
 
     logger.info("Found %d devices in %f seconds", len(response_data), float(timer))

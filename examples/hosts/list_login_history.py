@@ -10,9 +10,16 @@ The example demonstrates how to use the Hosts API.
 """
 import logging
 
+from typing import Dict, List
+
 from caracara import Client
 
-from examples.common import caracara_example, NoDevicesFound, NoLoginsFound, Timer
+from examples.common import (
+    caracara_example,
+    NoDevicesFound,
+    NoLoginsFound,
+    Timer,
+)
 
 
 @caracara_example
@@ -28,18 +35,20 @@ def list_login_history(**kwargs):
         response_data = client.hosts.describe_login_history()
 
     for device_id, device_data in response_data.items():
-        recents = device_data.get("recent_logins", "No recent accesses")
+        recents: List[Dict] = device_data.get('recent_logins')
         logins = "No logins found"
         found = []
         if recents:
             for login in recents:
                 login_detail = "".join([
                     f"{login.get('user_name', 'Username not found')}: ",
-                    f"{login.get('login_time', 'Unknown')}"
-                    ])
+                    f"{login.get('login_time', 'Unknown')}",
+                ])
                 if login_detail not in found:
                     found.append(login_detail)
+
             logins = ", ".join(found)
+
         logger.info("%s (%s)", device_id, logins)
 
     logger.info("Found %d devices in %f seconds", len(response_data), float(timer))

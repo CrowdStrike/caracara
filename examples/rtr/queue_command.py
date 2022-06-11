@@ -23,11 +23,11 @@ from typing import Dict, List
 from caracara import Client
 
 from examples.common import (
+    caracara_example,
+    parse_filter_list,
     MissingArgument,
     NoDevicesFound,
     NoSessionsConnected,
-    caracara_example,
-    parse_filter_list,
 )
 
 
@@ -38,8 +38,7 @@ def queue_command(**kwargs):
     logger: logging.Logger = kwargs['logger']
     settings: Dict = kwargs['settings']
 
-    cmd = settings.get("command", None) if settings else None
-    if not cmd:
+    if not settings or 'command' not in settings:
         error_message = "".join([
             "You must configure the 'cmd' argument within your "
             "YAML file to proceed with this example."
@@ -47,6 +46,7 @@ def queue_command(**kwargs):
         logger.critical(error_message)
         raise MissingArgument("cmd", error_message)
 
+    cmd: str = settings['command']
     logger.info("Running the command: %s", cmd)
 
     filters = client.FalconFilter()

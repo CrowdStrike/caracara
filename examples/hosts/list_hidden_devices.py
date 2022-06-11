@@ -12,7 +12,11 @@ import logging
 
 from caracara import Client
 
-from examples.common import caracara_example, NoDevicesFound, Timer
+from examples.common import (
+    caracara_example,
+    NoDevicesFound,
+    Timer,
+)
 
 
 @caracara_example
