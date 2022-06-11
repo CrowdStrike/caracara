@@ -28,20 +28,23 @@ def list_all_group_members(**kwargs):
 
     logger.info("Listing all host groups and their members within the tenant")
 
-    total_members_found = 0
-
     with client:
-        response_data = client.hosts.describe_group_members()
+        response_data = client.hosts.describe_group_members_2()
+        discovered_devices = set()
         for group_id, group_data in response_data.items():
-            member_list = "No members found"
-            if group_data:
-                member_list = ", ".join(group_data)
-            logger.info("%s (%s)", group_id, member_list)
-            total_members_found += len(group_data)
+            logger.info(
+                "Group %s (%s) contains %d devices",
+                group_id, group_data['name'], len(group_data['devices']),
+            )
+            for device in group_data['devices']:
+                device_id = device['device_id']
+                hostname = device.get("hostname", "No Hostname")
+                discovered_devices.add(device_id)
+                logger.info("%s (%s)", device_id, hostname)
 
         logger.info(
             "Found %d groups with %d total members in %f seconds",
-            len(response_data), total_members_found, float(timer),
+            len(response_data), len(discovered_devices), float(timer),
         )
 
         if not response_data:
@@ -49,8 +52,8 @@ def list_all_group_members(**kwargs):
 
 
 if __name__ in ["__main__", "examples.hosts.list_all_group_members"]:
-    try:
-        list_all_group_members()
-        raise SystemExit
-    except NoGroupsFound as no_groups:
-        raise SystemExit(no_groups) from no_groups
+    list_all_group_members()
+    # try:
+    #     raise SystemExit
+    # except NoGroupsFound as no_groups:
+    #     raise SystemExit(no_groups) from no_groups

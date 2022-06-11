@@ -110,12 +110,21 @@ class HostsApiModule(FalconApiModule):
         dict: A dictionary containing details for every host group discovered.
         """
         self.logger.info("Describing host group members according to the filter string %s", filters)
-        group_ids = self.get_group_ids(filters)
-        group_members = {}
-        for group in group_ids:
-            group_members[group] = self.get_group_member_ids(group)
+        groups = self.describe_groups(filters=filters)
+        func = partial(self.host_group_api.query_combined_group_members, filter=filters)
+        device_data = all_pages_numbered_offset_parallel(func, self.logger)
+        all_group_data = {}
+        for group_id, group_data in groups.items():
+            all_group_data[group_id] = group_data
+            all_group_data[group_id]['devices'] = []
 
-        return group_members
+        for device in device_data:
+            if 'groups' not in device:
+                continue
+            for group_id in device['groups']:
+                all_group_data[group_id]['devices'].append(device)
+
+        return all_group_data
 
     @filter_string
     def describe_hidden_devices(self, filters: FalconFilter or str = None) -> Dict:
