@@ -24,7 +24,7 @@ from falconpy import (
 
 from caracara.common.batching import batch_get_data
 from caracara.common.constants import SCROLL_BATCH_SIZE, HOST_GROUP_SCROLL_BATCH_SIZE
-from caracara.common.exceptions import GenericAPIError
+from caracara.common.exceptions import GenericAPIError, MustProvideFilterOrID, HostGroupNotFound
 from caracara.common.module import FalconApiModule
 from caracara.common.pagination import (
     all_pages_numbered_offset_parallel,
@@ -334,12 +334,46 @@ class HostsApiModule(FalconApiModule):
             device_ids=device_ids if device_ids else self.get_device_ids(device_filters),
         )["resources"]
 
+    def delete_group(self,
+                     group_ids: List[str] = None,
+                     filters: FalconFilter or str = None
+                     ) -> Dict:
+        """Delete a host group from within your Falcon tenant.
+        
+        Arguments
+        ---------
+        filters: FalconFilter or str, optional
+            Group filter to apply to the host group search. Not required if group_ids are provided.
+        group_ids: List[str] or str, optional
+            List of host group IDs to update. Comma delimited strings are converted.
+            Not required if a group filter is provided. Takes precedence over provided filters.
+
+        Returns
+        -------
+        dict: A dictionary containing details for the host group update result.
+        """
+        if isinstance(group_ids, str):
+            group_ids = group_ids.split(",")
+        group_ids = group_ids if group_ids else self.get_group_ids(filters)
+        if not group_ids and not filters:
+            raise MustProvideFilterOrID
+        if not group_ids:
+            raise HostGroupNotFound
+
+        returned = self.host_group_api.delete_host_groups(
+            ids=group_ids
+            )["body"]
+        if returned["errors"]:
+            raise GenericAPIError(returned["errors"])
+
+        return returned
+
     def _perform_action(self, action_name: str, device_ids: List[str]) -> Dict:
         """Perform the specified action against the list of targets."""
         returned = self.hosts_api.perform_action(ids=device_ids, action_name=action_name)["body"]
 
         if returned["errors"]:
-            raise GenericAPIError(error_list=returned["errors"])
+            raise GenericAPIError(returned["errors"])
 
         return returned
 
@@ -354,7 +388,7 @@ class HostsApiModule(FalconApiModule):
                                                             filter=f"(device_id:{device_ids})"
                                                             )["body"]
         if returned["errors"]:
-            raise GenericAPIError(error_list=returned["errors"])
+            raise GenericAPIError(returned["errors"])
 
         return returned
 
@@ -422,7 +456,7 @@ class HostsApiModule(FalconApiModule):
 
     @filter_string
     def get_group_ids(self, filters: FalconFilter or str = None) -> List[str]:
-        """Return a list of IDs (string) for every host group within your Falcon tentant.
+        """Return a list of IDs (string) for every host group within your Falcon tenant.
 
         Arguments
         ---------
