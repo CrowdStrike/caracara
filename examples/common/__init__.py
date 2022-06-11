@@ -25,7 +25,7 @@ __all__ = [
     "MissingArgument",
     "NoAddressesFound",
     "NoDevicesFound",
-    "NoGroupsFound"
+    "NoGroupsFound",
     "NoLoginsFound",
     "NoSessionsConnected",
     "Timer",
