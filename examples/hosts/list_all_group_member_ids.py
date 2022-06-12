@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Caracara Examples Collection.
 
-list_all_groups_members.py
+list_all_groups_members_ids.py
 
 This example will use the API credentials configured in your config.yml file to
 list the device member IDs for every host group within your Falcon tenant.
@@ -20,7 +20,7 @@ from examples.common import (
 
 
 @caracara_example
-def list_all_group_members(**kwargs):
+def list_all_group_member_ids(**kwargs):
     """List All Host Group Members."""
     client: Client = kwargs['client']
     logger: logging.Logger = kwargs['logger']
@@ -30,22 +30,12 @@ def list_all_group_members(**kwargs):
     total_members_found = 0
     with client:
         response_data = client.hosts.describe_group_member_ids()
-        #discovered_devices = set()
         for group_id, group_data in response_data.items():
             member_list = "No members found"
             if group_data:
                 member_list = ", ".join(group_data)
             logger.info("%s (%s)", group_id, member_list)
             total_members_found += len(group_data)
-            # logger.info(
-            #     "Group %s (%s) contains %d devices",
-            #     group_id, group_data['name'], len(group_data['devices']),
-            # )
-            # for device in group_data['devices']:
-            #     device_id = device['device_id']
-            #     hostname = device.get("hostname", "No Hostname")
-            #     discovered_devices.add(device_id)
-            #     logger.info("%s (%s)", device_id, hostname)
 
     logger.info(
         "Found %d groups with %d total members in %f seconds",
@@ -57,7 +47,7 @@ def list_all_group_members(**kwargs):
 
 
 if __name__ in ["__main__", "examples.hosts.list_all_group_members"]:
-    list_all_group_members()
+    list_all_group_member_ids()
     try:
         raise SystemExit
     except NoGroupsFound as no_groups:
