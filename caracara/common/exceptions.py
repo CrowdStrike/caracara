@@ -1,6 +1,7 @@
 """Caracara exceptions."""
 from typing import List
 
+
 class BaseCaracaraError(Exception):
     """Base exception class from which all other exceptions inherit."""
 
@@ -94,6 +95,7 @@ class MissingArgument(GenericAPIError):
             "message": arg_str
         }]
         super().__init__(self.errors)
+
 
 class MissingArguments(GenericAPIError):
     """A required argument was not provided."""

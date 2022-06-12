@@ -10,6 +10,7 @@ r"""Hosts and Host Group API.
 
 This module handles interactions with the CrowdStrike Falcon Hosts and Host Group APIs.
 """
+# pylint: disable=R0904
 from functools import partial
 from typing import (
     Dict,
@@ -566,8 +567,13 @@ class HostsApiModule(FalconApiModule):
             returned[group] = {}
             returned[group]["removed"] = False
             if members:
-                returned[group]["result"] = self.remove_from_group(group_ids=group, device_ids=members)
-                self.logger.info("Removed %d members from group %s", len(returned[group]["result"]), group)
+                returned[group]["result"] = self.remove_from_group(group_ids=group,
+                                                                   device_ids=members
+                                                                   )
+                self.logger.info("Removed %d members from group %s",
+                                 len(returned[group]["result"]),
+                                 group
+                                 )
             if remove_groups:
                 self.logger.info("Remove group %s", group)
                 delete_result = self.delete_group(group_ids=group)
@@ -577,11 +583,11 @@ class HostsApiModule(FalconApiModule):
         return returned["resources"]
 
     def _create_host_group(self,
-                     group_name: str = None,
-                     description: str = None,
-                     group_type: str = "static",
-                     assignment_rule: str = None
-                     ) -> Dict:
+                           group_name: str = None,
+                           description: str = None,
+                           group_type: str = "static",
+                           assignment_rule: str = None
+                           ) -> Dict:
         """Create the requested host group within the tenant."""
         if not group_name:
             raise MissingArgument("group_name")
@@ -589,10 +595,10 @@ class HostsApiModule(FalconApiModule):
             self.logger.info("Group type not specified for creation, defaulting to static.")
 
         returned = self.host_group_api.create_host_groups(name=group_name,
-                                                      description=description,
-                                                      group_type=group_type,
-                                                      assignment_rule=assignment_rule
-                                                      )["body"]
+                                                          description=description,
+                                                          group_type=group_type,
+                                                          assignment_rule=assignment_rule
+                                                          )["body"]
         if returned["errors"]:
             raise GenericAPIError(returned["errors"])
 

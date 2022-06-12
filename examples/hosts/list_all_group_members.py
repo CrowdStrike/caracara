@@ -12,6 +12,8 @@ from examples.common import (
     NoGroupsFound,
     Timer,
 )
+
+
 @caracara_example
 def list_all_group_members(**kwargs):
     """List All Host Group Members."""

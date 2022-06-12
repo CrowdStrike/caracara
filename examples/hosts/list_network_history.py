@@ -17,7 +17,6 @@ from caracara import Client
 from examples.common import (
     caracara_example,
     NoDevicesFound,
-    NoAddressesFound,
     Timer,
 )
 
