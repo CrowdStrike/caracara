@@ -521,7 +521,7 @@ class HostsApiModule(FalconApiModule):
               assignment_rule: str = None,
               device_ids: List[str] = None
               ) -> Dict:
-        """Groups a list of device IDs into a newly created host group within the tenant.
+        """Group a list of device IDs into a newly created host group within the tenant.
 
         Arguments
         ---------
@@ -546,7 +546,7 @@ class HostsApiModule(FalconApiModule):
         return self.add_to_group(group_ids=new_group, device_ids=device_ids)["resources"]
 
     def ungroup(self, group_ids: List[str] or str = None, remove_groups: bool = False):
-        """Removes all members from host groups and then removes the group.
+        """Remove all members from host groups and then remove the group (if specified).
 
         Arguments
         ---------
