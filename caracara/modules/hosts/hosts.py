@@ -97,8 +97,8 @@ class HostsApiModule(FalconApiModule):
         return group_data
 
     @filter_string
-    def describe_group_members(self, filters: FalconFilter or str = None) -> Dict:
-        """Return a dictionary with member detail for all host groups matching the provided filter.
+    def describe_group_member_ids(self, filters: FalconFilter or str = None) -> Dict:
+        """Return a dictionary with member IDs for all host groups matching the provided filter.
 
         Arguments
         ---------
@@ -116,21 +116,37 @@ class HostsApiModule(FalconApiModule):
             group_members[group] = self.get_group_member_ids(group)
 
         return group_members
-        # groups = self.describe_groups(filters=filters)
-        # func = partial(self.host_group_api.query_combined_group_members, filter=filters)
-        # device_data = all_pages_numbered_offset_parallel(func, self.logger)
-        # all_group_data = {}
-        # for group_id, group_data in groups.items():
-        #     all_group_data[group_id] = group_data
-        #     all_group_data[group_id]['devices'] = []
 
-        # for device in device_data:
-        #     if 'groups' not in device:
-        #         continue
-        #     for group_id in device['groups']:
-        #         all_group_data[group_id]['devices'].append(device)
+    @filter_string
+    def describe_group_members(self, filters: FalconFilter or str = None) -> Dict:
+        """Return a dictionary with member details for all host groups matching the provided filter.
 
-        # return all_group_data
+        Arguments
+        ---------
+        filters: FalconFilter or str, optional
+            Filters to apply to the host group search.
+
+        Returns
+        -------
+        dict: A dictionary containing details for every host group discovered.
+        """
+        self.logger.info("Describing host group members according to the filter string %s", filters)
+        groups = self.describe_groups(filters=filters)
+        func = partial(self.host_group_api.query_combined_group_members, filter=filters)
+        device_data = all_pages_numbered_offset_parallel(func, self.logger)
+        all_group_data = {}
+        for group_id, group_data in groups.items():
+            all_group_data[group_id] = group_data
+            all_group_data[group_id]['devices'] = []
+
+            for device in device_data:
+                if 'groups' not in device:
+                    continue
+                for group_identifier in device['groups']:
+                    if group_identifier == group_id:
+                        all_group_data[group_identifier]['devices'].append(device)
+
+        return all_group_data
 
     @filter_string
     def describe_hidden_devices(self, filters: FalconFilter or str = None) -> Dict:
