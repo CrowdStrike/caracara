@@ -26,7 +26,6 @@ class FalconFilter:
     """
 
     available_filters = {}
-    filters = {}
     logger = logging.getLogger(__name__)
 
     def set_filter_value(self, filter_id: str, value):
@@ -139,6 +138,8 @@ class FalconFilter:
         FQL can be generated instantly. Otherwise, the developer can add filter data at will,
         and then dump to FQL when ready.
         """
+        self.filters = {}
+
         self.logger.debug("Initialising a new FalconFilter object")
         if filters:
             for initial_filter in filters:
