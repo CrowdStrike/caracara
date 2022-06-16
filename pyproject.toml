@@ -9,7 +9,7 @@ readme = "README.md"
 python = "^3.7"
 py7zr = "^0.17.4"
 pyppmd = "0.17.4"
-crowdstrike-falconpy = "^1.0.10"
+crowdstrike-falconpy-dev = "^1.1.4"
 
 [tool.poetry.dev-dependencies]
 bandit = "^1.7.3"
@@ -56,6 +56,7 @@ disable = [
 agent-versions = "examples.hosts.show_agent_versions:show_agent_versions"
 find-devices = "examples.hosts.find_devices:find_devices"
 list-all-devices = "examples.hosts.list_all_devices:list_all_devices"
+list-all-device-states = "examples.hosts.list_device_states:list_device_states"
 list-all-groups = "examples.hosts.list_all_groups:list_all_groups"
 list-all-group-members = "examples.hosts.list_all_group_members:list_all_group_members"
 list-all-group-member-ids = "examples.hosts.list_all_group_member_ids:list_all_group_member_ids"
