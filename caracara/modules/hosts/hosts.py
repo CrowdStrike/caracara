@@ -79,6 +79,28 @@ class HostsApiModule(FalconApiModule):
         return device_data
 
     @filter_string
+    def describe_state(self, filters: FalconFilter or str = None) -> Dict:
+        """Return a dictionary containing online state for devices matching the provided filter.
+
+        Arguments
+        ---------
+        filters: FalconFilter or str, optional
+            Filters to apply to the device search.
+
+        Returns
+        -------
+        dict: A dictionary containing state details for every device discovered.
+        """
+        self.logger.info("Describing device states according to the filter string %s", filters)
+        device_ids = self.get_device_ids(filters)
+        device_data = batch_get_data(device_ids, self.hosts_api.get_device_details)
+        for device, state in batch_get_data(device_ids, self.hosts_api.get_online_state).items():
+            if device in device_data:
+                device_data[device]["state"] = state.get("state", "unknown")
+
+        return device_data
+
+    @filter_string
     def describe_groups(self, filters: FalconFilter or str = None) -> Dict:
         """Return a dictionary containing detail for every host group matching the provided filter.
 
