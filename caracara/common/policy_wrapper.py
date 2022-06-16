@@ -17,14 +17,13 @@ class PolicySetting(ABC):
     nested policy settings.
     """
 
-    name: str = None
-
     def __init__(self, data_dict: Dict = None):
         """Initialise a policy setting from a Falcon dictionary."""
+        self.name: str = None
+
         if data_dict:
             self._load_data_dict(data_dict)
 
-    @abstractmethod
     def _load_data_dict(self, data_dict: Dict):
         self.name = data_dict.get("name")
 
@@ -49,17 +48,29 @@ class PolicySetting(ABC):
 class GroupAssignment(PolicySetting):
     """Represents an assignment rule that maps a policy to a host group."""
 
-    def _load_data_dict(self, data_dict: Dict):
-        super()._load_data_dict(data_dict)
+    def __init__(self, data_dict: Dict = None):
+        self.assignment_rule: str = None
+        self.created_by: str = None
+        self.created_timestamp: datetime = None
+        self.description: str = None
+        self.group_id: str = None
+        self.group_type: str = None
+        self.modified_by: str = None
+        self.modified_timestamp: datetime = None
 
-        self.assignment_rule: str = data_dict.get("assignment_rule")
-        self.created_by: str = data_dict.get("created_by")
-        self.created_timestamp: datetime = data_dict.get("created_timestamp")
-        self.description: str = data_dict.get("description")
-        self.group_id: str = data_dict.get("id")
-        self.group_type: str = data_dict.get("group_type")
-        self.modified_by: str = data_dict.get("modified_by")
-        self.modified_timestamp: str = data_dict.get("modified_timestamp")
+        super().__init__(data_dict)
+
+    def _load_data_dict(self, data_dict: Dict):
+        self.assignment_rule = data_dict.get("assignment_rule")
+        self.created_by = data_dict.get("created_by")
+        self.created_timestamp = data_dict.get("created_timestamp")
+        self.description = data_dict.get("description")
+        self.group_id = data_dict.get("id")
+        self.group_type = data_dict.get("group_type")
+        self.modified_by = data_dict.get("modified_by")
+        self.modified_timestamp = data_dict.get("modified_timestamp")
+
+        super()._load_data_dict(data_dict)
 
     def dump(self) -> Dict:
         """Return a dictionary representing a group assignment.
@@ -101,10 +112,12 @@ class ChangeablePolicySetting(PolicySetting, ABC):
     The actual type of setting must be derived from this (e.g., a toggle setting).
     """
 
-    description: str = None
-    name: str = None
-    setting_id: str = None
-    setting_type: str = None
+    def __init__(self, data_dict: Dict = None):
+        self.description: str = None
+        self.name: str = None
+        self.setting_id: str = None
+
+        super().__init__(data_dict)
 
     @property
     @abstractmethod
@@ -120,6 +133,7 @@ class ChangeablePolicySetting(PolicySetting, ABC):
 
     def _load_data_dict(self, data_dict: Dict):
         super()._load_data_dict(data_dict)
+
         self.description = data_dict.get("description")
         self.setting_id = data_dict.get("id")
         self.setting_type = data_dict.get("type")
@@ -154,9 +168,12 @@ class ChangeablePolicySetting(PolicySetting, ABC):
 
 class TogglePolicySetting(ChangeablePolicySetting):
     """Toggle policy setting that has two options: enabled and disabled."""
+    setting_type = "toggle"
 
-    enabled: bool = None
-    setting_type: str = "toggle"
+    def __init__(self, data_dict: Dict = None):
+        self.enabled: bool = None
+
+        super().__init__(data_dict)
 
     def _dump_value(self) -> Dict[str, str]:
         return {
@@ -165,6 +182,7 @@ class TogglePolicySetting(ChangeablePolicySetting):
 
     def _load_data_dict(self, data_dict: Dict):
         super()._load_data_dict(data_dict)
+
         value_dict = data_dict.get("value")
         self.enabled = value_dict.get("enabled")
 
@@ -174,10 +192,13 @@ class MLSliderPolicySetting(ChangeablePolicySetting):
 
     Each ML slider has string values for detection and prevention.
     """
+    setting_type = "mlslider"
 
-    detection: str = None
-    prevention: str = None
-    setting_type: str = "mlslider"
+    def __init__(self, data_dict: Dict = None):
+        self.detection: str = None
+        self.prevention: str = None
+
+        super().__init__(data_dict)
 
     def _dump_value(self) -> Dict[str, str]:
         return {
@@ -187,7 +208,8 @@ class MLSliderPolicySetting(ChangeablePolicySetting):
 
     def _load_data_dict(self, data_dict: Dict):
         super()._load_data_dict(data_dict)
-        value_dict = data_dict.get("value")
+
+        value_dict: Dict = data_dict.get("value")
         self.detection = value_dict.get("detection")
         self.prevention = value_dict.get("prevention")
 
@@ -203,13 +225,13 @@ class PolicySettingGroup(PolicySetting):
 
     def __init__(self, data_dict: Dict = None):
         """Return a new policy settings group, optionally configured via a dictionary."""
-        # Configure settings as an instance variable to avoid passing the same list reference
-        # around between different instances of this classs
         self.settings: List[PolicySetting] = []
+
         super().__init__(data_dict)
 
     def _load_data_dict(self, data_dict: Dict):
         super()._load_data_dict(data_dict)
+
         inner_settings: List[Dict] = data_dict.get("settings", [])
         for inner_setting_dict in inner_settings:
             setting_template_name = inner_setting_dict.get("type")
@@ -254,25 +276,26 @@ class Policy:
     GroupAssignent object.
     """
 
-    cid: str = None
-    created_by: str = None
-    created_timestamp: datetime = None
-    description: str = None
-    enabled: bool = None
-    groups: List[GroupAssignment] = None
-    modified_by: str = None
-    modified_timestamp: str = None
-    name: str = None
-    platform_name: str = None
-    policy_id: str = None
-    settings_groups: List[PolicySettingGroup] = None
-    settings_key_name = "settings"
-
     def __init__(self, data_dict: Dict = None, style: str = "response"):
         """Return a completely built Policy object.
 
         The object can be created blank, or populated based on a Falcon API response dictionary.
         """
+        # Configure the general settings that every policy will contain
+        self.cid: str = None
+        self.created_by: str = None
+        self.created_timestamp: datetime = None
+        self.description: str = None
+        self.enabled: bool = None
+        self.groups: List[GroupAssignment] = None
+        self.modified_by: str = None
+        self.modified_timestamp: str = None
+        self.name: str = None
+        self.platform_name: str = None
+        self.policy_id: str = None
+        self.settings_groups: List[PolicySettingGroup] = None
+        self.settings_key_name = "settings"
+
         # Set lists up here to ensure we do not pass references around when multiple Policy classes
         # are instantiated
         self.groups = []

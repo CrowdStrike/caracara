@@ -33,7 +33,7 @@ class VariableInterpolator:  # pylint: disable=too-few-public-methods
     """Variable interpolation class.
 
     We define this as a class rather than a standalone function so that we only have to
-    compile the regex pattern ones. This gives a (very slight) performance gain when performing
+    compile the regex pattern once. This gives a (very slight) performance gain when performing
     interpolation against a long list of variables.
     """
 

@@ -37,8 +37,11 @@ def describe_prevention_policies(**kwargs):
         if policy.description:
             print(policy.description)
 
-        pretty_print(policy.dump())
-        pretty_print(policy.flat_dump())
+        logger.info("Policy JSON")
+        logger.info(pretty_print(policy.dump()))
+
+        logger.debug("Flat policy JSON for use with the Falcon API")
+        logger.debug(pretty_print(policy.flat_dump()))
 
         i += 1
 

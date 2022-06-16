@@ -6,7 +6,11 @@ FQL string representing all the filter objects within it.
 """
 import logging
 
-from typing import Any, List
+from typing import (
+    Any,
+    Dict,
+    List,
+)
 from uuid import uuid4
 
 from caracara.filters.fql import FalconFilterAttribute
@@ -25,7 +29,7 @@ class FalconFilter:
     type cannot be used as a key within the internal dictionary.
     """
 
-    available_filters = {}
+    available_filters: Dict[str, FalconFilterAttribute] = {}
     logger = logging.getLogger(__name__)
 
     def set_filter_value(self, filter_id: str, value):
@@ -66,7 +70,7 @@ class FalconFilter:
         self,
         filter_name: str,
         initial_value: Any = None,
-        initial_operator: str = "EQUAL"
+        initial_operator: str = "EQUAL",
     ) -> str:
         """
         Create a new filter and add it to the FalconFilter object.
@@ -82,7 +86,7 @@ class FalconFilter:
         if filter_name not in self.available_filters:
             raise Exception(filter_name)
 
-        new_filter = self.available_filters[filter_name]()
+        new_filter: FalconFilterAttribute = self.available_filters[filter_name]()
         if initial_value:
             new_filter.set_value(initial_value)
         if initial_operator:
@@ -92,7 +96,7 @@ class FalconFilter:
         self.logger.info("Created new %s filter with ID %s", filter_name, filter_id)
         return filter_id
 
-    def create_new_filter_from_kv_string(self, key_string: str, value):
+    def create_new_filter_from_kv_string(self, key_string: str, value) -> str:
         """
         Create a filter from a key->value string.
 
@@ -138,7 +142,7 @@ class FalconFilter:
         FQL can be generated instantly. Otherwise, the developer can add filter data at will,
         and then dump to FQL when ready.
         """
-        self.filters = {}
+        self.filters: Dict[str, FalconFilterAttribute] = {}
 
         self.logger.debug("Initialising a new FalconFilter object")
         if filters:

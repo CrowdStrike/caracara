@@ -33,8 +33,8 @@ def list_device_states(**kwargs):
 
     for device_id, device_data in response_data.items():
         hostname = device_data.get("hostname", "Unknown Hostname")
-        curstate = device_data.get("state", "Unknown")
-        logger.info("%s (%s): %s", device_id, hostname, curstate)
+        current_state = device_data.get("state", "Unknown")
+        logger.info("%s (%s): %s", device_id, hostname, current_state)
 
     logger.info("Found %d devices in %f seconds", len(response_data), float(timer))
     if not response_data:

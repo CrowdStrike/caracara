@@ -192,3 +192,7 @@ __*Coming soon!*__
 ## Contributing
 
 Interested in taking part in the development of the Caracara project? Start [here](CONTRIBUTING.md).
+
+## Why Caracara?
+
+Simple! We like birds at CrowdStrike, so what better bird to name a Python project after one that eats just about anything, including snakes :)

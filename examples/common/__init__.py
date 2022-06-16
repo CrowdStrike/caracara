@@ -8,11 +8,11 @@ __all__ = [
 from examples.common.example import caracara_example
 from examples.common.exceptions import (
     MissingArgument,
-    NoDevicesFound,
-    NoSessionsConnected,
-    NoLoginsFound,
     NoAddressesFound,
+    NoDevicesFound,
     NoGroupsFound,
+    NoLoginsFound,
+    NoSessionsConnected,
 )
 from examples.common.filter_loader import parse_filter_list
 from examples.common.timer import Timer

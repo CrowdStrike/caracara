@@ -1,5 +1,5 @@
 """Caracara exceptions."""
-from typing import List
+from typing import Dict, List
 
 
 class BaseCaracaraError(Exception):
@@ -9,14 +9,14 @@ class BaseCaracaraError(Exception):
 class GenericAPIError(BaseCaracaraError):
     """A generic error from the API."""
 
-    def __init__(self, error_list: list = None):
+    def __init__(self, errors: List[Dict] = None):
         """Construct an instance of the GenericAPIError class."""
         self.errors = [{
             "code": 500,
             "message": "An unexpected error has occurred"
         }]
-        if error_list:
-            self.errors = error_list
+        if errors:
+            self.errors = errors
         super().__init__(self.errors)
 
     def __str__(self):
@@ -90,6 +90,7 @@ class MissingArgument(GenericAPIError):
         else:
             arg_name = f"The required argument {arg_name}"
         arg_str = f"{arg_name} was not provided"
+
         self.errors = [{
             "code": 500,
             "message": arg_str
@@ -100,13 +101,14 @@ class MissingArgument(GenericAPIError):
 class MissingArguments(GenericAPIError):
     """A required argument was not provided."""
 
-    def __init__(self, arg_name: List[str] = None):
+    def __init__(self, arg_names: List[str] = None):
         """Construct an instance of the MissingArguments class."""
-        if not arg_name:
-            arg_name = "Required arguments"
+        if not arg_names:
+            arg_names = "Required arguments"
         else:
-            arg_name = f"The required arguments {', '.join(arg_name)}"
-        arg_str = f"{arg_name} were not provided"
+            arg_names = f"The required arguments {', '.join(arg_names)}"
+        arg_str = f"{arg_names} were not provided"
+
         self.errors = [{
             "code": 500,
             "message": arg_str
