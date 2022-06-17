@@ -10,8 +10,7 @@ from typing import Dict, List
 
 
 class PolicySetting(ABC):
-    """
-    Generic policy setting class.
+    """Generic policy setting class.
 
     Contains a list of settings and settings groups. This is recursive, as Falcon allows
     nested policy settings.
@@ -49,6 +48,7 @@ class GroupAssignment(PolicySetting):
     """Represents an assignment rule that maps a policy to a host group."""
 
     def __init__(self, data_dict: Dict = None):
+        """Configure a new Group Assignment object."""
         self.assignment_rule: str = None
         self.created_by: str = None
         self.created_timestamp: datetime = None
@@ -113,6 +113,12 @@ class ChangeablePolicySetting(PolicySetting, ABC):
     """
 
     def __init__(self, data_dict: Dict = None):
+        """Configure a new Changeable Policy Setting.
+
+        This constructor only handles parameters that are available in all policy settings.
+        Individual policy settings (such as toggles and sliders) have their own additional
+        settings to store the values that are passed to and from the API.
+        """
         self.description: str = None
         self.name: str = None
         self.setting_id: str = None
@@ -168,9 +174,14 @@ class ChangeablePolicySetting(PolicySetting, ABC):
 
 class TogglePolicySetting(ChangeablePolicySetting):
     """Toggle policy setting that has two options: enabled and disabled."""
+
     setting_type = "toggle"
 
     def __init__(self, data_dict: Dict = None):
+        """Configure a new Toggle.
+
+        We default this to None so that no position is ever assumed.
+        """
         self.enabled: bool = None
 
         super().__init__(data_dict)
@@ -192,9 +203,15 @@ class MLSliderPolicySetting(ChangeablePolicySetting):
 
     Each ML slider has string values for detection and prevention.
     """
+
     setting_type = "mlslider"
 
     def __init__(self, data_dict: Dict = None):
+        """Configure a new ML Slider.
+
+        We initially set detection and prevention to None so that no assumption is made
+        about the protection levels stored by the Cloud or desired by a user.
+        """
         self.detection: str = None
         self.prevention: str = None
 

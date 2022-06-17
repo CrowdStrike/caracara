@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Caracara Examples Collection.
+
 list_all_groups_members.py
+
 This example will use the API credentials configured in your config.yml file to
 list the device member details for every host group within your Falcon tenant.
 The example demonstrates how to use the Hosts API.
