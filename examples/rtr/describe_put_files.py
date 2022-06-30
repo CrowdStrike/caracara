@@ -20,9 +20,11 @@ def describe_put_files(**kwargs):
     client: Client = kwargs['client']
     logger: logging.Logger = kwargs['logger']
 
-    logger.info("Listing available PUT files")
-    put_files = client.rtr.describe_put_files()
-    pretty_print(put_files)
+    with client:
+        logger.info("Listing available PUT files")
+        for put_file_id, put_file_data in client.rtr.describe_put_files().items():
+            logger.info("%s\n%s", put_file_id, pretty_print(put_file_data))
 
 
-describe_put_files()
+if __name__ == '__main__':
+    describe_put_files()

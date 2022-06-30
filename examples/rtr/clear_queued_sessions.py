@@ -27,4 +27,5 @@ def clear_queued_sessions(**kwargs):
     client.rtr.clear_queued_sessions()
 
 
-clear_queued_sessions()
+if __name__ == "__main__":
+    clear_queued_sessions()

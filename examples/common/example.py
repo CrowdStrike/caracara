@@ -2,6 +2,7 @@
 # pylint: disable=duplicate-code
 import logging
 import os
+import sys
 
 from functools import wraps
 from typing import Dict
@@ -42,7 +43,15 @@ def _get_profile() -> Dict:
         raise Exception("You must create a profiles stanza in the configuration YAML file")
 
     profile_names = list(config['profiles'].keys())
-    profile_name = _select_profile(profile_names)
+    # Check to see if the user provided us with a profile name as the first argument
+    profile_name = None
+    if len(sys.argv) > 1:
+        profile_name = sys.argv[1]
+        if profile_name not in profile_names:
+            raise Exception(f"The profile named {profile_name} does not exist in config.yml")
+    else:
+        profile_name = _select_profile(profile_names)
+
     profile = config['profiles'][profile_name]
     return profile
 

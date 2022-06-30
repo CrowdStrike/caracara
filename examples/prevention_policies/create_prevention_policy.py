@@ -21,4 +21,5 @@ def create_prevention_policy(**kwargs):
     pretty_print(prevention_policy.flat_dump())
 
 
-create_prevention_policy()
+if __name__ == "__main__":
+    create_prevention_policy()

@@ -1,5 +1,4 @@
-"""
-Caracara batching support.
+"""Caracara batching support.
 
 This module contains all the required code to generically parallelise retrieval of data batches.
 
@@ -35,7 +34,10 @@ def batch_data_pull_threads() -> int:
     return thread_count
 
 
-def batch_get_data(lookup_ids: str, func: Callable[[object, List[str], str], Dict]):
+def batch_get_data(
+    lookup_ids: str,
+    func: Callable[[object, List[str], str], Dict],
+) -> Dict[str, Dict]:
     """Retrieve details for the list of AIDs provided.
 
     Arguments

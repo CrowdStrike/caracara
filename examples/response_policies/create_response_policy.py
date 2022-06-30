@@ -21,4 +21,5 @@ def create_response_policy(**kwargs):
     pretty_print(response_policy.flat_dump())
 
 
-create_response_policy()
+if __name__ == "__main__":
+    create_response_policy()
