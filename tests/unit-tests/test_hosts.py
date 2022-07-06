@@ -74,9 +74,11 @@ def hosts_test():
         @patch("caracara.modules.hosts.hosts.Hosts", autospec=falconpy.Hosts)
         @patch("caracara.client.OAuth2")
         def new_func(mock_oauth2, mock_hosts, mock_hostgroup):
-            auth = Client(
-                client_id="abc",
-                client_secret="def",
+            # B106 is a bandit warning for hardcoded passwords, this is a testing context and
+            # the credentials passed to this constructor aren't valid and aren't used.
+            auth = Client(  # nosec B106:hardcoded_password_funcarg
+                client_id="testing id",
+                client_secret="testing secret",
                 cloud_name="auto",
             )
 
