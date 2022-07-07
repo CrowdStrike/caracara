@@ -1,7 +1,13 @@
+"""Unit tests for HostsApiModule"""
 from unittest.mock import patch
-from caracara import Client
 import falconpy
+from caracara import Client
 
+# A lot of mock methods need a certain function signature, and since they only mock functionality
+# they do not always use all the arguments. So we disable the unused-argument warning.
+# We also disable the redefined-builtin warning, as falconpy uses builtin identifiers like 'filter'
+# so we must use it also in order to mock it.
+# pylint: disable=unused-argument, redefined-builtin
 
 mock_devices = {
     "00000000000000000000000000000000": {
@@ -24,6 +30,7 @@ hidden_ids = [i for i, dev in mock_devices.items() if dev.get("host_hidden_statu
 
 
 def mock_query_devices_by_filter_scroll(*, filter, limit, offset):
+    """Mock method for falconpy.Hosts.query_devices_by_filter_scroll"""
     assert filter is None
 
     if offset is None:
@@ -42,6 +49,7 @@ def mock_query_devices_by_filter_scroll(*, filter, limit, offset):
 
 
 def mock_query_hidden_devices(*, filter, limit, offset):
+    """Mock method for falconpy.Hosts.query_hidden_devices"""
     assert filter is None
 
     if offset is None:
@@ -60,6 +68,7 @@ def mock_query_hidden_devices(*, filter, limit, offset):
 
 
 def mock_get_device_details(ids, *, parameters=None):
+    """Mock method for falconpy.Hosts.get_device_details"""
     return {
         "body": {
             "resources": [mock_devices[id_] for id_ in ids]
@@ -94,6 +103,7 @@ def hosts_test():
 
 @hosts_test()
 def test_describe_devices(auth: Client, **_):
+    """Unit test for HostsApiModule.describe_devices"""
     # Mock falconpy methods
     auth.hosts.hosts_api.configure_mock(**{
         "query_devices_by_filter_scroll.side_effect": mock_query_devices_by_filter_scroll,
@@ -108,6 +118,7 @@ def test_describe_devices(auth: Client, **_):
 
 @hosts_test()
 def test_describe_hidden_devices(auth: Client, **_):
+    """Unit test for HostsApiModule.describe_hidden_devices"""
     # Mock falconpy methods
     auth.hosts.hosts_api.configure_mock(**{
         "query_hidden_devices.side_effect": mock_query_hidden_devices,
@@ -122,6 +133,7 @@ def test_describe_hidden_devices(auth: Client, **_):
 
 @hosts_test()
 def test_describe_login_history(auth: Client, **_):
+    """Unit test for HostsApiModule.describe_login_history"""
     mock_login_history = {
         "00000000000000000000000000000000": {
             "device_id": "00000000000000000000000000000000",
@@ -165,6 +177,7 @@ def test_describe_login_history(auth: Client, **_):
 
 @hosts_test()
 def test_describe_network_address_history(auth: Client, **_):
+    """Unit test for HostsApiModule.describe_network_address_history"""
     # There are only entries for the visible devices
     mock_network_history = {
         "00000000000000000000000000000000": {
@@ -212,6 +225,7 @@ def test_describe_network_address_history(auth: Client, **_):
 
 @hosts_test()
 def test_contain(auth: Client, **_):
+    """Unit test for HostsApiModule.contain"""
     resources = []
 
     def mock_perform_action(*, ids, action_name):
@@ -234,6 +248,7 @@ def test_contain(auth: Client, **_):
 
 @hosts_test()
 def test_release(auth: Client, **_):
+    """Unit test for HostsApiModule.release"""
     resources = []
 
     def mock_perform_action(*, ids, action_name):
@@ -256,6 +271,7 @@ def test_release(auth: Client, **_):
 
 @hosts_test()
 def test_hide(auth: Client, **_):
+    """Unit test for HostsApiModule.hide"""
     resources = []
 
     def mock_perform_action(*, ids, action_name):
@@ -278,6 +294,7 @@ def test_hide(auth: Client, **_):
 
 @hosts_test()
 def test_unhide(auth: Client, **_):
+    """Unit test for HostsApiModule.unhide"""
     resources = []
 
     def mock_perform_action(*, ids, action_name):
@@ -300,6 +317,7 @@ def test_unhide(auth: Client, **_):
 
 @hosts_test()
 def test_tag(auth: Client, **_):
+    """Unit test for HostsApiModule.tag"""
     resources = []
     tags = ["tag1", "tag2"]
 
@@ -323,6 +341,7 @@ def test_tag(auth: Client, **_):
 
 @hosts_test()
 def test_untag(auth: Client, **_):
+    """Unit test for HostsApiModule.untag"""
     resources = []
     tags = ["tag1", "tag2"]
 
@@ -346,6 +365,7 @@ def test_untag(auth: Client, **_):
 
 @hosts_test()
 def test_get_device_ids(auth: Client, **_):
+    """Unit test for HostsApiModule.get_device_ids"""
     auth.hosts.hosts_api.configure_mock(**{
         "query_devices_by_filter_scroll.side_effect": mock_query_devices_by_filter_scroll,
     })
@@ -355,6 +375,7 @@ def test_get_device_ids(auth: Client, **_):
 
 @hosts_test()
 def test_get_hidden_ids(auth: Client, **_):
+    """Unit test for HostsApiModule.get_hidden_ids"""
     auth.hosts.hosts_api.configure_mock(**{
         "query_hidden_devices.side_effect": mock_query_hidden_devices,
     })
