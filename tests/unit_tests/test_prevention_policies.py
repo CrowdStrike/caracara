@@ -1,5 +1,6 @@
 """Unit tests for PreventionPoliciesApiModule"""
 import copy
+
 from unittest.mock import patch
 
 import falconpy
