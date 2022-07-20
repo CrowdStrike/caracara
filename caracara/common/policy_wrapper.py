@@ -1,3 +1,5 @@
+# Disable TODO warning, to be removed when a wrapper is implemented for `ioa_rule_groups`
+# pylint: disable=W0511
 """
 Caracara wrapper for Policies API.
 
