@@ -325,7 +325,7 @@ class Policy:
         self.modified_timestamp = data_dict.get("modified_timestamp")
         self.name = data_dict.get("name")
         self.platform_name = data_dict.get("platform_name")
-        self._raw_ioa_rule_groups = data_dict.get("ioa_rule_groups") # TODO: see earlier TODO
+        self._raw_ioa_rule_groups = data_dict.get("ioa_rule_groups")  # TODO: see earlier TODO
 
         # Load all groups as GroupAssignment objects
         groups: List[Dict] = data_dict.get("groups", [])
@@ -362,7 +362,7 @@ class Policy:
         }
 
         if self.style == "prevention":
-            dumped["ioa_rule_groups"] = self._raw_ioa_rule_groups # TODO: see earlier TODO
+            dumped["ioa_rule_groups"] = self._raw_ioa_rule_groups  # TODO: see earlier TODO
 
         return dumped
 
