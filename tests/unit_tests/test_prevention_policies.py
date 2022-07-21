@@ -32,6 +32,10 @@ def prevpol_test():
     return decorator
 
 
+# Disabling this warning because these are not publicly shared constants, they're just locally
+# shared test variables. The reused mock function also does not need a docstring, as it's purpose
+# is conveyed by the function it's mocking.
+# pylint: disable=invalid-name,missing-function-docstring
 test_filters = None
 test_sort = SORT_ASC
 
@@ -130,7 +134,7 @@ def test_push_policy(auth: Client, **_):
     mock_cid = "00000000000000000000000000000001"
 
     def mock_create_policies(body):
-        body = copy.deepcopy(body)  # have to clone body otherwise assert_called_once_with will not work
+        body = copy.deepcopy(body)  # must deep copy for assert_called_once_with to work correctly
         body["resources"][0]["cid"] = mock_cid
         return {"body": body}
 
