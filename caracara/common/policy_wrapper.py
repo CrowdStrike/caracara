@@ -9,7 +9,7 @@ It is to be extended by the respective modules (response_policies, prevention_po
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Dict, List
+from typing import Any, Dict, List
 
 
 class PolicySetting(ABC):
@@ -285,7 +285,7 @@ class Policy:
 
     # TODO: Replace with a proper wrapper around ioa_rule_groups, this is temporary so that this
     #       result is still reachable from the 'dump' method when style="prevention".
-    _raw_ioa_rule_groups: dict = None
+    _raw_ioa_rule_groups: List[Dict[str, Any]] = None
 
     def __init__(self, data_dict: Dict = None, style: str = "response"):
         """
