@@ -3,10 +3,12 @@
 This file contains wrapper classes that can represent policies in a generic way.
 It is to be extended by the respective modules (response_policies, prevention_policies, etc.)
 """
+# Disable TODO warning, to be removed when a wrapper is implemented for `ioa_rule_groups`
+# pylint: disable=W0511
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Dict, List
+from typing import Any, Dict, List
 
 
 class PolicySetting(ABC):
@@ -313,6 +315,10 @@ class Policy:
         self.settings_groups: List[PolicySettingGroup] = None
         self.settings_key_name = "settings"
 
+        # TODO: Replace with a proper wrapper around ioa_rule_groups, this is temporary so that this
+        #       result is still reachable from the 'dump' method when style="prevention".
+        self._raw_ioa_rule_groups: List[Dict[str, Any]] = None
+
         # Set lists up here to ensure we do not pass references around when multiple Policy classes
         # are instantiated
         self.groups = []
@@ -345,6 +351,7 @@ class Policy:
         self.modified_timestamp = data_dict.get("modified_timestamp")
         self.name = data_dict.get("name")
         self.platform_name = data_dict.get("platform_name")
+        self._raw_ioa_rule_groups = data_dict.get("ioa_rule_groups")  # TODO: see earlier TODO
 
         # Load all groups as GroupAssignment objects
         groups: List[Dict] = data_dict.get("groups", [])
@@ -363,7 +370,7 @@ class Policy:
         can replicate the exact response sent back by the CrowdStrike API if this policy
         already happened to exist in the Cloud.
         """
-        return {
+        dumped = {
             "cid": self.cid,
             "created_by": self.created_by,
             "created_timestamp": self.created_timestamp,
@@ -375,8 +382,14 @@ class Policy:
             "modified_timestamp": self.modified_timestamp,
             "name": self.name,
             "platform_name": self.platform_name,
+            "ioa_rule_groups": self._raw_ioa_rule_groups,
             self.settings_key_name: [x.dump() for x in self.settings_groups],
         }
+
+        if self.style == "prevention":
+            dumped["ioa_rule_groups"] = self._raw_ioa_rule_groups  # TODO: see earlier TODO
+
+        return dumped
 
     def flat_dump(self) -> Dict:
         """Return a stripped down dictionary representing a full policy.

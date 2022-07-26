@@ -138,7 +138,10 @@ def caracara_example(example_func):
 
         client = Client(**falcon_config)
 
-        example_settings = _get_example_settings(profile, example_func.__globals__['__file__'])
+        example_settings = _get_example_settings(
+            profile,
+            example_func.__globals__['__file__'],
+        )
 
         # Pass data back to the example via keyword arguments
         kwargs['client'] = client
