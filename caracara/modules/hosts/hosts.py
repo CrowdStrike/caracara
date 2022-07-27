@@ -59,6 +59,7 @@ class HostsApiModule(FalconApiModule):
         release,
     )
 
+    # Import data history functions
     from caracara.modules.hosts._data_history import (
         describe_login_history,
         describe_network_address_history,
@@ -100,7 +101,7 @@ class HostsApiModule(FalconApiModule):
         untag,
     )
 
-    # Static methods have to be set
+    # Static methods have to be set within the class
     _create_tag_list = staticmethod(_create_tag_list)
 
     def _perform_action(self, action_name: str, device_ids: List[str]) -> Dict:
