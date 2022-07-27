@@ -1,14 +1,17 @@
 ![CrowdStrike Falcon](https://raw.githubusercontent.com/CrowdStrike/falconpy/main/docs/asset/cs-logo.png) [![Twitter URL](https://img.shields.io/twitter/url?label=Follow%20%40CrowdStrike&style=social&url=https%3A%2F%2Ftwitter.com%2FCrowdStrike)](https://twitter.com/CrowdStrike)<br/>
 
 # Caracara
+
+
+
 <!--
 ![PyPI - Status](https://img.shields.io/pypi/status/caracara)
-[![PyPI](https://img.shields.io/pypi/v/caracara)](https://pypi.org/project/caracara/)
 [![Pylint](https://github.com/CrowdStrike/caracara/actions/workflows/pylint.yml/badge.svg)](https://github.com/CrowdStrike/caracara/actions/workflows/pylint.yml)
 [![Flake8](https://github.com/CrowdStrike/caracara/actions/workflows/flake8.yml/badge.svg)](https://github.com/CrowdStrike/caracara/actions/workflows/flake8.yml)
 [![Bandit](https://github.com/CrowdStrike/caracara/actions/workflows/bandit.yml/badge.svg)](https://github.com/CrowdStrike/caracara/actions/workflows/bandit.yml)
 [![CodeQL](https://github.com/CrowdStrike/caracara/actions/workflows/codeql.yml/badge.svg)](https://github.com/CrowdStrike/caracara/actions/workflows/codeql.yml)
 -->
+[![PyPI](https://img.shields.io/pypi/v/caracara)](https://pypi.org/project/caracara/)
 ![OSS Lifecycle](https://img.shields.io/osslifecycle/CrowdStrike/caracara)
 
 A friendly wrapper to help you interact with the CrowdStrike Falcon API. Less code, less fuss, better performance, and full interoperability with [FalconPy](https://github.com/CrowdStrike/falconpy/).
@@ -83,14 +86,13 @@ python3 -m pip uninstall caracara
 
 </details>
 
-## Basic Usage Example
+## Basic Usage Examples
 
 ```python
-"""
-This example will use the API credentials provided as parameters to
-list the names of all systems within your Falcon tenant that run Windows.
+"""List Windows devices.
 
-The example demonstrates how to use the FalconFilter() class and the Hosts API.
+This example will use the API credentials provided as keywords to list the
+IDs and hostnames of all systems within your Falcon tenant that run Windows.
 """
 
 from caracara import Client
@@ -104,7 +106,34 @@ filters = client.FalconFilter()
 filters.create_new_filter("OS", "Windows")
 
 response_data = client.hosts.describe_devices(filters)
-print(f"Found {len(response_data.keys())} devices running Windows")
+print(f"Found {len(response_data)} devices running Windows")
+
+for device_id, device_data in response_data.items():
+    hostname = device_data.get("hostname", "Unknown Hostname")
+    print(f"{device_id} - {hostname}")
+```
+
+You can also leverage the built in context manager and environment variables.
+
+```python
+"""List stale sensors.
+
+This example will use the API credentials set in the environment to list the
+hostnames and IDs of all systems within your Falcon tenant that have not checked
+into your CrowdStrike tenant within the past 7 days.
+
+This is determined based on the filter LastSeen less than or equal (LTE) to 7 days ago (-7d).
+"""
+
+from caracara import Client
+
+
+with Client(client_id="${CLIENT_ID_ENV_VARIABLE}", client_secret="${CLIENT_SECRET_ENV_VARIABLE}") as client:
+    filters = client.FalconFilter()
+    filters.create_new_filter("LastSeen", "-7d", "LTE")
+    response_data = client.hosts.describe_devices(filters)
+
+print(f"Found {len(response_data)} stale devices")
 
 for device_id, device_data in response_data.items():
     hostname = device_data.get("hostname", "Unknown Hostname")
@@ -117,7 +146,7 @@ Each API wrapper is provided alongside example code. Cloning or downloading/extr
 
 Using the examples collection requires that you install our Python packaging tool of choice, [Poetry](https://python-poetry.org). Please refer to the Poetry project's [installation guide](https://python-poetry.org/docs/#installation) if you do not yet have Poetry installed.
 
-Once Poetry is installed, make sure you run `poetry install` within the `caracara` folder to set up the Python virtual environment.
+Once Poetry is installed, make sure you run `poetry install` within the root repository folder to set up the Python virtual environment.
 
 To configure the examples, first copy `examples/config.example.yml` to `examples/config.yml`. Then, add your API credentials and example-specific settings to `examples/config.yml`. Once you have set up profiles for each Falcon tenant you want to test with, execute examples using one of the two options below.
 
@@ -146,6 +175,14 @@ If you do not want to enter the Caracara virtual environment (e.g., because you 
 poetry run examples/get_devices/list_windows_devices.py
 ```
 
+All examples are also configured in the `pyproject.toml` file as scripts, allowing them to be executed simply.
+
+```shell
+poetry run stale-sensors
+```
+
+> To get a complete list of available examples, execute the command `util/list-examples.sh` from the root of the repository folder.
+
 </details>
 
 ## Documentation
@@ -155,3 +192,7 @@ __*Coming soon!*__
 ## Contributing
 
 Interested in taking part in the development of the Caracara project? Start [here](CONTRIBUTING.md).
+
+## Why Caracara?
+
+Simple! We like birds at CrowdStrike, so what better bird to name a Python project after one that eats just about anything, including snakes :)

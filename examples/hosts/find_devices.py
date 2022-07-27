@@ -27,6 +27,8 @@ from examples.common import (
     caracara_example,
     parse_filter_list,
     pretty_print,
+    NoDevicesFound,
+    Timer,
 )
 
 
@@ -36,21 +38,32 @@ def find_devices(**kwargs):
     client: Client = kwargs['client']
     logger: logging.Logger = kwargs['logger']
     settings: Dict = kwargs['settings']
+    timer: Timer = Timer()
 
     filters = client.FalconFilter()
-    filter_list: List[Dict] = settings.get("filters") if settings else [{}]
-    parse_filter_list(filter_list, filters)
+    if 'filters' in settings:
+        filter_list: List[Dict] = settings['filters']
+        parse_filter_list(filter_list, filters)
+
     if filters.filters:
         logger.info("Getting a list of hosts that match the FQL string %s", filters.get_fql())
     else:
-        logger.info("No filter provided, getting a list of all devices within the tenant")
+        logger.info("No filter provided; getting a list of all devices within the tenant")
 
-    response_data = client.hosts.describe_devices(filters)
-    logger.info("Found %d devices", len(response_data))
+    with client:
+        response_data = client.hosts.describe_devices(filters)
 
-    for _, device_data in response_data.items():
+    for device_data in response_data.values():
         logger.info("%s", pretty_print(device_data))
 
+    logger.info("Found %d devices in %f seconds", len(response_data), float(timer))
+    if not response_data:
+        raise NoDevicesFound(filters.get_fql())
 
-if __name__ == '__main__':
-    find_devices()
+
+if __name__ in ["__main__", "examples.hosts.find_devices"]:
+    try:
+        find_devices()
+        raise SystemExit
+    except NoDevicesFound as no_devices:
+        raise SystemExit(no_devices) from no_devices

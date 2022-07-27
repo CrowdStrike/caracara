@@ -1,4 +1,14 @@
-"""Caracara API Client."""
+r"""Caracara base API interface client.
+
+CrowdStrike Caracara
+    _______ __ __             __
+   |   _   |  |__.-----.-----|  |_
+   |.  1___|  |  |  -__|     |   _|
+   |.  |___|__|__|_____|__|__|____|
+   |:  1   |
+   |::.. . |     for FalconPy
+   `-------'
+"""
 
 import logging
 
@@ -26,16 +36,14 @@ from caracara.modules import (
 
 
 class Client:
-    """
-    Falcon API client.
+    """Falcon API client.
 
     This class exposes all available Falcon API commands, and proxies requests through
     the FalconPy library.
     """
 
     class FalconFilter(FalconFilter):
-        """
-        Falcon Filter wrapper class.
+        """Falcon Filter wrapper class.
 
         Create a sub-class of the FalconFilter class which we own locally within
         the client. This allows us to dynamically calculate the FQL filter attributes
@@ -81,13 +89,23 @@ class Client:
             interpolator = VariableInterpolator()
             cloud_name = interpolator.interpolate(cloud_name)
             client_id = interpolator.interpolate(client_id)
+            client_secret = interpolator.interpolate(client_secret)
             member_cid = interpolator.interpolate(member_cid)
             user_agent = interpolator.interpolate(user_agent)
             proxy = interpolator.interpolate(proxy)
+            user_agent = interpolator.interpolate(user_agent)
+
+            if user_agent:
+                user_agent = f"{user_agent} ({user_agent_string()})"
+            else:
+                user_agent = user_agent_string()
+
+            self.logger.debug("User agent: %s", user_agent)
+
             auth_keys = {
                 "base_url": cloud_name,
                 "client_id": client_id,
-                "client_secret": interpolator.interpolate(client_secret),
+                "client_secret": client_secret,
                 "member_cid": member_cid,
                 "proxy": proxy,
                 "user_agent": user_agent,
@@ -108,10 +126,6 @@ class Client:
                 if auth_keys[k] is None:
                     del auth_keys[k]
 
-            if not user_agent:
-                user_agent = user_agent_string()
-            self.logger.debug("User agent: %s", user_agent)
-
             self.verbose = verbose
             self.logger.debug("Verbose mode: %s", verbose)
 
@@ -127,8 +141,11 @@ class Client:
             self.api_authentication = falconpy_authobject
         else:
             raise Exception("Impossible authentication scenario")
+
+        self.logger.info("Requesting API token")
         self.api_authentication.token()  # Need to force the authentication to resolve the base_url
         self.logger.info("Resolved Base URL: %s", self.api_authentication.base_url)
+
         # Configure modules here so that IDEs can pick them up
         self.logger.debug("Setting up Hosts module")
         self.hosts = HostsApiModule(self.api_authentication)
@@ -162,7 +179,7 @@ class Client:
 
     def __exit__(self, *args):
         """Discard our token when we exit the context."""
-        self.logger.info("Revoking API token")
+        self.logger.info("Discarding API token on Client exit")
         self.api_authentication.revoke(self.api_authentication.token_value)
         self.logger.debug("Discarding Caracara context manager")
         return args

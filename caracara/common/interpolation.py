@@ -1,5 +1,12 @@
-"""
-Caracara: Variable Interpolation Logic.
+r"""Caracara: Environment Variable Interpolator.
+
+     _______                ___ ___ __          __   _____
+    |   _   .---.-.--.--.  |   Y   |  |--.---.-|  |_|__   |
+    |   1___|  _  |  |  |  |.  |   |     |  _  |   _',  ,-
+    |____   |___._|___  |  |. / \  |__|__|___._|____||--|
+    |:  1   |     |_____|  |:      |                 '--
+    |::.. . |              |::.|:. |
+    `-------'              `--- ---'
 
 The functions within this file allow for interpolation of variables based on
 the contents of environment variables, similar to how Docker allows for
@@ -23,17 +30,15 @@ import re
 
 
 class VariableInterpolator:  # pylint: disable=too-few-public-methods
-    """
-    Variable interpolation class.
+    """Variable interpolation class.
 
     We define this as a class rather than a standalone function so that we only have to
-    compile the regex pattern ones. This gives a (very slight) performance gain when performing
+    compile the regex pattern once. This gives a (very slight) performance gain when performing
     interpolation against a long list of variables.
     """
 
     def __init__(self):
-        """
-        Configure the interpolation regex pattern.
+        """Configure the interpolation regex pattern.
 
         The pattern will search for all instances of ${text} in a string, but
         will not match on $${text}. This allows a double dollar sign to act as
@@ -46,8 +51,7 @@ class VariableInterpolator:  # pylint: disable=too-few-public-methods
         self.logger.debug("Instantiating a Variable Interpolator")
 
     def interpolate(self, input_string: str) -> str:
-        """
-        Take an input string and swap interpolation strings with environment variables.
+        """Take an input string and swap interpolation strings with environment variables.
 
         Since the regex pattern only returns the inner text, we need to re-add the
         $ and {} to the matched string to find the string to replace.

@@ -22,7 +22,13 @@ from typing import Dict, List
 
 from caracara import Client
 
-from examples.common import caracara_example, parse_filter_list, pretty_print
+from examples.common import (
+    caracara_example,
+    parse_filter_list,
+    MissingArgument,
+    NoDevicesFound,
+    NoSessionsConnected,
+)
 
 
 @caracara_example
@@ -32,11 +38,15 @@ def queue_command(**kwargs):
     logger: logging.Logger = kwargs['logger']
     settings: Dict = kwargs['settings']
 
-    cmd = settings.get("command")
-    if not cmd:
-        logger.critical("No command argument provided. Aborting.")
-        return
+    if not settings or 'command' not in settings:
+        error_message = "".join([
+            "You must configure the 'cmd' argument within your "
+            "YAML file to proceed with this example."
+        ])
+        logger.critical(error_message)
+        raise MissingArgument("cmd", error_message)
 
+    cmd: str = settings['command']
     logger.info("Running the command: %s", cmd)
 
     filters = client.FalconFilter()
@@ -47,7 +57,7 @@ def queue_command(**kwargs):
     device_ids = client.hosts.get_device_ids(filters=filters)
     if not device_ids:
         logger.warning("No devices matched the filter. Aborting.")
-        return
+        raise NoDevicesFound(filters.get_fql())
 
     logger.info("Connecting to %d devices with queueing enabled", len(device_ids))
 
@@ -55,18 +65,27 @@ def queue_command(**kwargs):
     batch_session.connect(device_ids=device_ids, queueing=True)
 
     connected_devices = batch_session.device_ids()
-
     if not connected_devices:
         logger.warning(
             "No devices successfully connected within %ds. Aborting.",
             batch_session.default_timeout,
         )
-        return
+        raise NoSessionsConnected
 
     logger.info("Connected to %d systems", len(connected_devices))
 
-    result = batch_session.run_generic_command(cmd)
-    pretty_print(data=result, rewrite_new_lines=True)
+    for device_id, device_result in batch_session.run_generic_command(cmd).items():
+        logger.info("[%s] Task queued: %s", device_id, device_result["task_id"])
 
 
-queue_command()
+if __name__ in ["__main__", "examples.rtr.queue_command"]:
+    try:
+        queue_command()
+        print("Command queued for execution across specified hosts.")
+        raise SystemExit
+    except MissingArgument as no_command:
+        raise SystemExit(no_command) from no_command
+    except NoDevicesFound as no_devices:
+        raise SystemExit(no_devices) from no_devices
+    except NoSessionsConnected as no_sessions:
+        raise SystemExit(no_sessions) from no_sessions

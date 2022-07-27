@@ -25,4 +25,5 @@ def describe_queued_sessions(**kwargs):
     pretty_print(sessions)
 
 
-describe_queued_sessions()
+if __name__ == "__main__":
+    describe_queued_sessions()

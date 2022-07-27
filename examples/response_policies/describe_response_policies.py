@@ -43,4 +43,5 @@ def describe_response_policies(**kwargs):
         i += 1
 
 
-describe_response_policies()
+if __name__ == '__main__':
+    describe_response_policies()

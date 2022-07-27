@@ -1,5 +1,4 @@
-"""
-Generic Caracara API module.
+"""Generic Caracara API module.
 
 This module contains the the FalconApiModule class, which represents a generic
 Caracara API module. All modules, including Hosts, Prevention Policies, etc.

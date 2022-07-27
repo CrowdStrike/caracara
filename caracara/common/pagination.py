@@ -1,5 +1,13 @@
-"""
-Caracara: Pagination functions.
+r"""Caracara: Pagination functions.
+
+MM'''''''`YM                   oo                     dP
+MM  mmmmm  M                                          88
+M'        .M .d8888b. .d8888b. dP 88d888b. .d8888b. d8888P .d8888b. 88d888b.
+MM  MMMMMMMM 88'  `88 88'  `88 88 88'  `88 88'  `88   88   88'  `88 88'  `88
+MM  MMMMMMMM 88.  .88 88.  .88 88 88    88 88.  .88   88   88.  .88 88
+MM  MMMMMMMM `88888P8 `8888P88 dP dP    dP `88888P8   dP   `88888P' dP
+MMMMMMMMMMMM               .88
+                       d8888P                       for CrowdStrike Caracara
 
 This file contains code for all types of pagination styles used by the
 Falcon APIs, to avoid code repetition within the individual modules.
@@ -10,14 +18,15 @@ of data dictionaries returned in response to a list of IDs, the batching
 code file contains the required code to pull this data down as quickly
 as possible.
 
-Three types of paginator are in use:
+Four types of paginator are in use:
 
 Style 1 (Numerical Offset)
+Implementation function: all_pages_numbered_offset()
+
 We paginate by providing a limit (default: 100), and grabbing pages with
 that number of items per page. Keep going until len(list of items) == total
 
-It may be theoretically possible to parallise these requests, as an offset
-and limit are used instead of a token that changes per page.
+This is optimised for performance by grabbing multiple pages in parallel.
 
 Pages are structured like this
 {
@@ -31,14 +40,15 @@ Pages are structured like this
 }
 
 
-
 Style 2 (Token Offset)
+Implementation function: all_pages_token_offset()
+
 In this style, a token is returned by the server. When we send the token
 to the server, we get the next page of content as well as another token.
 We keep requesting data until we have all the items.
 
 It is not possible to parallise these requests because each page depends
-on the retrieval of its token from the previous page
+on the retrieval of its page token from the previous page.
 
 Pages are structured like this
 {
@@ -49,8 +59,21 @@ Pages are structured like this
     }
 }
 
-Style 3
-Used in Intel. TBC.
+
+Style 3 (Token After)
+This style works exactly the same as Style 2, except the token is stored in
+an attribute named `after`.
+Implementation function: all_pages_token_offset(offset_key_named_after=True)
+
+
+Style 4 (Token _marker)
+Some APIs (such as those associated with our Intel service) divide data up by
+times, rather than by pages of data. In these cases, an FQL filter named
+_marker is used to indicate the position within the result set.
+Once a Caracara wrapper to such an API is implemented, a function to handle
+this will be built.
+See the "Deep Pagination Leveraging Markers (Timestamp)" section here:
+    https://falconpy.io/Usage/Response-Handling.html
 """
 import concurrent.futures
 import logging
@@ -202,8 +225,14 @@ def all_pages_token_offset(
     func: Callable[[Dict[str, Dict]], List[Dict] or List[str]] or partial,
     logger: logging.Logger,
     limit: int = SCROLL_BATCH_SIZE,
+    offset_key_named_after: bool = False,
 ) -> List:
-    """Grab all pages from a token offset-based pagination endpoint (Style 2)."""
+    """Grab all pages from a token offset-based pagination endpoint.
+
+    This defaults to implenting Style 2, which is a scroll-style paginatied endpoint
+    that takes a token as an offset. However, if you set offset_key_named_after to True,
+    this endpoint implements pagination Style 3.
+    """
     logger = logger.getChild(__name__)
     if isinstance(func, partial):
         logger.info(
@@ -228,15 +257,22 @@ def all_pages_token_offset(
             "Fetching page %d: %d to up to %d",
             current_page, len(item_ids) + 1, limit * current_page,
         )
-        response = func(limit=limit, offset=offset)['body']
+        if offset_key_named_after:
+            response = func(limit=limit, after=offset)['body']
+        else:
+            response = func(limit=limit, offset=offset)['body']
         logger.debug(response)
         item_ids.extend(response['resources'])
         if not item_ids:
             # Nothing was returned, so bail out in case the pagination data does not exist
             return []
 
-        if response['meta']['pagination']['total'] > len(item_ids):
-            offset = response['meta']['pagination']['offset']
+        pagination_data = response['meta']['pagination']
+        if pagination_data['total'] > len(item_ids):
+            if offset_key_named_after:
+                offset = pagination_data['after']
+            else:
+                offset = pagination_data['offset']
         else:
             complete = True
 

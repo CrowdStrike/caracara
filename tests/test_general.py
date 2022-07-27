@@ -19,7 +19,7 @@ AUTH = Client(
 
 def test_version():
     """Assert that the reflective version loading code works"""
-    assert __version__ == '0.1.0'
+    assert __version__ == '0.1.2'
 
 
 def cloud_validation_testing():
