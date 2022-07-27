@@ -9,7 +9,7 @@ readme = "README.md"
 python = "^3.7"
 py7zr = "^0.17.4"
 pyppmd = "0.17.4"
-crowdstrike-falconpy-dev = "^1.1.4"
+crowdstrike-falconpy = "^1.1.5"
 
 [tool.poetry.dev-dependencies]
 bandit = "^1.7.3"
