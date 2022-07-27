@@ -128,8 +128,29 @@ class HostsApiModule(FalconApiModule):
         """
         self.logger.info("Describing devices according to the filter string %s", filters)
         device_ids = self.get_device_ids(filters)
-        device_data = batch_get_data(device_ids, self.hosts_api.get_device_details)
+        device_data = self.get_device_data(device_ids)
 
+        return device_data
+
+    def get_device_data(self, device_ids: List[str]) -> Dict[str, Dict]:
+        """Return a dictionary containing details for every device specified by ID.
+
+        You should only use this endpoint if you already have a list of Device IDs / AIDs,
+        and want to retreive data about them directly. If you need to get device data via a
+        filter, and you do not yet have a list of Device IDs, you should consider using the
+        describe_devices() function.
+
+        Arguments
+        ---------
+        device_ids: [str], required
+            A list of Falcon Device IDs.
+
+        Returns
+        -------
+        dict: A dictionary containing details for every device listed.
+        """
+        self.logger.info("Obtaining data for %s devices", len(device_ids))
+        device_data = batch_get_data(device_ids, self.hosts_api.get_device_details)
         return device_data
 
     @filter_string
