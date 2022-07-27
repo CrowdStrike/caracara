@@ -17,7 +17,7 @@ jobs:
   flake8:
     strategy:
       matrix:
-        python-version: [3.8, 3.10]
+        python-version: ["3.8", "3.10"]
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
