@@ -44,7 +44,7 @@ class PreventionPoliciesApiModule(FalconApiModule):
         self.logger.info("Describing all Falcon prevention policies")
         partial_func = partial(
             self.prevention_policies_api.query_combined_policies,
-            filters=filters,
+            filter=filters,
             sort=sort,
         )
         resources = all_pages_numbered_offset_parallel(func=partial_func, logger=self.logger)
