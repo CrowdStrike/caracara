@@ -58,7 +58,7 @@ mock_policies = [
 ]
 
 
-def mock_query_combined_policies(filter, sort, offset, limit):
+def mock_query_combined_policies(filter, sort, offset, limit):  # pylint: disable=redefined-builtin
     assert filter == test_filters
     assert sort == test_sort
 
