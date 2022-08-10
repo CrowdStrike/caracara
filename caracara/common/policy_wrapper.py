@@ -382,7 +382,6 @@ class Policy:
             "modified_timestamp": self.modified_timestamp,
             "name": self.name,
             "platform_name": self.platform_name,
-            "ioa_rule_groups": self._raw_ioa_rule_groups,
             self.settings_key_name: [x.dump() for x in self.settings_groups],
         }
 
