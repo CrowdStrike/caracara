@@ -325,9 +325,13 @@ class RTRBatchSession:
 
         return get_files
 
-    @_batch_session_required
     def refresh_sessions(self, timeout: int = default_timeout):
         """Refresh a batch RTR session, resetting the timeout back to 10 minutes."""
+        # Check whether we are connected to a session in this function rather than via the
+        # _batch_session_required decorator to avoid an infinite loop
+        if self.batch_sessions is None:
+            raise Exception("You must connect to hosts with the connect() function first")
+
         self.logger.info("Refreshing batch RTR session")
 
         def worker(session: InnerRTRBatchSession, func: partial):
