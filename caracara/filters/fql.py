@@ -179,7 +179,7 @@ class FalconFilterAttribute(ABC):
         Convert the internal data structure to useful FQL.
 
         For different types of filters this function may need to be overridden.
-        It will work for str and list(str) filters out the box.
+        It will work for str, list(str) and bool filters out the box.
         """
         operator_symbol = FILTER_OPERATORS[self.operator]
 
@@ -200,6 +200,8 @@ class FalconFilterAttribute(ABC):
         else:
             if isinstance(self.value, str):
                 fql_value = f"'{self.value}'"
+            elif isinstance(self.value, bool):
+                fql_value = f"{str(self.value).lower()}"
             else:
                 fql_value = (
                     '[' +
