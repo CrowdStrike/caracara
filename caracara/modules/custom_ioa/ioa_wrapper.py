@@ -39,6 +39,12 @@ class IoaRuleGroup:
         if data_dict is not None:
             self._load_data_dict(data_dict=data_dict)
 
+    def __repr__(self):
+        return (
+            f"<{self.__class__.__name__}(id_={repr(self.id_)}, version={repr(self.version)}, "
+            f"name={repr(self.name)}, ...)>"
+        )
+
     def _load_data_dict(self, data_dict: Dict = None):
         """Load an IOA Rule Group dictionary from Falcon and set up the object accordingly."""
         self.comment = data_dict.get("comment")
@@ -156,7 +162,7 @@ class CustomIoaRule:
     name: str = None
     pattern_id: str = None
     pattern_severity: str = None
-    rulegroup_id: str = None
+    rulegroup_id: str = None  # TODO: for some reason this doesn't get populated by API
     ruletype_id: str = None
     ruletype_name: str = None
     version_ids: str = List[None]
@@ -173,6 +179,13 @@ class CustomIoaRule:
         if data_dict is not None:
             self._load_data_dict(data_dict=data_dict)
 
+    def __repr__(self):
+        return (
+            f"<{self.__class__.__name__}(group={repr(self.group)}, "
+            f"instance_id={repr(self.instance_id)}, instance_version={repr(self.instance_version)} "
+            f"name={repr(self.name)}, ruletype_name={repr(self.ruletype_name)}, ...)>"
+        )
+
     def _load_data_dict(self, data_dict: Dict = None):
         """Load an Custom IOA Rule dictionary from Falcon and set up the object accordingly."""
         self.action_label = data_dict.get("action_label")
@@ -185,7 +198,7 @@ class CustomIoaRule:
         self.description = data_dict.get("description")
         self.disposition_id = data_dict.get("disposition_id")
         self.enabled = data_dict.get("enabled")
-        self.field_values = data_dict.get("field_value")
+        self.field_values = data_dict.get("field_values")
         self.instance_id = data_dict.get("instance_id")
         self.instance_version = data_dict.get("instance_version")
         self.magic_cookie = data_dict.get("magic_cookie")
