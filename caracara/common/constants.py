@@ -27,3 +27,6 @@ PLATFORMS = [
     "Mac",
     "Windows",
 ]
+
+#
+DEFAULT_COMMENT = "This action was performed by the Caracara Python library."

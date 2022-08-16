@@ -5,6 +5,7 @@ from typing import Dict, List, Optional
 from falconpy import OAuth2, CustomIOA
 
 from caracara.common.batching import batch_get_data
+from caracara.common.constants import DEFAULT_COMMENT
 from caracara.common.pagination import all_pages_numbered_offset_parallel
 from caracara.filters import FalconFilter
 from caracara.filters.decorators import filter_string
@@ -109,3 +110,20 @@ class CustomIoaApiModule(FalconApiModule):
         self.logger.info("Obtaining data for %s IOA rule groups", len(rule_group_ids))
         device_data = batch_get_data(rule_group_ids, self.custom_ioa_api.get_rule_groups)
         return device_data
+
+    def delete_rule_groups(
+        self, rule_groups: List[IoaRuleGroup or str], comment: str = DEFAULT_COMMENT
+    ):
+        """Delete an IOA rule group.
+
+        Arguments
+        ---------
+        `rule_groups`: `List[IoaRuleGroup or str]`
+            Rule group to delete, either an `IoaRuleGroup` object or a rule group ID.
+        `comment`: `str`
+            A comment for the audit log.
+        """
+        for i, rule_group in enumerate(rule_groups):
+            if isinstance(rule_group, IoaRuleGroup):
+                rule_groups[i] = rule_group.id_
+        self.custom_ioa_api.delete_rule_groups(ids=rule_groups, comment=comment)
