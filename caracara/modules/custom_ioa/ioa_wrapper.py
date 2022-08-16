@@ -97,6 +97,8 @@ class IoaRuleGroup:
         for rule in self.rules:
             dumped["rules"].append(rule.dump())
 
+        return dumped
+
     def flat_dump(self, mode: str = 'auto') -> Dict:
         """Return a stripped down dictionary representing a full IOA Rule Group.
 
