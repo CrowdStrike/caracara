@@ -38,7 +38,7 @@ class CustomIoaApiModule(FalconApiModule):
         self.logger.debug(resources)
         return resources
 
-    @ filter_string
+    @filter_string
     def describe_ioa_rule_groups(
         self, filters: str or FalconFilter = None, sort: str = "name.asc"
     ) -> List[IoaRuleGroup]:
