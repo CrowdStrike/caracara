@@ -97,7 +97,7 @@ class CustomIoaApiModule(FalconApiModule):
 
         Arguments
         ---------
-        `ids`: `List[str]`
+        `rule_group_ids`: `List[str]`
             List of IOA rule group IDs to fetch
 
         Returns
