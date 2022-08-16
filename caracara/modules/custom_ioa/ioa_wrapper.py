@@ -65,7 +65,9 @@ class IoaRuleGroup:
 
         self.rules = []
         for rule_dict in data_dict.get("rules", []):
-            self.rules.append(CustomIoaRule(group=self, data_dict=rule_dict))
+            rule = CustomIoaRule(group=self, data_dict=rule_dict)
+            rule.rulegroup_id = self.id_  # API doesn't seem to populate this field, so we do it
+            self.rules.append(rule)
 
     def dump(self) -> Dict:
         """Return a dictionary representing a full IOA Rule Group
@@ -162,7 +164,7 @@ class CustomIoaRule:
     name: str = None
     pattern_id: str = None
     pattern_severity: str = None
-    rulegroup_id: str = None  # TODO: for some reason this doesn't get populated by API
+    rulegroup_id: str = None
     ruletype_id: str = None
     ruletype_name: str = None
     version_ids: str = List[None]
