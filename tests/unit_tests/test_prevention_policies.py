@@ -1,7 +1,10 @@
 """Unit tests for PreventionPoliciesApiModule"""
 import copy
-from unittest.mock import patch
+
 import falconpy
+
+from unittest.mock import patch
+
 from caracara import Client, Policy
 from caracara.common.sorting import SORT_ASC
 
@@ -15,8 +18,9 @@ def prevpol_test():
         )
         @patch("caracara.client.OAuth2")
         def test_new_func(mock_oauth2, mock_prevpol):
-            # B106 is a bandit warning for hardcoded passwords, this is a testing context and
-            # the credentials passed to this constructor aren't valid and aren't used.
+            # B106 is a bandit warning for hardcoded passwords.
+            # This is a testing context and the credentials passed to this constructor
+            # are not valid, so we can legitimately disable this warning.
             auth = Client(  # nosec B106:hardcoded_password_funcarg
                 client_id="testing id",
                 client_secret="testing secret",
@@ -32,8 +36,8 @@ def prevpol_test():
     return decorator
 
 
-# Disabling this warning because these are not publicly shared constants, they're just locally
-# shared test variables. The reused mock function also does not need a docstring, as it's purpose
+# Disabling this warning because these are not publicly shared constants; they're just locally
+# shared test variables. The reused mock function also does not need a docstring, as its purpose
 # is conveyed by the function it's mocking.
 # pylint: disable=invalid-name,missing-function-docstring
 test_filters = None
@@ -67,23 +71,24 @@ def mock_query_combined_policies(filter, sort, offset, limit):  # pylint: disabl
             "resources": mock_policies[offset:offset+limit],
             "meta": {
                 "pagination": {
-                    "total": len(mock_policies)
-                }
-            }
-        }
+                    "total": len(mock_policies),
+                },
+            },
+        },
     }
 
 
 @prevpol_test()
 def test_describe_policies_raw(auth: Client, **_):
-    """Unit test for PreventionPoliciesApiModule.describe_policies_raw"""
+    """Unit test for PreventionPoliciesApiModule.describe_policies_raw."""
 
     auth.prevention_policies.prevention_policies_api.configure_mock(**{
-        "query_combined_policies.side_effect": mock_query_combined_policies
+        "query_combined_policies.side_effect": mock_query_combined_policies,
     })
 
     assert auth.prevention_policies.describe_policies_raw(
-        filters=test_filters, sort=test_sort
+        filters=test_filters,
+        sort=test_sort,
     ) == mock_policies
 
 
@@ -92,11 +97,12 @@ def test_describe_policies(auth, **_):
     """Unit test for PreventionPoliciesApiModule.describe_policies"""
 
     auth.prevention_policies.prevention_policies_api.configure_mock(**{
-        "query_combined_policies.side_effect": mock_query_combined_policies
+        "query_combined_policies.side_effect": mock_query_combined_policies,
     })
 
     results = auth.prevention_policies.describe_policies(
-        filters=test_filters, sort=test_sort
+        filters=test_filters,
+        sort=test_sort,
     )
 
     result_dumps = [pol.dump() for pol in results]
@@ -117,18 +123,24 @@ def test_push_policy(auth: Client, **_):
     mock_cid = "00000000000000000000000000000001"
 
     def mock_create_policies(body):
-        body = copy.deepcopy(body)  # must deep copy for assert_called_once_with to work correctly
+        # We must deep copy for assert_called_once_with to work correctly
+        body = copy.deepcopy(body)
         body["resources"][0]["cid"] = mock_cid
         return {"body": body}
 
     auth.prevention_policies.prevention_policies_api.configure_mock(**{
-        "create_policies.side_effect": mock_create_policies
+        "create_policies.side_effect": mock_create_policies,
     })
 
-    res = auth.prevention_policies.push_policy(Policy(data_dict=mock_policy, style="prevention"))
+    res = auth.prevention_policies.push_policy(Policy(
+        data_dict=mock_policy,
+        style="prevention",
+    ))
 
     assert res.cid == mock_cid
 
     auth.prevention_policies.prevention_policies_api.create_policies.assert_called_once_with(
-        body={"resources": [mock_policy]}
+        body={
+            "resources": [mock_policy],
+        },
     )

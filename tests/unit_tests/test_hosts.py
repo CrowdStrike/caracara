@@ -1,11 +1,14 @@
 """Unit tests for HostsApiModule"""
-from unittest.mock import patch
 import falconpy
+
+from unittest.mock import patch
+
 from caracara import Client
 
+
 # A lot of mock methods need a certain function signature, and since they only mock functionality
-# they do not always use all the arguments. So we disable the unused-argument warning.
-# We also disable the redefined-builtin warning, as falconpy uses builtin identifiers like 'filter'
+# they do not always use all the arguments. Therefore, we disable the unused-argument warning.
+# We also disable the redefined-builtin warning, as FalconPy uses builtin identifiers like 'filter'
 # so we must use it also in order to mock it.
 # pylint: disable=unused-argument, redefined-builtin
 
@@ -83,8 +86,9 @@ def hosts_test():
         @patch("caracara.modules.hosts.hosts.Hosts", autospec=falconpy.Hosts)
         @patch("caracara.client.OAuth2")
         def new_func(mock_oauth2, mock_hosts, mock_hostgroup):
-            # B106 is a bandit warning for hardcoded passwords, this is a testing context and
-            # the credentials passed to this constructor aren't valid and aren't used.
+            # B106 is a bandit warning for hardcoded passwords.
+            # This is a testing context and the credentials passed to this constructor
+            # are not valid, so we can legitimately disable this warning.
             auth = Client(  # nosec B106:hardcoded_password_funcarg
                 client_id="testing id",
                 client_secret="testing secret",
@@ -104,7 +108,7 @@ def hosts_test():
 @hosts_test()
 def test_describe_devices(auth: Client, **_):
     """Unit test for HostsApiModule.describe_devices"""
-    # Mock falconpy methods
+    # Mock FalconPy methods
     auth.hosts.hosts_api.configure_mock(**{
         "query_devices_by_filter_scroll.side_effect": mock_query_devices_by_filter_scroll,
         "get_device_details.side_effect": mock_get_device_details,
@@ -119,7 +123,7 @@ def test_describe_devices(auth: Client, **_):
 @hosts_test()
 def test_describe_hidden_devices(auth: Client, **_):
     """Unit test for HostsApiModule.describe_hidden_devices"""
-    # Mock falconpy methods
+    # Mock FalconPy methods
     auth.hosts.hosts_api.configure_mock(**{
         "query_hidden_devices.side_effect": mock_query_hidden_devices,
         "get_device_details.side_effect": mock_get_device_details,
@@ -166,7 +170,7 @@ def test_describe_login_history(auth: Client, **_):
             },
         }
 
-    # Mock falconpy methods
+    # Mock FalconPy methods
     auth.hosts.hosts_api.configure_mock(
         query_devices_by_filter_scroll=mock_query_devices_by_filter_scroll,
         query_device_login_history=mock_query_device_login_history,
@@ -214,7 +218,7 @@ def test_describe_network_address_history(auth: Client, **_):
             },
         }
 
-    # Mock falconpy methods
+    # Mock FalconPy methods
     auth.hosts.hosts_api.configure_mock(
         query_devices_by_filter_scroll=mock_query_devices_by_filter_scroll,
         query_network_address_history=mock_query_network_address_history,
@@ -242,7 +246,8 @@ def test_contain(auth: Client, **_):
 
     assert auth.hosts.contain() == resources
     auth.hosts.hosts_api.perform_action.assert_called_once_with(
-        ids=visible_ids, action_name="contain",
+        ids=visible_ids,
+        action_name="contain",
     )
 
 
@@ -265,7 +270,8 @@ def test_release(auth: Client, **_):
 
     assert auth.hosts.release() == resources
     auth.hosts.hosts_api.perform_action.assert_called_once_with(
-        ids=visible_ids, action_name="lift_containment",
+        ids=visible_ids,
+        action_name="lift_containment",
     )
 
 
@@ -288,7 +294,8 @@ def test_hide(auth: Client, **_):
 
     assert auth.hosts.hide() == resources
     auth.hosts.hosts_api.perform_action.assert_called_once_with(
-        ids=visible_ids, action_name="hide_host",
+        ids=visible_ids,
+        action_name="hide_host",
     )
 
 
@@ -311,7 +318,8 @@ def test_unhide(auth: Client, **_):
 
     assert auth.hosts.unhide() == resources
     auth.hosts.hosts_api.perform_action.assert_called_once_with(
-        ids=hidden_ids, action_name="unhide_host",
+        ids=hidden_ids,
+        action_name="unhide_host",
     )
 
 
@@ -335,7 +343,9 @@ def test_tag(auth: Client, **_):
 
     assert auth.hosts.tag(tags) == resources
     auth.hosts.hosts_api.update_device_tags.assert_called_once_with(
-        action_name="add", ids=visible_ids, tags=tags
+        action_name="add",
+        ids=visible_ids,
+        tags=tags,
     )
 
 
@@ -359,7 +369,9 @@ def test_untag(auth: Client, **_):
 
     assert auth.hosts.untag(tags) == resources
     auth.hosts.hosts_api.update_device_tags.assert_called_once_with(
-        action_name="remove", ids=visible_ids, tags=tags
+        action_name="remove",
+        ids=visible_ids,
+        tags=tags,
     )
 
 
