@@ -60,6 +60,8 @@ class CustomIoaApiModule(FalconApiModule):
         if group.exists_in_cloud():
             raise Exception("This group already exists in the cloud!")
 
+        group.validation()
+
         # Create the group
         group_create = group.dump_create(comment=comment)
         response = instr(self.custom_ioa_api.create_rule_group)(body=group_create)
@@ -77,6 +79,8 @@ class CustomIoaApiModule(FalconApiModule):
     ) -> IoaRuleGroup:
         if not group.exists_in_cloud():
             raise Exception("This group does not exist in the cloud!")
+
+        group.validation()
 
         # Update the group
         group_update = group.dump_update(comment=comment)

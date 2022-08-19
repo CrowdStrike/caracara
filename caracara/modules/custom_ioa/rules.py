@@ -2,6 +2,7 @@ from __future__ import annotations
 from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Optional
+from wsgiref import validate
 
 from caracara.modules.custom_ioa.rule_types import RuleType
 
@@ -53,6 +54,7 @@ class IoaRuleGroup:
         self.name = name
         self.description = description
         self.platform = platform
+        self.rules = []
 
     def __repr__(self):
         return (
@@ -81,7 +83,6 @@ class IoaRuleGroup:
         rule_group.rule_ids = data_dict["rule_ids"]
         rule_group.version = data_dict["version"]
 
-        rule_group.rules = []
         for raw_rule in data_dict.get("rules", []):
             rule_type = rule_types.get(raw_rule.get("ruletype_id"))
             rule = CustomIoaRule.from_data_dict(data_dict=raw_rule, rule_type=rule_type)
@@ -89,6 +90,10 @@ class IoaRuleGroup:
             rule_group.rules.append(rule)
 
         return rule_group
+
+    def validation(self):  # TODO consider separate validation for create / update
+        for rule in self.rules:
+            rule.validation()
 
     def exists_in_cloud(self) -> bool:
         return self.id_ is not None
@@ -223,6 +228,22 @@ class CustomIoaRule:
 
         return rule
 
+    def validation(self):
+        # Check an action / disposition has been set
+        if not hasattr(self, "disposition_id"):
+            raise Exception("Rule has no action, make sure to set one with the set_action method")
+
+        # Check that at least one excludable field is non-default
+        if all(
+            all(value["value"] == ".*" for value in field["values"])
+            for field in self.fields.values()
+            if field["type"] == "excludable"
+        ):
+            raise Exception(
+                "All excludable/regex fields set to the default of '.*' which the API will reject, "
+                "set one to something else with the set_excludable_field method"
+            )
+
     def exists_in_cloud(self) -> bool:
         return self.instance_id is not None
 
@@ -307,7 +328,12 @@ class CustomIoaRule:
             "values": values,
         }
 
-    def dump_update(self, group: IoaRuleGroup):
+    def dump_update(self, group: IoaRuleGroup, verify: bool = True):
+        if verify:
+            if not self.exists_in_cloud():
+                raise Exception("Can't update a rule that hasn't been created in the cloud")
+            self.validation()
+
         return {
             "name": self.name,
             "description": self.description,
@@ -318,7 +344,12 @@ class CustomIoaRule:
             "field_values": list(self.fields.values()),
         }
 
-    def dump_create(self, comment: str, group: IoaRuleGroup):
+    def dump_create(self, comment: str, group: IoaRuleGroup, verify: bool = True):
+        if verify:
+            if self.exists_in_cloud():
+                raise Exception("This rule already exists in the cloud!")
+            self.validation()
+
         return {
             "name": self.name,
             "description": self.description,
