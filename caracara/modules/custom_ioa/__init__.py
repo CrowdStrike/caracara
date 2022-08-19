@@ -6,4 +6,4 @@ __all__ = [
 ]
 
 from caracara.modules.custom_ioa.custom_ioa import CustomIoaApiModule
-from caracara.modules.custom_ioa.ioa_wrapper import CustomIoaRule, IoaRuleGroup
+from caracara.modules.custom_ioa.rules import CustomIoaRule, IoaRuleGroup
