@@ -27,11 +27,8 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        python -m pip install poetry --pre
-        poetry install
+        util/install-dependencies.sh
     - name: Analyze package with bandit
       run: |
-        poetry run bandit -r caracara --configfile .bandit
-        poetry run bandit -r examples --configfile examples/.bandit
-        poetry run bandit -r tests --configfile tests/.bandit
+        util/bandit.sh
+
