@@ -1,9 +1,8 @@
 """Unit tests for PreventionPoliciesApiModule"""
 import copy
+from unittest.mock import patch
 
 import falconpy
-
-from unittest.mock import patch
 
 from caracara import Client, Policy
 from caracara.common.sorting import SORT_ASC

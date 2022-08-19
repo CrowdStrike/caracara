@@ -1,10 +1,9 @@
 """Unit tests for HostsApiModule"""
-import falconpy
-
 from unittest.mock import patch
 
-from caracara import Client
+import falconpy
 
+from caracara import Client
 
 # A lot of mock methods need a certain function signature, and since they only mock functionality
 # they do not always use all the arguments. Therefore, we disable the unused-argument warning.
