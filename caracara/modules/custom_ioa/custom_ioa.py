@@ -131,11 +131,10 @@ class CustomIoaApiModule(FalconApiModule):
                 "rulegroup_version": group.version + 1,
                 "rulegroup_id": group.id_,
             })
-            print(response)
             raw_group = response["body"]["resources"][0]
 
             # Create the object representing the updated group
-            rule_types = self._get_rule_types_cached_check_group_rule_ids(raw_groups=[raw_group])
+            rule_types = self._get_rule_types_cached()
             new_group = IoaRuleGroup.from_data_dict(data_dict=raw_group, rule_types=rule_types)
         else:
             group.rules = new_rules
