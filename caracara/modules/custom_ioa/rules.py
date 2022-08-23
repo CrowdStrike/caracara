@@ -91,6 +91,15 @@ class IoaRuleGroup:
 
         return rule_group
 
+    def add_rule(self, rule: CustomIoaRule):
+        if rule.group is not None:
+            raise Exception(
+                "This rule has already been added to a group! You can clone a rule to add to"
+                "another group with the TODO method"  # TODO
+            )
+        rule.group = self
+        self.rules.append(rule)
+
     def validation(self):  # TODO consider separate validation for create / update
         for rule in self.rules:
             rule.validation()
@@ -167,6 +176,7 @@ class CustomIoaRule:
     severity: PatternSeverity
     rule_type: RuleType
     fields: Dict[(str, str), dict]  # (name, type) -> raw dict
+    group: IoaRuleGroup = None
 
     def __init__(
         self,
