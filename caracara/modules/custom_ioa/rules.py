@@ -244,11 +244,12 @@ class CustomIoaRule:
             raise Exception("Rule has no action, make sure to set one with the set_action method")
 
         # Check that at least one excludable field is non-default
-        if all(
-            all(value["value"] == ".*" for value in field["values"])
-            for field in self.fields.values()
-            if field["type"] == "excludable"
-        ):
+        regex_values = [
+            value["value"]
+            for field in self.fields.values() if field["type"] == "excludable"
+            for value in field["values"]
+        ]
+        if len(regex_values) > 0 and all(value == ".*" for value in regex_values):
             raise Exception(
                 "All excludable/regex fields set to the default of '.*' which the API will reject, "
                 "set one to something else with the set_excludable_field method"
