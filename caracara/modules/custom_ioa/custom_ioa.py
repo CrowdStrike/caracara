@@ -229,7 +229,7 @@ class CustomIoaApiModule(FalconApiModule):
         """
         rule_types = self.get_rule_types_raw(rule_type_ids=rule_type_ids)
         for i, rule_type in rule_types.items():
-            rule_types[i] = RuleType(data_dict=rule_type)
+            rule_types[i] = RuleType.from_data_dict(rule_type)
         return rule_types
 
     def get_rule_type_ids(self) -> List[str]:

@@ -12,26 +12,32 @@ class RuleType:
     disposition_map: Dict[int, str]
     fields: List[RuleTypeField]
 
-    def __init__(self, data_dict: dict = {}):
-        self._load_data_dict(data_dict=data_dict)
-
     def __repr__(self) -> str:
         return (
             f"<RuleType(id_={repr(self.id_)}, name={repr(self.name)}, "
             f"platform={repr(self.platform)}, ...)>"
         )
 
-    def _load_data_dict(self, data_dict: dict):
-        self.id_ = data_dict["id"]
-        self.name = data_dict["name"]
-        self.long_desc = data_dict["long_desc"]
-        self.platform = data_dict["platform"]
-        self.disposition_map = {}
+    @staticmethod
+    def from_data_dict(data_dict: dict) -> RuleType:
+        disposition_map = {}
         for mapping in data_dict["disposition_map"]:
-            self.disposition_map[mapping["id"]] = mapping["label"]
-        self.fields = []
+            disposition_map[mapping["id"]] = mapping["label"]
+
+        fields = []
         for raw_field in data_dict["fields"]:
-            self.fields.append(RuleTypeField(data_dict=raw_field))
+            fields.append(RuleTypeField.from_data_dict(raw_field))
+
+        rule_type = RuleType(
+            id_=data_dict["id"],
+            name=data_dict["name"],
+            long_desc=data_dict["long_desc"],
+            platform=data_dict["platform"],
+            disposition_map=disposition_map,
+            fields=fields
+        )
+
+        return rule_type
 
     def get_field(
         self, field_name_or_label: str, field_type: Optional[str] = None
@@ -50,16 +56,20 @@ class RuleTypeField:
     type: str
     options: List[RuleTypeFieldOption]
 
-    def __init__(self, data_dict: dict = {}):
-        self._load_data_dict(data_dict=data_dict)
-
-    def _load_data_dict(self, data_dict: dict):
-        self.label = data_dict["label"]
-        self.name = data_dict["name"]
-        self.type = data_dict["type"]
-        self.options = []
+    @staticmethod
+    def from_data_dict(data_dict: dict) -> RuleTypeField:
+        options = []
         for raw_option in data_dict["options"]:
-            self.options.append(RuleTypeFieldOption(data_dict=raw_option))
+            options.append(RuleTypeFieldOption.from_data_dict(raw_option))
+
+        field = RuleTypeField(
+            label=data_dict["label"],
+            name=data_dict["name"],
+            type=data_dict["type"],
+            options=options,
+        )
+
+        return field
 
     def to_concrete_field(self):
         field = {
@@ -83,12 +93,12 @@ class RuleTypeFieldOption:
     label: str
     value: str
 
-    def __init__(self, data_dict: dict = {}):
-        self._load_data_dict(data_dict=data_dict)
-
-    def _load_data_dict(self, data_dict: dict):
-        self.label = data_dict["label"]
-        self.value = data_dict["value"]
+    @staticmethod
+    def from_data_dict(data_dict: dict) -> RuleTypeFieldOption:
+        return RuleTypeFieldOption(
+            label=data_dict["label"],
+            value=data_dict["value"],
+        )
 
     def dump(self):
         return {"label": self.label, "value": self.value}
