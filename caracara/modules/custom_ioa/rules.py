@@ -2,7 +2,6 @@ from __future__ import annotations
 from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Optional
-from wsgiref import validate
 
 from caracara.modules.custom_ioa.rule_types import RuleType
 

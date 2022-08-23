@@ -57,6 +57,21 @@ class CustomIoaApiModule(FalconApiModule):
     def create_rule_group(
         self, group: IoaRuleGroup, comment: str = DEFAULT_COMMENT
     ) -> IoaRuleGroup:
+        """Creates a new rule group from a manually constructed `IoaRuleGroup`.
+
+        This creates the provided rule group (provided it does not already exist), and also creates
+        all the rules within the rule group (added with `IoaRuleGroup.add_rule`).
+
+        Arguments
+        ---------
+        `group`: `IoaRuleGroup`
+            The group to create in the cloud (note this group must not already exist in the cloud,
+            i.e. `group.exists_in_cloud() == False`)
+
+        Returns
+        -------
+        `IoaRuleGroup`: The object representing the newly created rule group in the cloud
+        """
         if group.exists_in_cloud():
             raise Exception("This group already exists in the cloud!")
 

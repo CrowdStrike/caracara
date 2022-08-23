@@ -48,6 +48,24 @@ class RuleType:
                 return field
         return None
 
+    def dump(self, released: bool, channel: int) -> dict:  # TODO consider storing released/channel
+        """Dump a dictionary representing this rule conforming to the api.RuleTypeV1 model in the
+        CrowdStrike API Swagger doc."""
+        dumped = {
+            "id": self.id_,
+            "name": self.name,
+            "long_desc": self.long_desc,
+            "platform": self.platform,
+            "disposition_map": [
+                {"id": k, "label": v} for k, v in self.disposition_map.items()
+            ],
+            "fields": [field.dump() for field in self.fields],
+            "released": released,
+            "channel": channel,
+        }
+
+        return dumped
+
 
 @dataclass
 class RuleTypeField:
@@ -70,6 +88,18 @@ class RuleTypeField:
         )
 
         return field
+
+    def dump(self):
+        """Dump this rule type field, conforming to the real structure of the 'fields' key in
+        `api.RuleTypeV1` from the Crowdstrike API Swagger doc (`domain.Field`, but also including a
+        `type` and `options`)
+        """
+        return {
+            "label": self.label,
+            "name": self.name,
+            "type": self.type,
+            "options": [option.dump() for option in self.options]
+        }
 
     def to_concrete_field(self):
         field = {
