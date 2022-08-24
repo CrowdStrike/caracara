@@ -8,7 +8,8 @@ from caracara.modules.custom_ioa.rule_types import RuleType
 # TODO check these are actually correct
 
 
-class PatternSeverity(Enum):
+# Maps pattern severity to its ID
+class RuleSeverity(Enum):
     CRITICAL = "critical"
     HIGH = "high"
     MEDIUM = "medium"
@@ -106,6 +107,31 @@ class IoaRuleGroup:
     def exists_in_cloud(self) -> bool:
         return self.id_ is not None
 
+    def dump(self) -> dict:
+        """Dumps this rule group in conformance with api.RuleGroupV1 model in the CrowdStrike API
+        Swagger doc
+        """
+        if not self.exists_in_cloud():
+            raise Exception("This group does not exist in the cloud!")
+        return {
+            "customer_id": self.customer_id,
+            "id": self.id_,
+            "name": self.name,
+            "description": self.description,
+            "platform": self.platform,
+            "enabled": self.enabled,
+            "deleted": self.deleted,
+            "rule_ids": [rule.instance_id for rule in self.rules],
+            "rules": [rule.dump() for rule in self.rules],
+            "version": self.version,
+            "committed_on": self.committed_on,
+            "created_on": self.created_on,
+            "created_by": self.created_by,
+            "modified_on": self.modified_on,
+            "modified_by": self.modified_by,
+            "comment": self.comment,
+        }
+
     def dump_create(self, comment: str, verify: bool = True):
         if verify and self.exists_in_cloud():
             raise Exception("This group already exists in the cloud!")
@@ -171,8 +197,9 @@ class CustomIoaRule:
     modified_on: datetime
     name: str
     version_ids: List[str]
+    pattern_id: str
 
-    severity: PatternSeverity
+    severity: RuleSeverity
     rule_type: RuleType
     fields: Dict[(str, str), dict]  # (name, type) -> raw dict
     group: IoaRuleGroup = None
@@ -181,7 +208,7 @@ class CustomIoaRule:
         self,
         name: str,
         description: str,
-        severity: PatternSeverity,
+        severity: RuleSeverity,
         rule_type: RuleType,
     ):
         """Return a completely built Custom IOA Rule object.
@@ -230,6 +257,8 @@ class CustomIoaRule:
         rule.modified_by = data_dict["modified_by"]
         rule.modified_on = data_dict["modified_on"]
         rule.version_ids = data_dict["version_ids"]
+        rule.pattern_id = data_dict["pattern_id"]
+        rule.comment = data_dict["comment"]
 
         rule.fields = {}
         for field_value in data_dict["field_values"]:
@@ -338,7 +367,34 @@ class CustomIoaRule:
             "values": values,
         }
 
-    def dump_update(self, group: IoaRuleGroup, verify: bool = True):
+    def dump(self) -> dict:
+        """Dumps this object in conformance with api.RuleV1 in the CrowdStrike API Swagger doc"""
+        return {
+            "customer_id": self.customer_id,
+            "instance_id": self.instance_id,
+            "name": self.name,
+            "description": self.description,
+            "pattern_id": self.pattern_id,
+            "pattern_severity": self.severity,
+            "disposition_id": self.disposition_id,
+            "action_label": self.action_label,
+            "ruletype_id": self.rule_type.id_,
+            "ruletype_name": self.rule_type.name,
+            "field_values": list(self.fields.values()),
+            "enabled": self.enabled,
+            "deleted": self.deleted,
+            "instance_version": self.instance_version,
+            "version_ids": self.version_ids,
+            "magic_cookie": self.magic_cookie,
+            "committed_on": self.committed_on,
+            "created_on": self.created_on,
+            "created_by": self.created_by,
+            "modified_on": self.modified_on,
+            "modified_by": self.modified_by,
+            "comment": self.comment,
+        }
+
+    def dump_update(self, group: IoaRuleGroup, verify: bool = True):  # TODO remove group
         if verify:
             if not self.exists_in_cloud():
                 raise Exception("Can't update a rule that hasn't been created in the cloud")
