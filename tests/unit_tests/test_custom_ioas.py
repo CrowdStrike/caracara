@@ -333,3 +333,44 @@ def test_describe_rule_groups_with_rules(
         assert mock_group["id"] in groups.keys()
         assert len(groups[mock_group["id"]].rules) == len(mock_group["rules"])
         assert groups[mock_group["id"]].dump() == mock_group
+
+
+def test_delete_rule_groups_using_ids(client: Client, custom_ioa_api: falconpy.CustomIOA):
+    # Call caracara
+    client.custom_ioas.delete_rule_groups(rule_groups=["test_group_01"], comment="test comment")
+
+    # Assert
+    custom_ioa_api.delete_rule_groups.assert_called_once_with(
+        ids=["test_group_01"], comment="test comment")
+
+
+def test_delete_rule_groups_using_groups(client: Client, custom_ioa_api: falconpy.CustomIOA):
+    # Setup
+    group = IoaRuleGroup.from_data_dict({
+        "customer_id": "test_customer",
+        "id": "test_group_01",
+        "name": "test rule group",
+        "description": "test rule group desc",
+        "platform": "windows",
+        "enabled": False,
+        "deleted": False,
+        "rule_ids": [],
+        "rules": [],
+        "version": 1,
+        "committed_on": "2022-01-01T12:00:00.000000000Z",
+        "created_on": "2022-01-01T12:00:00.000000000Z",
+        "created_by": "caracara@test.com",
+        "modified_on": "2022-01-01T12:00:00.000000000Z",
+        "modified_by": "caracara@test.com",
+        "comment": "test comment",
+    }, rule_types=[])
+
+    # Mock
+
+    # Call caracara
+    client.custom_ioas.delete_rule_groups(
+        rule_groups=[group], comment="test deletion comment")
+
+    # Assert
+    custom_ioa_api.delete_rule_groups.assert_called_once_with(
+        ids=["test_group_01"], comment="test deletion comment")

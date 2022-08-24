@@ -112,6 +112,9 @@ class CustomIoaApiModule(FalconApiModule):
     def delete_rule_groups(
         self, rule_groups: List[IoaRuleGroup or str], comment: str = DEFAULT_COMMENT
     ):
+        if len(rule_groups) == 0:  # Do nothing if no rule groups to delete
+            return
+
         ids_to_delete = []
         for rule_group in rule_groups:
             if isinstance(rule_group, IoaRuleGroup):
