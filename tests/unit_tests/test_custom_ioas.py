@@ -35,6 +35,8 @@ def simple_rule_type():
         platform="windows",
         disposition_map={1: "Test Action"},
         fields=[],
+        released=True,
+        channel=0,
     )
 
     return rule_type
@@ -102,7 +104,7 @@ def create_mock_create_rule(assigned_id: str, rule_types: List[RuleType]):
 
 def create_mock_get_rule_types(rule_types):
     return create_mock_get_resources(
-        dict((rule_type.id_, rule_type.dump(released=True, channel=0)) for rule_type in rule_types)
+        dict((rule_type.id_, rule_type.dump()) for rule_type in rule_types)
     )
 
 
@@ -364,7 +366,7 @@ def test_delete_rule_groups_using_groups(client: Client, custom_ioa_api: falconp
         "modified_on": "2022-01-01T12:00:00.000000000Z",
         "modified_by": "caracara@test.com",
         "comment": "test comment",
-    }, rule_types=[])
+    }, rule_type_map=[])
 
     # Call caracara
     client.custom_ioas.delete_rule_groups(
@@ -395,7 +397,7 @@ def test_update_rule_groups_no_rules(client: Client, custom_ioa_api: falconpy.Cu
         "modified_by": "caracara@test.com",
         "comment": "test comment",
     }
-    group = IoaRuleGroup.from_data_dict(raw_group, rule_types=[])
+    group = IoaRuleGroup.from_data_dict(raw_group, rule_type_map=[])
 
     # Mock
     def mock_update_rule_group(body):
@@ -498,7 +500,7 @@ def test_update_rule_groups_with_rule_changes(
         "comment": "test rule group comment",
     }
     group = IoaRuleGroup.from_data_dict(  # Acts as an already queried group
-        raw_group, rule_types={simple_rule_type.id_: simple_rule_type})
+        raw_group, rule_type_map={simple_rule_type.id_: simple_rule_type})
     group.remove_rule(0)
     rule = CustomIoaRule(
         name="test rule 3",

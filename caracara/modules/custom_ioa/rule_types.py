@@ -5,12 +5,15 @@ from typing import Dict, List, Optional
 
 @dataclass
 class RuleType:
+    """A dataclass representing a custom IOA rule type."""
     id_: str
     name: str
     long_desc: str
     platform: str
     disposition_map: Dict[int, str]
     fields: List[RuleTypeField]
+    released: bool
+    channel: int
 
     def __repr__(self) -> str:
         return (
@@ -20,6 +23,21 @@ class RuleType:
 
     @staticmethod
     def from_data_dict(data_dict: dict) -> RuleType:
+        """Creates an instance of this class using a dictionary conforming to api.RuleTypeV1
+        (mostly) returned from the API.
+
+        The swagger model for api.RuleTypeV1 (as of writing) is inconsistent with what is returned
+        from the cloud. If you are curious as to the actual structure, read the `RuleTypeField.dump`
+        docstring.
+
+        Arguments
+        ---------
+        `data_dict`: `dict`
+            The dictionary conforming to api.RuleTypeV1 (mostly)
+
+        Returns
+        -------
+        `RuleType`: the newly constructed rule type object"""
         disposition_map = {}
         for mapping in data_dict["disposition_map"]:
             disposition_map[mapping["id"]] = mapping["label"]
@@ -34,7 +52,9 @@ class RuleType:
             long_desc=data_dict["long_desc"],
             platform=data_dict["platform"],
             disposition_map=disposition_map,
-            fields=fields
+            fields=fields,
+            released=data_dict["released"],
+            channel=data_dict["channel"],
         )
 
         return rule_type
@@ -42,13 +62,27 @@ class RuleType:
     def get_field(
         self, field_name_or_label: str, field_type: Optional[str] = None
     ) -> Optional[RuleTypeField]:
+        """Gets a reference to a field via its its name or label and optionally its type, if it
+        exists, otherwise `None`.
+
+        Arguments
+        ---------
+        `field_name_or_label`: `str`
+            The name or label of the field to get
+        `field_type`: `Optional[str]`
+            The type of the field to get (optional)
+
+        Returns
+        -------
+        `Optional[RuleTypeField]`: The rule type field if one can be found, `None` otherwise.
+        """
         for field in self.fields:
             if (field_name_or_label in [field.name, field.label]
                     and (field_type is None or field.type == field_type)):
                 return field
         return None
 
-    def dump(self, released: bool, channel: int) -> dict:  # TODO consider storing released/channel
+    def dump(self) -> dict:
         """Dump a dictionary representing this rule conforming to the api.RuleTypeV1 model in the
         CrowdStrike API Swagger doc."""
         dumped = {
@@ -60,8 +94,8 @@ class RuleType:
                 {"id": k, "label": v} for k, v in self.disposition_map.items()
             ],
             "fields": [field.dump() for field in self.fields],
-            "released": released,
-            "channel": channel,
+            "released": self.released,
+            "channel": self.channel,
         }
 
         return dumped
