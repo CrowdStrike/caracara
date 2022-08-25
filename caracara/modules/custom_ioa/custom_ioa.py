@@ -164,13 +164,13 @@ class CustomIoaApiModule(FalconApiModule):
 
         # Create the new rules
         new_rules = []
-        for rule in to_be_created:  # TODO parallelise
+        for rule in to_be_created:
             resp = instr(self.custom_ioa_api.create_rule)(
                 body=rule.dump_create(comment=comment))
             raw_rule = resp["body"]["resources"][0]
             new_rule = CustomIoaRule.from_data_dict(
                 raw_rule, rule_type=self._get_rule_types_cached()[raw_rule["ruletype_id"]])
-            new_rule.rulegroup_id = group.id  # TODO
+            new_rule.rulegroup_id = group.id
             new_rules.append(new_rule)
 
         # Update the existing rules, if there are any
@@ -249,9 +249,7 @@ class CustomIoaApiModule(FalconApiModule):
                 data_dict=raw_group, rule_type_map=rule_types)
         return groups
 
-    # TODO Test optional
-
-    def get_rule_types_raw(self, rule_type_ids: List[str]) -> Dict[str, Optional[Dict]]:
+    def get_rule_types_raw(self, rule_type_ids: List[str]) -> Dict[str, dict]:
         """Get rule types as raw dicts returned by the API, by ID.
 
         Arguments
@@ -261,9 +259,8 @@ class CustomIoaApiModule(FalconApiModule):
 
         Returns
         -------
-        `Dict[str, Optional[dict]]`:
-            Dictionary mapping ID to its associated rule type as a raw dict returned by the api, if
-            it exists.
+        `Dict[str, dict]`:
+            Dictionary mapping ID to its associated rule type as a raw dict returned by the api.
         """
         rule_types = batch_get_data(
             rule_type_ids, instr(self.custom_ioa_api.get_rule_types)
@@ -271,7 +268,7 @@ class CustomIoaApiModule(FalconApiModule):
 
         return rule_types
 
-    def get_rule_types(self, rule_type_ids: List[str]) -> Dict[str, Optional[RuleType]]:
+    def get_rule_types(self, rule_type_ids: List[str]) -> Dict[str, RuleType]:
         """Get rule types by ID.
 
         Arguments
@@ -281,8 +278,8 @@ class CustomIoaApiModule(FalconApiModule):
 
         Returns
         -------
-        `Dict[str, Optional[RuleType]]`:
-            Dictionary mapping ID to its associated rule type, if it exists.
+        `Dict[str, RuleType]`:
+            Dictionary mapping ID to its associated rule type.
         """
         rule_types = self.get_rule_types_raw(rule_type_ids=rule_type_ids)
         for i, rule_type in rule_types.items():
