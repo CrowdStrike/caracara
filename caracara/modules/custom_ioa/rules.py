@@ -1,20 +1,10 @@
 from __future__ import annotations
 from datetime import datetime
 from enum import Enum
+from operator import index
 from typing import Dict, List, Optional
 
 from caracara.modules.custom_ioa.rule_types import RuleType
-
-# TODO check these are actually correct
-
-
-# Maps pattern severity to its ID
-class RuleSeverity(Enum):
-    CRITICAL = "critical"
-    HIGH = "high"
-    MEDIUM = "medium"
-    LOW = "low"
-    INFORMATIONAL = "informational"
 
 
 class IoaRuleGroup:
@@ -28,7 +18,8 @@ class IoaRuleGroup:
     can update an instance of this class to match the state in the CrowdStrike cloud with <TODO: put
     function here>."""
 
-    # API fields
+    # API fields TODO maybe make readonly, and just generally clean up maybe make readonly, and
+    # just generally clean up
     comment: str = None
     committed_on: datetime = None
     created_by: str = None
@@ -47,6 +38,8 @@ class IoaRuleGroup:
     version: int = None
     # end API fields
 
+    rules_to_delete: List[CustomIoaRule]
+
     def __init__(self, name: str, description: str, platform: str):
         """Return a completely built IOA Rule Group object.
 
@@ -55,6 +48,7 @@ class IoaRuleGroup:
         self.description = description
         self.platform = platform
         self.rules = []
+        self.rules_to_delete = []
 
     def __repr__(self):
         return (
@@ -84,7 +78,9 @@ class IoaRuleGroup:
         rule_group.version = data_dict["version"]
 
         for raw_rule in data_dict.get("rules", []):
-            rule_type = rule_types.get(raw_rule.get("ruletype_id"))
+            # The following line might raise an index error if there's a rule type on this rule that
+            # we don't know about. I don't catch this since I don't think it's likely to happen.
+            rule_type = rule_types[raw_rule["ruletype_id"]]
             rule = CustomIoaRule.from_data_dict(data_dict=raw_rule, rule_type=rule_type)
             rule.rulegroup_id = rule_group.id_  # API doesn't seem to populate this field so we will
             rule_group.rules.append(rule)
@@ -99,6 +95,17 @@ class IoaRuleGroup:
             )
         rule.group = self
         self.rules.append(rule)
+
+    def get_rules(self) -> List[CustomIoaRule]:
+        return self.rules
+
+    def remove_rule(self, index_of_rule: int):
+        if index_of_rule >= len(self.rules) or index_of_rule < 0:
+            raise Exception("Index of rule out of range!")
+        else:
+            removed_rule = self.rules.pop(index_of_rule)
+            if removed_rule.exists_in_cloud():
+                self.rules_to_delete.append(removed_rule)
 
     def validation(self):  # TODO consider separate validation for create / update
         for rule in self.rules:
@@ -152,7 +159,6 @@ class IoaRuleGroup:
             "rulegroup_version": self.version,
             "name": self.name,
             "description": self.description,
-            "platform": self.platform,
             "enabled": self.enabled,
             "comment": comment,
         }
@@ -199,7 +205,7 @@ class CustomIoaRule:
     version_ids: List[str]
     pattern_id: str
 
-    severity: RuleSeverity
+    severity: str
     rule_type: RuleType
     fields: Dict[(str, str), dict]  # (name, type) -> raw dict
     group: IoaRuleGroup = None
@@ -208,7 +214,7 @@ class CustomIoaRule:
         self,
         name: str,
         description: str,
-        severity: RuleSeverity,
+        severity: str,
         rule_type: RuleType,
     ):
         """Return a completely built Custom IOA Rule object.
@@ -221,7 +227,7 @@ class CustomIoaRule:
         self.rule_type = rule_type
 
         self.fields = {}
-        for field_type in self.rule_type.fields:
+        for field_type in rule_type.fields:
             field = field_type.to_concrete_field()
             self.fields[(field["name"], field["type"])] = field
 
@@ -238,7 +244,7 @@ class CustomIoaRule:
         rule = CustomIoaRule(
             name=data_dict["name"],
             description=data_dict["description"],
-            severity=data_dict.get("pattern_severity"),
+            severity=data_dict["pattern_severity"],
             rule_type=rule_type,
         )
 
