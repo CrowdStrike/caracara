@@ -1,3 +1,4 @@
+"""Module defining wrappers around custom IOA rule types."""
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import Dict, List, Optional
@@ -103,6 +104,10 @@ class RuleType:
 
 @dataclass
 class RuleTypeField:
+    """A wrapper around a rule type's field
+
+    In the Swagger doc, this should be `domain.Field` according to `api.RuleTypeV1`, but in reality
+    the API also provides `type` and options `fields`."""
     label: str
     name: str
     type: str
@@ -110,6 +115,8 @@ class RuleTypeField:
 
     @staticmethod
     def from_data_dict(data_dict: dict) -> RuleTypeField:
+        """Construct an instance of this class from a dict almost conforming to `domain.Field` (see
+        class docstring for more details)"""
         options = []
         for raw_option in data_dict["options"]:
             options.append(RuleTypeFieldOption.from_data_dict(raw_option))
@@ -123,10 +130,9 @@ class RuleTypeField:
 
         return field
 
-    def dump(self):
-        """Dump this rule type field, conforming to the real structure of the 'fields' key in
-        `api.RuleTypeV1` from the Crowdstrike API Swagger doc (`domain.Field`, but also including a
-        `type` and `options`)
+    def dump(self) -> dict:
+        """Dump this rule type field as a dict almost conforming to `domain.Field` (see class
+        docstring) for details
         """
         return {
             "label": self.label,
@@ -135,7 +141,10 @@ class RuleTypeField:
             "options": [option.dump() for option in self.options]
         }
 
-    def to_concrete_field(self):
+    def to_concrete_field(self) -> dict:
+        """Converts this spec for a field into an actual field that can be used in rules, with
+        default values set.
+        """
         field = {
             "label": self.label,
             "name": self.name,
@@ -154,15 +163,18 @@ class RuleTypeField:
 
 @dataclass
 class RuleTypeFieldOption:
+    """A dataclass representing an option within a rule type field"""
     label: str
     value: str
 
     @staticmethod
     def from_data_dict(data_dict: dict) -> RuleTypeFieldOption:
+        """Constructs an instance of this object from an option returend from the API."""
         return RuleTypeFieldOption(
             label=data_dict["label"],
             value=data_dict["value"],
         )
 
     def dump(self):
+        """Dumps this option as a dict to be used in API calls"""
         return {"label": self.label, "value": self.value}

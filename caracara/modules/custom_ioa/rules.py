@@ -1,3 +1,4 @@
+"""Module that provides wrappers around IOA Rule Groups and Custom IOA Rules."""
 from __future__ import annotations
 from datetime import datetime
 from typing import Dict, List, Optional
@@ -23,7 +24,7 @@ class IoaRuleGroup:
     # The fields below will only be populated if `exists_in_cloud()` returns `True`, with the
     # exception of `id` which should be initialised to `None` if this object does not exist on the
     # cloud
-    id: str
+    id_: str
     comment: str
     committed_on: datetime
     created_by: str
@@ -57,11 +58,11 @@ class IoaRuleGroup:
         self.rules = []
         self.rules_to_delete = []
         self.group = None
-        self.id = None
+        self.id_ = None
 
     def __repr__(self):
         return (
-            f"<{self.__class__.__name__}(id_={repr(self.id)}, version={repr(self.version)}, "
+            f"<{self.__class__.__name__}(id_={repr(self.id_)}, version={repr(self.version)}, "
             f"name={repr(self.name)}, ...)>"
         )
 
@@ -94,7 +95,7 @@ class IoaRuleGroup:
         rule_group.customer_id = data_dict["customer_id"]
         rule_group.deleted = data_dict["deleted"]
         rule_group.enabled = data_dict["enabled"]
-        rule_group.id = data_dict["id"]
+        rule_group.id_ = data_dict["id"]
         rule_group.modified_by = data_dict["modified_by"]
         rule_group.modified_on = data_dict["modified_on"]
         rule_group.rule_ids = data_dict["rule_ids"]
@@ -104,8 +105,8 @@ class IoaRuleGroup:
             # The following line might raise an index error if there's a rule type on this rule that
             # we don't know about. I don't catch this since I don't think it's likely to happen.
             rule_type = rule_type_map[raw_rule["ruletype_id"]]
+            raw_rule["rulegroup_id"] = rule_group.id_  # API doesn't populate this field, so we do
             rule = CustomIoaRule.from_data_dict(data_dict=raw_rule, rule_type=rule_type)
-            rule.rulegroup_id = rule_group.id  # API doesn't seem to populate this field so we will
             rule_group.rules.append(rule)
 
         return rule_group
@@ -138,10 +139,10 @@ class IoaRuleGroup:
         """
         if index_of_rule >= len(self.rules) or index_of_rule < 0:
             raise Exception("Index of rule out of range!")
-        else:
-            removed_rule = self.rules.pop(index_of_rule)
-            if removed_rule.exists_in_cloud():
-                self.rules_to_delete.append(removed_rule)
+
+        removed_rule = self.rules.pop(index_of_rule)
+        if removed_rule.exists_in_cloud():
+            self.rules_to_delete.append(removed_rule)
 
     def validation(self):
         """This method will validate each rule in order to catch some errors before sending to the
@@ -153,7 +154,7 @@ class IoaRuleGroup:
     def exists_in_cloud(self) -> bool:
         """Will return true if this object reflects an existing rule group in the cloud.
         """
-        return self.id is not None
+        return self.id_ is not None
 
     def dump(self) -> dict:
         """Dumps this rule group in conformance with api.RuleGroupV1 model in the CrowdStrike API
@@ -163,7 +164,7 @@ class IoaRuleGroup:
             raise Exception("This group does not exist in the cloud!")
         return {
             "customer_id": self.customer_id,
-            "id": self.id,
+            "id": self.id_,
             "name": self.name,
             "description": self.description,
             "platform": self.platform,
@@ -226,7 +227,7 @@ class IoaRuleGroup:
             raise Exception("This group does not exist in the cloud!")
 
         return {
-            "id": self.id,
+            "id": self.id_,
             "rulegroup_version": self.version,
             "name": self.name,
             "description": self.description,
@@ -251,7 +252,7 @@ class IoaRuleGroup:
             "comment": comment,
             "rule_updates": [rule.dump_update(group=self) for rule in self.rules],
             "rulegroup_version": self.version + 1,
-            "rulegroup_id": self.id,
+            "rulegroup_id": self.id_,
         }
 
 
@@ -276,7 +277,7 @@ class CustomIoaRule:
     as a 'set' field). The options for this field can be set with `set_set_field`.
 
     The easiest way to find out the action/field names and possible values is to look at their names
-    and options on the CrowdStrike Falcon web interface.    
+    and options on the CrowdStrike Falcon web interface.
 """
 
     # These fields should exist on all instances of this object
@@ -512,7 +513,7 @@ class CustomIoaRule:
     def set_set_field(self, name_or_label: str, selected_options: List[str]):
         """Sets the options for a set field.
 
-        A set field can be thought of like a list of checkboxes, where you can check a subset of a 
+        A set field can be thought of like a list of checkboxes, where you can check a subset of a
         set of values. For a list of available options you cna use the `get_set_field_options`
         method. By default all options are checked.
 
@@ -614,7 +615,7 @@ class CustomIoaRule:
             "pattern_severity": self.severity,
             "disposition_id": self.disposition_id,
             "field_values": list(self.fields.values()),
-            "rulegroup_id": self.group.id,
+            "rulegroup_id": self.group.id_,
             "ruletype_id": self.rule_type.id_,
             "comment": comment,
         }

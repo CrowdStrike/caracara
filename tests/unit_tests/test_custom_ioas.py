@@ -11,9 +11,19 @@ from caracara.modules.custom_ioa import IoaRuleGroup
 from caracara.modules.custom_ioa.rules import CustomIoaRule
 from caracara.modules.custom_ioa.rule_types import RuleType
 
+# We have to disable redefined-outer-name, as pytest fixtures break this linting check by design.
+# pylint: disable=redefined-outer-name
+
+# We also have to disabled redefined builtins, so we can mock falconpy functions that also redefine
+# builtins
+# pylint: disable=redefined-builtin
+
 
 @pytest.fixture
 def client():
+    """Pytest fixture that provides a client with a mocked OAuth2 object, so no API credentials
+    are needed.
+    """
     auth = MagicMock(autospec=falconpy.OAuth2)
     client = Client(falconpy_authobject=auth)
     return client
@@ -21,6 +31,8 @@ def client():
 
 @pytest.fixture
 def custom_ioa_api(client):
+    """Pytest fixture that provides a mocked `falconpy.CustomIOA` and applies to the `client` Pytest
+    fixture as well."""
     custom_ioa_api = MagicMock(autospec=falconpy.CustomIOA)
     client.custom_ioas.custom_ioa_api = custom_ioa_api
     return custom_ioa_api
@@ -28,6 +40,7 @@ def custom_ioa_api(client):
 
 @pytest.fixture
 def simple_rule_type():
+    """Pytest fixture that provides a simple rule type for testing purposes."""
     rule_type = RuleType(
         id_="test_rule_type_simple",
         name="SimpleType",
@@ -46,6 +59,7 @@ def simple_rule_type():
 
 
 def create_mock_create_rule_group(assigned_id: str):
+    """Creates a mock function for `create_rule_group` which assigns the given id"""
     def mock_create_rule_group(body):
         new_body = {
             "customer_id": "test_customer",
@@ -70,6 +84,9 @@ def create_mock_create_rule_group(assigned_id: str):
 
 
 def create_mock_create_rule(assigned_id: str, rule_types: List[RuleType]):
+    """Creates a mock function for `create_rule` assigning the given id and recognising the
+    provided rule types.
+    """
     rule_type_map = dict((rule_type.id_, rule_type) for rule_type in rule_types)
 
     def mock_create_rule(body, comment=None):
@@ -79,7 +96,7 @@ def create_mock_create_rule(assigned_id: str, rule_types: List[RuleType]):
             "instance_id": assigned_id,
             "name": body["name"],
             "description": body["description"],
-            "pattern_id": "",  # TODO pattern_id stuff
+            "pattern_id": "41000",
             "pattern_severity": body["pattern_severity"],
             "disposition_id": body["disposition_id"],
             "action_label": rule_type.disposition_map[body["disposition_id"]],
@@ -103,12 +120,14 @@ def create_mock_create_rule(assigned_id: str, rule_types: List[RuleType]):
 
 
 def create_mock_get_rule_types(rule_types):
+    """Creates a mock for get_rule_types, given the rule types to return"""
     return create_mock_get_resources(
         dict((rule_type.id_, rule_type.dump()) for rule_type in rule_types)
     )
 
 
 def create_mock_query_resources(resources):
+    """Creates a generic mock to fetch Style 1 paginated resources"""
     def mock_resources(limit, offset):
         return {"body": {
             "meta": {"pagination": {"total": len(resources)}},
@@ -118,6 +137,7 @@ def create_mock_query_resources(resources):
 
 
 def create_mock_get_resources(resource_map):
+    """Creates a generic get resources by id given a map"""
     def mock_get_resources(ids):
         return {"body": {"resources": [resource_map[id_] for id_ in ids]}}
     return mock_get_resources
@@ -339,6 +359,7 @@ def test_describe_rule_groups_with_rules(
 
 
 def test_delete_rule_groups_using_ids(client: Client, custom_ioa_api: falconpy.CustomIOA):
+    """Tests `CustomIoaApiModule.delete_rule_groups` when using IDs"""
     # Call caracara
     client.custom_ioas.delete_rule_groups(rule_groups=["test_group_01"], comment="test comment")
 
@@ -348,6 +369,7 @@ def test_delete_rule_groups_using_ids(client: Client, custom_ioa_api: falconpy.C
 
 
 def test_delete_rule_groups_using_groups(client: Client, custom_ioa_api: falconpy.CustomIOA):
+    """Tests `CustomIoaApiModule.delete_rule_groups` when using rule group objects"""
     # Setup
     group = IoaRuleGroup.from_data_dict({
         "customer_id": "test_customer",
@@ -378,6 +400,7 @@ def test_delete_rule_groups_using_groups(client: Client, custom_ioa_api: falconp
 
 
 def test_update_rule_groups_no_rules(client: Client, custom_ioa_api: falconpy.CustomIOA):
+    """Tests `CustomIoaApiModule.update_rule_groups` when the group has no rules"""
     # Setup
     raw_group = {
         "customer_id": "test_customer",
@@ -431,6 +454,8 @@ def test_update_rule_groups_no_rules(client: Client, custom_ioa_api: falconpy.Cu
 
 def test_update_rule_groups_with_rule_changes(
         client: Client, custom_ioa_api: falconpy.CustomIOA, simple_rule_type: RuleType):
+    """Tests `CustomIoaApiModule.update_rule_groups` when the group has a rule to update, another
+    rule to create, and another to delete."""
     # Setup
     raw_group = {  # Acts as a store for the API
         "customer_id": "test_customer",

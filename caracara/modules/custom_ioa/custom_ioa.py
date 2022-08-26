@@ -1,7 +1,7 @@
 """Caracara Indicator of Attack (IOA) API module."""
 from functools import partial
 from time import monotonic
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 from falconpy import OAuth2, CustomIOA
 
@@ -16,13 +16,13 @@ from caracara.modules.custom_ioa.rules import CustomIoaRule, IoaRuleGroup, RuleT
 
 # instrument falconpy to raise exceptions
 def instr(func) -> dict:
+    """Internal function to instrument falconpy functions with basic error handling."""
     def handle_errors(*args, **kwargs):
         response = func(*args, **kwargs)
         errors = response["body"].get("errors", [])
         if len(errors) == 0:
             return response
-        else:
-            raise Exception(errors)
+        raise Exception(errors)
     return handle_errors
 
 
@@ -148,7 +148,7 @@ class CustomIoaApiModule(FalconApiModule):
         ids_to_delete = []
         for rule_group in rule_groups:
             if isinstance(rule_group, IoaRuleGroup):
-                ids_to_delete.append(rule_group.id)
+                ids_to_delete.append(rule_group.id_)
             else:
                 ids_to_delete.append(rule_group)
         instr(self.custom_ioa_api.delete_rule_groups)(ids=ids_to_delete, comment=comment)
@@ -170,7 +170,7 @@ class CustomIoaApiModule(FalconApiModule):
             raw_rule = resp["body"]["resources"][0]
             new_rule = CustomIoaRule.from_data_dict(
                 raw_rule, rule_type=self._get_rule_types_cached()[raw_rule["ruletype_id"]])
-            new_rule.rulegroup_id = group.id
+            new_rule.rulegroup_id = group.id_
             new_rules.append(new_rule)
 
         # Update the existing rules, if there are any
@@ -179,7 +179,7 @@ class CustomIoaApiModule(FalconApiModule):
                 "comment": comment,
                 "rule_updates": [rule.dump_update() for rule in existing_rules],
                 "rulegroup_version": group.version + 1,
-                "rulegroup_id": group.id,
+                "rulegroup_id": group.id_,
             })
             raw_group = response["body"]["resources"][0]
 
@@ -194,7 +194,7 @@ class CustomIoaApiModule(FalconApiModule):
         if len(group.rules_to_delete) > 0:
             ids_to_delete = [rule.instance_id for rule in group.rules_to_delete]
             instr(self.custom_ioa_api.delete_rules)(
-                rule_group_id=group.id, ids=ids_to_delete, comment=comment)
+                rule_group_id=group.id_, ids=ids_to_delete, comment=comment)
             # If successful (i.e. no exceptions raised), clear the deletion queue
             group.rules_to_delete = []
         return new_group
