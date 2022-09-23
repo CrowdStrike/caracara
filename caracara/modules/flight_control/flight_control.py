@@ -23,7 +23,7 @@ from caracara.common.pagination import all_pages_numbered_offset_parallel
 
 
 class FlightControlApiModule(FalconApiModule):
-    """The FlightControlApiModule facilitates interactions with the Flight Control (MSSP) API"""
+    """The FlightControlApiModule facilitates interactions with the Flight Control (MSSP) API."""
 
     name = "CrowdStrike Falcon Flight Control API Module"
     help = "Interact with the management API calls in a Falcon Flight Control (MSSP) Parent CID"
@@ -81,12 +81,12 @@ class FlightControlApiModule(FalconApiModule):
         return child_cid_data
 
     def describe_child_cids(self) -> Dict[str, Dict[str, Union[List[str], str]]]:
-        """Return a dictionary containing details for each Child CID associated with this Parent CID
+        """Return a dictionary containing details for each Child CID associated with this tenant.
 
         Returns
         -------
         dict: A dictionary containing details for every Child CID associated with this
-              Falcon tenant
+              Parent Falcon tenant (CID)
         """
         self.logger.info("Describing this Parent CID's Child CIDs")
         child_cids = self.get_child_cids()
