@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "caracara"
-version = "0.1.4"
+version = "0.1.5"
 description = "The CrowdStrike Falcon Developer Toolkit"
 authors = [ "CrowdStrike <falconpy@crowdstrike.com>" ]
 readme = "README.md"
@@ -9,13 +9,13 @@ readme = "README.md"
 python = "^3.7"
 py7zr = "^0.17.4"
 pyppmd = "0.17.4"
-crowdstrike-falconpy = "^1.1.5"
+crowdstrike-falconpy = "^1.2.2"
 
 [tool.poetry.dev-dependencies]
-bandit = "^1.7.3"
+bandit = "^1.7.4"
 bullet = "^2.2.0"
-coverage = "^6.3.2"
-flake8 = "^^4.0.1"
+coverage = "^6.4.4"
+flake8 = "^5.0.4"
 pydocstyle = "^6.1.1"
 pylint = "^2.12.2"
 pytest = "^7.0.1"
@@ -28,6 +28,7 @@ python-dateutil = "^2.8.2"
 [build-system]
 build-backend = "poetry.core.masonry.api"
 requires = ["poetry-core>=1.0.0"]
+
 
 [tool.pylint.messages_control]
 max-line-length = 100

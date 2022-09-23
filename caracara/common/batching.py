@@ -88,6 +88,8 @@ def batch_get_data(
             resources_dict[resource['id']] = resource
         elif 'device_id' in resource:
             resources_dict[resource['device_id']] = resource
+        elif 'child_cid' in resource:
+            resources_dict[resource['child_cid']] = resource
         else:
             raise Exception("No ID field to build the dictionary from")
 
