@@ -7,7 +7,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.7"
-py7zr = "^0.17.4"
+py7zr = ">=0.17.4,<0.19.0"
 pyppmd = "0.17.4"
 crowdstrike-falconpy = "^1.2.2"
 
