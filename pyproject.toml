@@ -8,7 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.7"
 py7zr = "^0.17.4"
-pyppmd = "0.17.4"
+pyppmd = "1.0.0"
 crowdstrike-falconpy = "^1.2.2"
 
 [tool.poetry.dev-dependencies]
