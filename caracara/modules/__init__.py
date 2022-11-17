@@ -5,6 +5,7 @@ Exposes functions to get host data and perform actions on hosts, such as network
 """
 __all__ = [
     'CustomIoaApiModule',
+    'FlightControlApiModule',
     'HostsApiModule',
     'PreventionPoliciesApiModule',
     'ResponsePoliciesApiModule',
@@ -13,6 +14,7 @@ __all__ = [
 ]
 
 from caracara.modules.custom_ioa import CustomIoaApiModule
+from caracara.modules.flight_control import FlightControlApiModule
 from caracara.modules.hosts import (
     FILTER_ATTRIBUTES as hosts_filter_attributes,
     HostsApiModule,
