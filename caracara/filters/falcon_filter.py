@@ -87,7 +87,7 @@ class FalconFilter:
             raise Exception(filter_name)
 
         new_filter: FalconFilterAttribute = self.available_filters[filter_name]()
-        if initial_value:
+        if initial_value is not None:
             new_filter.set_value(initial_value)
         if initial_operator:
             new_filter.set_operator(initial_operator)

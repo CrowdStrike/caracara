@@ -4,6 +4,7 @@ Falcon Host module.
 Exposes functions to get host data and perform actions on hosts, such as network containment.
 """
 __all__ = [
+    'CustomIoaApiModule',
     'FlightControlApiModule',
     'HostsApiModule',
     'PreventionPoliciesApiModule',
@@ -12,6 +13,7 @@ __all__ = [
     'MODULE_FILTER_ATTRIBUTES',
 ]
 
+from caracara.modules.custom_ioa import CustomIoaApiModule
 from caracara.modules.flight_control import FlightControlApiModule
 from caracara.modules.hosts import (
     FILTER_ATTRIBUTES as hosts_filter_attributes,
