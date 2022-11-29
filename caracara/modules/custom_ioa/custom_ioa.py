@@ -16,7 +16,11 @@ from caracara.modules.custom_ioa.rules import CustomIoaRule, IoaRuleGroup, RuleT
 
 # instrument falconpy to raise exceptions
 def instr(func) -> dict:
-    """Internal function to instrument falconpy functions with basic error handling."""
+    """Instrument FalconPy functions with basic error handling.
+
+    This is an internal function, and therefore developers should not expect this function to
+    remain consistent.
+    """
     def handle_errors(*args, **kwargs):
         response = func(*args, **kwargs)
         errors = response["body"].get("errors", [])
@@ -55,7 +59,7 @@ class CustomIoaApiModule(FalconApiModule):
     def create_rule_group(
         self, group: IoaRuleGroup, comment: str = DEFAULT_COMMENT
     ) -> IoaRuleGroup:
-        """Creates a new rule group from a manually constructed `IoaRuleGroup`.
+        """Create a new rule group from a manually constructed `IoaRuleGroup`.
 
         This creates the provided rule group (provided it does not already exist), and also creates
         all the rules within the rule group (added with `IoaRuleGroup.add_rule`).
@@ -94,7 +98,7 @@ class CustomIoaApiModule(FalconApiModule):
     def update_rule_group(
         self, group: IoaRuleGroup, comment: str = DEFAULT_COMMENT
     ) -> IoaRuleGroup:
-        """Updates a group that already exists in the cloud.
+        """Update a group that already exists in the cloud.
 
         This will also sync the state of the rules with the cloud, i.e. creating rules that don't
         yet exist, updating existing rules that have changes, and deleting any locally removed
@@ -109,7 +113,8 @@ class CustomIoaApiModule(FalconApiModule):
 
         Returns
         -------
-        `IoaRuleGroup`: The updated group."""
+        `IoaRuleGroup`: The updated group.
+        """
         if not group.exists_in_cloud():
             raise Exception("This group does not exist in the cloud!")
 
@@ -133,7 +138,7 @@ class CustomIoaApiModule(FalconApiModule):
     def delete_rule_groups(
         self, rule_groups: List[IoaRuleGroup or str], comment: str = DEFAULT_COMMENT
     ):
-        """Deletes a list of rule groups in the cloud.
+        """Delete a list of rule groups in the cloud.
 
         Arguments
         ---------

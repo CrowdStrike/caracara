@@ -7,6 +7,7 @@ from typing import Dict, List, Optional
 @dataclass
 class RuleType:
     """A dataclass representing a custom IOA rule type."""
+
     id_: str
     name: str
     long_desc: str
@@ -17,6 +18,7 @@ class RuleType:
     channel: int
 
     def __repr__(self) -> str:
+        """Return a string representation of the RuleType and its ID, platform and name."""
         return (
             f"<RuleType(id_={repr(self.id_)}, name={repr(self.name)}, "
             f"platform={repr(self.platform)}, ...)>"
@@ -24,12 +26,11 @@ class RuleType:
 
     @staticmethod
     def from_data_dict(data_dict: dict) -> RuleType:
-        """Creates an instance of this class using a dictionary conforming to api.RuleTypeV1
-        (mostly) returned from the API.
+        """Create an instance of this class using a dict conforming to the `api.RuleTypeV1` model.
 
-        The swagger model for api.RuleTypeV1 (as of writing) is inconsistent with what is returned
-        from the cloud. If you are curious as to the actual structure, read the `RuleTypeField.dump`
-        docstring.
+        This object is mostly returned from the API. The Swagger model for api.RuleTypeV1 (as of
+        writing) is inconsistent with what is returned from the cloud. If you are curious as to
+        the actual structure, read the `RuleTypeField.dump` docstring.
 
         Arguments
         ---------
@@ -38,7 +39,8 @@ class RuleType:
 
         Returns
         -------
-        `RuleType`: the newly constructed rule type object"""
+        `RuleType`: the newly constructed rule type object
+        """
         disposition_map = {}
         for mapping in data_dict["disposition_map"]:
             disposition_map[mapping["id"]] = mapping["label"]
@@ -63,8 +65,7 @@ class RuleType:
     def get_field(
         self, field_name_or_label: str, field_type: Optional[str] = None
     ) -> Optional[RuleTypeField]:
-        """Gets a reference to a field via its its name or label and optionally its type, if it
-        exists, otherwise `None`.
+        """Get a reference to a field via its its name or label and optionally its type.
 
         Arguments
         ---------
@@ -84,8 +85,10 @@ class RuleType:
         return None
 
     def dump(self) -> dict:
-        """Dump a dictionary representing this rule conforming to the api.RuleTypeV1 model in the
-        CrowdStrike API Swagger doc."""
+        """Dump a dictionary representing this rule conforming to the api.RuleTypeV1 model.
+
+        This object model is defined in the CrowdStrike API Swagger document.
+        """
         dumped = {
             "id": self.id_,
             "name": self.name,
@@ -104,10 +107,12 @@ class RuleType:
 
 @dataclass
 class RuleTypeField:
-    """A wrapper around a rule type's field
+    """A wrapper around a rule type's field.
 
     In the Swagger doc, this should be `domain.Field` according to `api.RuleTypeV1`, but in reality
-    the API also provides `type` and options `fields`."""
+    the API also provides `type` and options `fields`.
+    """
+
     label: str
     name: str
     type: str
@@ -115,8 +120,10 @@ class RuleTypeField:
 
     @staticmethod
     def from_data_dict(data_dict: dict) -> RuleTypeField:
-        """Construct an instance of this class from a dict almost conforming to `domain.Field` (see
-        class docstring for more details)"""
+        """Construct an instance of this class from a dict almost conforming to `domain.Field`.
+
+        For more information on `domain.Field`, see the class docstring.
+        """
         options = []
         for raw_option in data_dict["options"]:
             options.append(RuleTypeFieldOption.from_data_dict(raw_option))
@@ -131,8 +138,9 @@ class RuleTypeField:
         return field
 
     def dump(self) -> dict:
-        """Dump this rule type field as a dict almost conforming to `domain.Field` (see class
-        docstring) for details
+        """Dump this rule type field as a dict almost conforming to `domain.Field`.
+
+        For more information on `domain.Field`, see the class docstring.
         """
         return {
             "label": self.label,
@@ -142,8 +150,9 @@ class RuleTypeField:
         }
 
     def to_concrete_field(self) -> dict:
-        """Converts this spec for a field into an actual field that can be used in rules, with
-        default values set.
+        """Convert this spec for a field into an actual field that can be used in rules.
+
+        This function will set default values where needed.
         """
         field = {
             "label": self.label,
@@ -163,18 +172,19 @@ class RuleTypeField:
 
 @dataclass
 class RuleTypeFieldOption:
-    """A dataclass representing an option within a rule type field"""
+    """A dataclass representing an option within a rule type field."""
+
     label: str
     value: str
 
     @staticmethod
     def from_data_dict(data_dict: dict) -> RuleTypeFieldOption:
-        """Constructs an instance of this object from an option returend from the API."""
+        """Construct an instance of this object from an option returned by the API."""
         return RuleTypeFieldOption(
             label=data_dict["label"],
             value=data_dict["value"],
         )
 
     def dump(self):
-        """Dumps this option as a dict to be used in API calls"""
+        """Dump this option as a dict to be used in API calls."""
         return {"label": self.label, "value": self.value}

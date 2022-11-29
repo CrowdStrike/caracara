@@ -61,15 +61,19 @@ class IoaRuleGroup:
         self.id_ = None
 
     def __repr__(self):
+        """Return an unambiguous string representation of the IOA and its ID, platform and name."""
         return (
             f"<{self.__class__.__name__}(id_={repr(self.id_)}, version={repr(self.version)}, "
-            f"name={repr(self.name)}, ...)>"
+            f"platform={repr(self.platform)}, name={repr(self.name)}, ...)>"
         )
 
     @staticmethod
     def from_data_dict(data_dict: dict, rule_type_map: Dict[str, RuleType]) -> IoaRuleGroup:
-        """Constructs a rule group object from an instance of the `api.RuleGroupV1` model returned
-        from the API. You must also provide a map of rule type IDs to their associated rule types.
+        """Construct a rule group object from an instance of the `api.RuleGroupV1` API model.
+
+        The API will return an api.RuleGroupV1 object. This function will parse the dictionary
+        representation of this object and return an IoaRuleGroup. You must also provide a map
+        of rule type IDs to their associated rule types.
 
         Arguments
         ---------
@@ -112,9 +116,10 @@ class IoaRuleGroup:
         return rule_group
 
     def add_rule(self, rule: CustomIoaRule):
-        """Use this method to add a rule to a group. The rule specified is queued up for creation
-        upon the next `update_rule_group` request. This method will fail if the provided rule is
-        already associated with another object
+        """Add a rule to a group.
+
+        The rule specified is queued up for creation upon the next `update_rule_group` request.
+        This method will fail if the provided rule is already associated with another object.
 
         Arguments
         ---------
@@ -129,8 +134,9 @@ class IoaRuleGroup:
         self.rules.append(rule)
 
     def remove_rule(self, index_of_rule: int):
-        """Use this method to remove a rule from a group. The rule specified is queued up for
-        deletion upon the next `update_rule_group` request.
+        """Remove a rule from a group.
+
+        The rule specified is queued up for deletion upon the next `update_rule_group` request.
 
         Arguments
         ---------
@@ -145,20 +151,21 @@ class IoaRuleGroup:
             self.rules_to_delete.append(removed_rule)
 
     def validation(self):
-        """This method will validate each rule in order to catch some errors before sending to the
-        API. If there is an error an exception will be raised.
+        """Validate each rule to catch some errors before sending to the API.
+
+        If there is an error an exception will be raised.
         """
         for rule in self.rules:
             rule.validation()
 
     def exists_in_cloud(self) -> bool:
-        """Will return true if this object reflects an existing rule group in the cloud.
-        """
+        """Return if this object reflects an existing rule group in the cloud."""
         return self.id_ is not None
 
     def dump(self) -> dict:
-        """Dumps this rule group in conformance with api.RuleGroupV1 model in the CrowdStrike API
-        Swagger doc
+        """Dump this rule group in conformance with api.RuleGroupV1 object model.
+
+        This object model is defined in the CrowdStrike API Swagger document.
         """
         if not self.exists_in_cloud():
             raise Exception("This group does not exist in the cloud!")
@@ -182,9 +189,10 @@ class IoaRuleGroup:
         }
 
     def dump_create(self, comment: str, verify: bool = True) -> dict:
-        """Dumps this rule group in conformance with the api.RuleGroupCreateRequestV1 model in the
-        CrowdStrike API Swagger doc, and will verify that this group has not been already created
-        when `verify=True`
+        """Dump this rule group in conformance with the api.RuleGroupCreateRequestV1 object model.
+
+        This object model is defined in the CrowdStrike API Swagger document. This function will
+        also verify that this group has not been already created when `verify=True`.
 
         Arguments
         ---------
@@ -208,9 +216,11 @@ class IoaRuleGroup:
         }
 
     def dump_update(self, comment: str, verify: bool = True) -> dict:
-        """Dumps this rule group in conformance with the api.RuleGroupModifyRequestV1 model in the
-        CrowdStrike API Swagger doc, and will verify that this group has already been already
-        created (and so can be updated) when `verify=True`
+        """Dump this rule group in conformance with the api.RuleGroupModifyRequestV1 model.
+
+        This object model is defined in the CrowdStrike API Swagger document. This function will
+        also verify that this group has already been already created (and so can be updated)
+        when `verify=True`.
 
         Arguments
         ---------
@@ -236,8 +246,9 @@ class IoaRuleGroup:
         }
 
     def dump_rules_update(self, comment: str) -> dict:
-        """Dumps the current rules conforming to the api.RuleUpdatesRequestV1 model in the
-        CrowdStrike API Swagger doc.
+        """Dump the current rules in a format conforming to the api.RuleUpdatesRequestV1 model.
+
+        This object model is defined in the CrowdStrike API Swagger document.
 
         Arguments
         ---------
@@ -260,25 +271,25 @@ class CustomIoaRule:
     """A class representing a Custom IOA Rule.
 
     A Custom IOA Rule is associated with a single IOA Rule Group (represented by instances of
-    `IoaRuleGroup`). So a Custom IOA Rule is uniquely identified by a combination of it's own ID and
+    `IoaRuleGroup`). So, a Custom IOA Rule is uniquely identified by a combination of its own ID and
     its group ID.
 
     A rule can be created with a provided `RuleType`. Right now you must query the rule types using
-    the `describe_rule_types` request on the custom IOA module, and pick the one you want (In the
-    future we may provide a quicker method).
+    the `describe_rule_types` request on the custom IOA module, and pick the one you want. In the
+    future, we may provide a quicker method.
 
     Every rule needs to have its action/disposition set using `set_action`.
 
     Additionally, if a rule has options for a regex (known as an 'excludable' field), this has an
-    include and an optional exclude regex that can be provided, this can be set using the
-    `set_excludable_field` method.
+    include and an optional exclude regex that can be provided. These parameters can be set using
+    the `set_excludable_field` method.
 
     Sometimes the rule may have an option to select a number of checkboxes in a set of values (known
     as a 'set' field). The options for this field can be set with `set_set_field`.
 
     The easiest way to find out the action/field names and possible values is to look at their names
     and options on the CrowdStrike Falcon web interface.
-"""
+    """
 
     # These fields should exist on all instances of this object
     name: str
@@ -320,9 +331,9 @@ class CustomIoaRule:
         """Construct a local rule object.
 
         This rule needs to be customised using the `set_*` methods (see the class docstring for more
-        information). After that it can be added to a rule group using the `add_rule` method on an
+        information). After that, it can be added to a rule group using the `add_rule` method on an
         `IoaRuleGroup` object, and created in the cloud by either creating that group if it doesn't
-        exist (with `create_rule_group`) or updating it if it already exists (with
+        exist (with `create_rule_group`), or updating it if it already exists (with
         `update_rule_group`)
 
         Arguments
@@ -337,7 +348,6 @@ class CustomIoaRule:
         `rule_type`: `RuleType`
             The type of this rule.
         """
-
         self.name = name
         self.description = description
         self.severity = severity
@@ -351,6 +361,10 @@ class CustomIoaRule:
             self.fields[(field["name"], field["type"])] = field
 
     def __repr__(self):
+        """Return an unambiguous string representation of the CustomIoaRule and its properties.
+
+        This function will display the rule's group, ID, version, name and type.
+        """
         return (
             f"<{self.__class__.__name__}(group={repr(self.group)}, "
             f"instance_id={repr(self.instance_id)}, instance_version={repr(self.instance_version)} "
@@ -359,8 +373,11 @@ class CustomIoaRule:
 
     @staticmethod
     def from_data_dict(data_dict: dict, rule_type: RuleType) -> CustomIoaRule:
-        """Constructs a rule object from an instance of the `api.RuleV1` model returned from the
-        API. You must also provide the rule type of the rule.
+        """Construct a rule object from an instance of the `api.RuleV1` object.
+
+        This object will conform to the `api.RuleV1` object model defined by the CrowdStrike API
+        Swagger document, and will be returned from the API. You must also provide the rule's type
+        for this function to succeed.
 
         Arguments
         ---------
@@ -406,8 +423,10 @@ class CustomIoaRule:
         return rule
 
     def validation(self):
-        """This method does some validation to catch errors before sending to the API. It will raise
-        an exception if there are any issues with more information.
+        """Validate the IoaRuleGroup to catch errors before sending data to the API.
+
+        This function will raise an exception if there are any issues with the data within this
+        object, and contextual information will be provided alongside each exception.
         """
         # Check an action / disposition has been set
         if not hasattr(self, "disposition_id"):
@@ -426,11 +445,11 @@ class CustomIoaRule:
             )
 
     def exists_in_cloud(self) -> bool:
-        """Returns `True` if this rule object reflects an existing rule in the cloud."""
+        """Return `True` if this rule object reflects an existing rule in the cloud."""
         return self.instance_id is not None
 
     def get_possible_actions(self) -> List[str]:
-        """This method returns a list of possible actions to set using the `set_action` method"""
+        """Return a list of possible actions to set using the `set_action` method."""
         return list(self.rule_type.disposition_map.values())
 
     def set_action(self, action: str or int):
@@ -459,9 +478,9 @@ class CustomIoaRule:
                 raise Exception("Invalid action/disposition label!")
 
     def set_excludable_field(self, name_or_label: str, include: str, exclude: Optional[str] = None):
-        """Sets a field of type excludable with a matching name or label to the one provided.
+        """Set a field of type excludable with a matching name or label to the one provided.
 
-        Fields of type 'excludable' concern regular expression matching, each field has an include
+        Fields of type 'excludable' concern regular expression matching. Each field has an include
         (defaulting to `.*`), and an optional exclude. At least one excludable field must be
         non-default for the API to accept this rule.
 
@@ -501,19 +520,20 @@ class CustomIoaRule:
         }
 
     def get_set_field_options(self, name_or_label: str) -> List[str]:
-        """Returns the available options for a set field.
+        """Return the available options for a set field.
 
         Arguments
         ---------
         `name_or_label`: `str`
-            The name or label of the set field to check the options of."""
+            The name or label of the set field to check the options of.
+        """
         field = self.rule_type.get_field(name_or_label, "set")
         return [option.value for option in field.options]
 
     def set_set_field(self, name_or_label: str, selected_options: List[str]):
-        """Sets the options for a set field.
+        """Set the options for a set field.
 
-        A set field can be thought of like a list of checkboxes, where you can check a subset of a
+        A set field can be thought of as a list of checkboxes, where you can check a subset of a
         set of values. For a list of available options you cna use the `get_set_field_options`
         method. By default all options are checked.
 
@@ -555,7 +575,10 @@ class CustomIoaRule:
         }
 
     def dump(self) -> dict:
-        """Dumps this object in conformance with api.RuleV1 in the CrowdStrike API Swagger doc"""
+        """Dump this object in conformance with the api.RuleV1 model.
+
+        This object model is defined in the CrowdStrike API Swagger document.
+        """
         return {
             "customer_id": self.customer_id,
             "instance_id": self.instance_id,
@@ -582,9 +605,12 @@ class CustomIoaRule:
         }
 
     def dump_update(self, verify: bool = True) -> dict:
-        """Dumps this object in conformance with the api.RuleUpdateV1 model in the CrowdStrike API
-        Swagger doc, excluding 'rulegroup_version'. Will check that this object reflects an existing
-        (updatable) object in the cloud if verify=`True`"""
+        """Dump this object in conformance with the api.RuleUpdateV1 model.
+
+        This object model is defined in the CrowdStrike API Swagger document, excluding
+        'rulegroup_version'. This function will check that this object reflects an existing
+        (updatable) object in the cloud if verify=`True`.
+        """
         if verify:
             if not self.exists_in_cloud():
                 raise Exception("Can't update a rule that hasn't been created in the cloud")
@@ -601,9 +627,12 @@ class CustomIoaRule:
         }
 
     def dump_create(self, comment: str, verify: bool = True) -> dict:
-        """Dumps this object in conformance with the `api.RuleCreateV1` model in the CrowdStrike API
-        Swagger doc. Will check that this object doesn't reflect an existing object in the cloud
-        (and so can be safely created) if verify=`True`"""
+        """Dump this object in conformance with the `api.RuleCreateV1` model.
+
+        This object model is defined in the CrowdStrike API Swagger document. The function will
+        check that this object does not reflect an existing object in the cloud (and so can be
+        safely created) if verify=`True`.
+        """
         if verify:
             if self.exists_in_cloud():
                 raise Exception("This rule already exists in the cloud!")
