@@ -136,7 +136,7 @@ toml = ["tomli"]
 
 [[package]]
 name = "crowdstrike-falconpy"
-version = "1.2.5"
+version = "1.2.6"
 description = "The CrowdStrike Falcon SDK for Python 3"
 category = "main"
 optional = false
@@ -963,8 +963,8 @@ coverage = [
     {file = "coverage-6.5.0.tar.gz", hash = "sha256:f642e90754ee3e06b0e7e51bce3379590e76b7f76b708e1a71ff043f87025c84"},
 ]
 crowdstrike-falconpy = [
-    {file = "crowdstrike-falconpy-1.2.5.tar.gz", hash = "sha256:ad76d17010a902ce2735e5d606e6a1e8d333647af3cb5e6216496cb3f9f0ee87"},
-    {file = "crowdstrike_falconpy-1.2.5-py3-none-any.whl", hash = "sha256:6a098d17f23b1a1689a2d026c63f352fda599c247cf33751ef1ef31f8f272fb6"},
+    {file = "crowdstrike-falconpy-1.2.6.tar.gz", hash = "sha256:36f1b218394371b861a2cc101610ada5bfb150165e8c8ae7cee612cd8edd08ee"},
+    {file = "crowdstrike_falconpy-1.2.6-py3-none-any.whl", hash = "sha256:6310413148c88b0b407a8dba977c81e15bdc20695e4efb1a285979e89f8f4831"},
 ]
 dill = [
     {file = "dill-0.3.6-py3-none-any.whl", hash = "sha256:a07ffd2351b8c678dfc4a856a3005f8067aea51d6ba6c700796a4d9e280f39f0"},
