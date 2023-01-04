@@ -146,7 +146,7 @@ def _numbered_offset_parallel_worker(
         )
     response = func(offset=batch_offset, limit=limit)['body']
     logger.debug("%s | %s", thread_name, response)
-    resources = response['resources']
+    resources = response.get('resources', [])
     logger.info("%s | Retrieved %d resources", thread_name, len(resources))
 
     return resources
@@ -172,12 +172,11 @@ def all_pages_numbered_offset_parallel(
 
     # Get the first page to figure out how many items to pull
     logger.info("Grabbing first batch of items 1 to up to %s", limit)
-    response = func(offset=0, limit=limit)['body']
+    response: Dict = func(offset=0, limit=limit)['body']
     logger.debug(response)
 
-    resources = response['resources']
-    logger.info("Retrieved a batch of %d items", len(resources))
-    all_resources: List[Dict] = resources
+    all_resources: List[Dict] = response.get('resources', [])
+    logger.info("Retrieved a batch of %d items", len(all_resources))
 
     if not all_resources:
         logger.info("No resources received; returning an empty list")
@@ -262,7 +261,8 @@ def all_pages_token_offset(
         else:
             response = func(limit=limit, offset=offset)['body']
         logger.debug(response)
-        item_ids.extend(response['resources'])
+        resources = response.get('resources', [])
+        item_ids.extend(resources)
         if not item_ids:
             # Nothing was returned, so bail out in case the pagination data does not exist
             return []
