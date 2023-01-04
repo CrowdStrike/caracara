@@ -14,7 +14,7 @@ import multiprocessing
 
 from functools import partial
 from threading import current_thread
-from typing import Callable, Dict, List
+from typing import Callable, Dict, List, Tuple
 
 from caracara.common.constants import DATA_BATCH_SIZE
 
@@ -52,6 +52,7 @@ def batch_get_data(
     dict: A dictionary of all results returned.
     """
     resources = []
+    errors = []
 
     BATCH_LOGGER.info("Batch data retrieval for %s (%d items)", func.__name__, len(lookup_ids))
     BATCH_LOGGER.debug(str(lookup_ids))
@@ -62,17 +63,30 @@ def batch_get_data(
 
     threads = batch_data_pull_threads()
 
-    def worker(batch_func: Callable[[List[str]], Dict], worker_lookup_ids: List[str]) -> Dict:
+    def worker(
+        batch_func: Callable[[List[str]], Dict],
+        worker_lookup_ids: List[str],
+    ) -> Tuple[List[Dict], List[Dict]]:
+        """Inline worker thread that pulls resources from an API endpoint."""
         thread_name = current_thread().name
         BATCH_LOGGER.info(
             "%s | Batch worker started with a list of %d items. Function: %s",
             thread_name, len(worker_lookup_ids), batch_func.__name__,
         )
-        resources = batch_func(ids=worker_lookup_ids)["body"]["resources"]
-        BATCH_LOGGER.info("%s | Retrieved %d resources", thread_name, len(resources))
-        BATCH_LOGGER.debug("%s | %s", thread_name, resources)
+        body: Dict = batch_func(ids=worker_lookup_ids)["body"]
+        # Gracefully handle a lack of returned resources, usually as a result of an error
+        thread_resources: List[Dict] = body.get("resources", [])
+        BATCH_LOGGER.info("%s | Retrieved %d resources", thread_name, len(thread_resources))
+        BATCH_LOGGER.debug("%s | %s", thread_name, thread_resources)
 
-        return resources
+        thread_errors: List[Dict] = body.get("errors")
+        if thread_errors:
+            BATCH_LOGGER.info("%s | ERRORS: %s", thread_name, thread_errors)
+
+        if thread_errors is None:
+            thread_errors = []
+
+        return thread_resources, thread_errors
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
         partial_worker = partial(worker, func)
@@ -80,7 +94,8 @@ def batch_get_data(
 
     for complete in completed:
         BATCH_LOGGER.debug("Completed a batch")
-        resources.extend(complete)
+        resources.extend(complete[0])
+        errors.extend(complete[1])
 
     resources_dict = {}
     for resource in resources:
@@ -95,5 +110,8 @@ def batch_get_data(
 
     BATCH_LOGGER.debug("Returned resources")
     BATCH_LOGGER.debug(resources_dict)
+
+    if errors:
+        raise Exception("At least one thread returned an error: " + str(errors))
 
     return resources_dict
