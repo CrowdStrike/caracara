@@ -405,7 +405,7 @@ class Policy:
             "description": self.description,
             "name": self.name,
             "platform_name": self.platform_name,
-            self.settings_key_name: settings,
+            "settings": settings,
         }
         if self.policy_id:
             data['id'] = self.policy_id
