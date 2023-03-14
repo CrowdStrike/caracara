@@ -11,7 +11,7 @@ py7zr = "^0.20"
 crowdstrike-falconpy = "^1.2.9"
 
 [tool.poetry.dev-dependencies]
-bandit = "^1.7.4"
+bandit = "^1.7.5"
 bullet = "^2.2.0"
 coverage = "^7.1.0"
 flake8 = "^5.0.4"
