@@ -13,7 +13,7 @@ crowdstrike-falconpy = "^1.2.9"
 [tool.poetry.dev-dependencies]
 bandit = "^1.7.5"
 bullet = "^2.2.0"
-coverage = "^7.1.0"
+coverage = "^7.2.2"
 flake8 = "^5.0.4"
 pydocstyle = "^6.3.0"
 pylint = "^2.12.2"
