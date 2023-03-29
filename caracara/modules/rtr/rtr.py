@@ -87,7 +87,7 @@ class RTRApiModule(FalconApiModule):
         List[str]: A list of IDs of all queued RTR sessions discovered.
         """
         self.logger.info("Searching for queued RTR sessions")
-        filter_str = "offline_queued: 1+deleted_at: null"
+        filter_str = "offline_queued: true+deleted_at: null"
         session_ids = self._search_sessions(filters=filter_str)
         return session_ids
 
