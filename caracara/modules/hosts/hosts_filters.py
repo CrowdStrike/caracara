@@ -22,27 +22,6 @@ class HostContainedFilterAttribute(FalconFilterAttribute):
     restrict = True
 
 
-class HostConnectionStatusFilterAttribute(FalconFilterAttribute):
-    """
-    Filter by whether a host is connected to the Falcon cloud.
-
-    Current valid options are Online and Offline.
-    """
-
-    name = "ConnectionStatus"
-    fql = "connection_status"
-    options = ["Online", "Offline"]
-    restrict = True
-
-    def example(self) -> str:
-        """Show filter example."""
-        return (
-            "This filter allows you to search for systems based on whether Falcon assesses them "
-            "as being Online or Offline. Theoretically, all 'Online' systems should be available "
-            "to connect to via Real Time Response (RTR)."
-        )
-
-
 class HostDomainFqlFilterAttribute(FalconFilterAttribute):
     """Filter by host AD domain."""
 
