@@ -139,7 +139,7 @@ class HostsApiModule(FalconApiModule):
         # Filter by online state, if applicable
         if online_state is not None:
             self.logger.info("Checking the online state of the device IDs")
-            id_list = self.filter_by_online_state(id_list, online_state=online_state)
+            device_ids = self.filter_by_online_state(device_ids, online_state=online_state)
 
         device_data = self.get_device_data(device_ids)
 
