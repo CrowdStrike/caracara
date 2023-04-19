@@ -93,6 +93,11 @@ class HostsApiModule(FalconApiModule):
         unhide,
     )
 
+    # Import functions to filter by device online state
+    from caracara.modules.hosts._online_state import (
+        filter_by_online_state,
+    )
+
     # Import functions to create and modify device tags
     from caracara.modules.hosts._tagging import (
         _create_tag_list,
@@ -114,13 +119,15 @@ class HostsApiModule(FalconApiModule):
         return returned
 
     @filter_string
-    def describe_devices(self, filters: FalconFilter or str = None) -> Dict[str, Dict]:
+    def describe_devices(self, filters: FalconFilter or str = None, online_state: bool = None) -> Dict[str, Dict]:
         """Return a dictionary containing details for every device matching the provided filter.
 
         Arguments
         ---------
         filters: FalconFilter or str, optional
             Filters to apply to the device search.
+        online_state: bool, optional
+            Device online state to filter devices on.
 
         Returns
         -------
@@ -128,6 +135,12 @@ class HostsApiModule(FalconApiModule):
         """
         self.logger.info("Describing devices according to the filter string %s", filters)
         device_ids = self.get_device_ids(filters)
+
+        # Filter by online state, if applicable
+        if online_state is not None:
+            self.logger.info("Checking the online state of the device IDs")
+            id_list = self.filter_by_online_state(id_list, online_state=online_state)
+
         device_data = self.get_device_data(device_ids)
 
         return device_data
@@ -154,13 +167,15 @@ class HostsApiModule(FalconApiModule):
         return device_data
 
     @filter_string
-    def get_device_ids(self, filters: FalconFilter or str = None) -> List[str]:
+    def get_device_ids(self, filters: FalconFilter or str = None, online_state: bool = None) -> List[str]:
         """Return a list of IDs (string) for every device in your Falcon tenant.
 
         Arguments
         ---------
         filters: FalconFilter or str, optional
             Filters to apply to the device search.
+        online_state: bool, optional
+            Device online state to filter devices on.
 
         Returns
         -------
@@ -169,6 +184,12 @@ class HostsApiModule(FalconApiModule):
         self.logger.info("Searching for device IDs using the filter string %s", filters)
         func = partial(self.hosts_api.query_devices_by_filter_scroll, filter=filters)
         id_list: List[str] = all_pages_token_offset(func=func, logger=self.logger)
+
+        # Filter by online state, if applicable
+        if online_state is not None:
+            self.logger.info("Checking the online state of the device IDs")
+            id_list = self.filter_by_online_state(id_list, online_state=online_state)
+
         return id_list
     
     def get_online_state(self, device_ids: List[str]) -> List[str]:
