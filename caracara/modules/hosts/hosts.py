@@ -170,3 +170,24 @@ class HostsApiModule(FalconApiModule):
         func = partial(self.hosts_api.query_devices_by_filter_scroll, filter=filters)
         id_list: List[str] = all_pages_token_offset(func=func, logger=self.logger)
         return id_list
+    
+    def get_online_state(self, device_ids: List[str]) -> List[str]:
+        """Return a dictionary containing online state details for every device specified by ID.
+
+        You should only use this endpoint if you already have a list of Device IDs / AIDs,
+        and want to retreive data about them directly. If you need to get device data via a
+        filter, and you do not yet have a list of Device IDs, you should consider using the
+        describe_devices() function.
+
+        Arguments
+        ---------
+        device_ids: [str], required
+            A list of Falcon Device IDs.
+
+        Returns
+        -------
+        dict: A dictionary containing online state details for every device listed.
+        """
+        self.logger.info("Obtaining online state data for %s devices", len(device_ids))
+        device_online_state_data = batch_get_data(device_ids, self.hosts_api.get_online_state)
+        return device_online_state_data

@@ -271,7 +271,6 @@ class HostOUFilterAttribute(FalconFilterAttribute):
 
 FILTER_ATTRIBUTES = [
     HostContainedFilterAttribute,
-    HostConnectionStatusFilterAttribute,
     HostDomainFqlFilterAttribute,
     HostGroupIdFilterAttribute,
     HostHostnameFilterAttribute,
