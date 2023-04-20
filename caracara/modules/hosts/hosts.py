@@ -191,7 +191,7 @@ class HostsApiModule(FalconApiModule):
             id_list = self.filter_by_online_state(id_list, online_state=online_state)
 
         return id_list
-    
+
     def get_online_state(self, device_ids: List[str]) -> List[str]:
         """Return a dictionary containing online state details for every device specified by ID.
 

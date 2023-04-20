@@ -21,7 +21,7 @@ def filter_by_online_state(
     online_state: bool,
 ):
     """Filter a list of device IDs by an online state.
-    
+
         Arguments
         ---------
         device_ids: List[str]
@@ -42,5 +42,5 @@ def filter_by_online_state(
         elif device_data['state'] != "online" and not online_state:
             # Consider offline and unknown states to be equivalent
             filtered_device_ids.append(device_id)
-    
-    return filtered_device_ids 
+
+    return filtered_device_ids
