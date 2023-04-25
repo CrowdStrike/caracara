@@ -1,7 +1,8 @@
 """
-Falcon Host module.
+Caracara Modules Package Initialisation.
 
-Exposes functions to get host data and perform actions on hosts, such as network containment.
+Proides pipework to link together the various modules within Caracara and expose them to
+the Client object at setup.
 """
 __all__ = [
     'CustomIoaApiModule',
@@ -10,6 +11,7 @@ __all__ = [
     'PreventionPoliciesApiModule',
     'ResponsePoliciesApiModule',
     'RTRApiModule',
+    'UsersApiModule',
     'MODULE_FILTER_ATTRIBUTES',
 ]
 
@@ -25,10 +27,15 @@ from caracara.modules.rtr import (
     FILTER_ATTRIBUTES as rtr_filter_attributes,
     RTRApiModule,
 )
+from caracara.modules.users import (
+    FILTER_ATTRIBUTES as users_filter_attributes,
+    UsersApiModule,
+)
 
 # Build up a list with all filter attributes from the includes modules.
 # This makes makes for much easier importing when setting up Falcon Filters.
 MODULE_FILTER_ATTRIBUTES = [
     *hosts_filter_attributes,
     *rtr_filter_attributes,
+    *users_filter_attributes,
 ]

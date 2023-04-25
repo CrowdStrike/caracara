@@ -33,6 +33,7 @@ from caracara.modules import (
     PreventionPoliciesApiModule,
     ResponsePoliciesApiModule,
     RTRApiModule,
+    UsersApiModule,
     MODULE_FILTER_ATTRIBUTES,
 )
 
@@ -161,6 +162,8 @@ class Client:
         self.response_policies = ResponsePoliciesApiModule(self.api_authentication)
         self.logger.debug("Setting up the RTR module")
         self.rtr = RTRApiModule(self.api_authentication)
+        self.logger.debug("Setting up the Users module")
+        self.users = UsersApiModule(self.api_authentication)
 
         self.logger.debug("Configuring FQL filters")
         # Pre-configure the FQL modules for faster instantiation later
