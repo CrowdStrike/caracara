@@ -31,7 +31,7 @@ class FalconApiModule(ABC):
     def __init__(self, api_authentication: OAuth2):
         """Configure a Caracara API module with a FalconPy OAuth2 module."""
         class_name = self.__class__.__name__
-        self.logger = logging.getLogger(class_name)
+        self.logger = logging.getLogger(f"caracara.modules.{class_name}")
         self.logger.debug("Initialising API module: %s", class_name)
 
         self.api_authentication = api_authentication

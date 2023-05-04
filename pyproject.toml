@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "caracara"
-version = "0.2.3"
+version = "0.3.0"
 description = "The CrowdStrike Falcon Developer Toolkit"
 authors = [ "CrowdStrike <falconpy@crowdstrike.com>" ]
 readme = "README.md"
@@ -8,7 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.7"
 py7zr = "^0.20"
-crowdstrike-falconpy = "^1.2.9"
+crowdstrike-falconpy = "^1.2.15"
 
 [tool.poetry.dev-dependencies]
 bandit = "^1.7.5"
@@ -85,3 +85,6 @@ describe-queued-sessions = "examples.rtr.describe_queued_sessions:describe_queue
 describe-scripts = "examples.rtr.describe_scripts:describe_scripts"
 download-event-log = "examples.rtr.download_event_log:download_event_log"
 queue-command = "examples.rtr.queue_command:queue_command"
+# Users
+describe-roles = "examples.users.describe_roles:describe_roles"
+describe-users = "examples.users.describe_users:describe_users"

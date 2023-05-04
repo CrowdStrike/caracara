@@ -7,6 +7,8 @@ create_response_policy.py
 This example will create a Windows response policy based on the included template.
 You can use this code sample to customise the policy.
 """
+import logging
+
 from caracara import Client
 
 from examples.common import caracara_example, pretty_print
@@ -16,9 +18,10 @@ from examples.common import caracara_example, pretty_print
 def create_response_policy(**kwargs):
     """Create a new Windows response policy with everything enabled."""
     client: Client = kwargs['client']
+    logger: logging.Logger = kwargs['logger']
 
     response_policy = client.response_policies.new_policy("Windows")
-    pretty_print(response_policy.flat_dump())
+    logger.info(pretty_print(response_policy.flat_dump()))
 
 
 if __name__ == "__main__":

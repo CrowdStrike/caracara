@@ -18,7 +18,7 @@ of data dictionaries returned in response to a list of IDs, the batching
 code file contains the required code to pull this data down as quickly
 as possible.
 
-Four types of paginator are in use:
+Five types of paginator are in use:
 
 Style 1 (Numerical Offset)
 Implementation function: all_pages_numbered_offset()
@@ -74,6 +74,18 @@ Once a Caracara wrapper to such an API is implemented, a function to handle
 this will be built.
 See the "Deep Pagination Leveraging Markers (Timestamp)" section here:
     https://falconpy.io/Usage/Response-Handling.html
+
+
+Style 5 (Generic Parallelised One-by-One Call)
+Some APIs, such as the User Management ones, include functions that accept
+only one parameter at a time (e.g., a single ID rather than a list of IDs).
+These APIs could be parallelised within individual Caracara modules / functions,
+but instead a generic implementation is provided here.
+
+Given that there are different types of IDs within the API (CIDs, AIDs, UUIDs, etc.),
+this function takes a parameter name / parameter value list pair.
+Param Name = the name of the kwarg that should be swapped out in each call
+Value List = a list of strings to be iterated over
 """
 import concurrent.futures
 import logging
@@ -280,3 +292,71 @@ def all_pages_token_offset(
     logger.debug(item_ids)
 
     return item_ids
+
+
+def _generic_parallel_list_execution_worker(
+    func: Callable[[Dict[str, Dict]], List[Dict] or List[str]] or partial,
+    logger: logging.Logger,
+    param_name: str,
+    param_value: str,
+):
+    thread_name = current_thread().name
+    if isinstance(func, partial):
+        logger.info(
+            "%s | Batch worker started with partial function: %s",
+            thread_name, func.func.__name__,
+        )
+    else:
+        logger.info(
+            "%s | Batch worker started with function: %s",
+            thread_name, func.__name__,
+        )
+
+    response = func(**{param_name: param_value})['body']
+    logger.debug("%s | %s", thread_name, response)
+    resources = response.get('resources', [])
+    logger.info("%s | Retrieved %d resources", thread_name, len(resources))
+
+    return resources
+
+
+def generic_parallel_list_execution(
+        func: Callable[[Dict[str, Dict]], List[Dict] or List[str]] or partial,
+        logger: logging.Logger,
+        param_name: str,
+        value_list: List[str],
+):
+    """Call a function many times in a thread pool based on a list of kwarg values.
+
+    This is what is described above as Pagination Style 5. A function (or partial)
+    should be provided, along with a param_name (e.g., id, cid, uuid, etc.) and
+    a list of strings to be iterated over, each of which will be assigned in turn to
+    the param named in the previous parameter.
+    """
+    logger = logger.getChild(__name__)
+    if isinstance(func, partial):
+        logger.info(
+            "Pagination Style 5: Repeatedly executing the partial function %s",
+            func.func.__name__,
+        )
+    else:
+        logger.info(
+            "Pagination Style 2: Grabbing all pages from the function %s",
+            func.__name__,
+        )
+
+    all_resources = []
+    threads = batch_data_pull_threads()
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
+        partial_worker = partial(_generic_parallel_list_execution_worker, func, logger, param_name)
+        completed = executor.map(
+            partial_worker,
+            value_list,
+        )
+
+    for complete in completed:
+        logger.debug("Completed a function execution against one item")
+        all_resources.extend(complete)
+
+    return all_resources

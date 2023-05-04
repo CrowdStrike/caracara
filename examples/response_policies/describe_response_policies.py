@@ -37,8 +37,8 @@ def describe_response_policies(**kwargs):
         if policy.description:
             print(policy.description)
 
-        pretty_print(policy.dump())
-        pretty_print(policy.flat_dump())
+        logger.info(pretty_print(policy.dump()))
+        logger.info(pretty_print(policy.flat_dump()))
 
         i += 1
 
