@@ -68,6 +68,7 @@ def describe_state(
     self: HostsApiModule,
     filters: FalconFilter or str = None,
 ) -> Dict[str, Dict]:
+    """NOTE: DEPRECATED. The describe_devices function now captures this functionality."""
     """Return a dictionary containing online state for devices matching the provided filter.
 
     Arguments

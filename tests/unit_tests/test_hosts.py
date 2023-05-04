@@ -1,9 +1,12 @@
 """Unit tests for HostsApiModule"""
 from unittest.mock import patch
+import pytest
 
 import falconpy
 
 from caracara import Client
+from caracara.common.constants import OnlineState
+from caracara.common.exceptions import InvalidOnlineState
 
 # A lot of mock methods need a certain function signature, and since they only mock functionality
 # they do not always use all the arguments. Therefore, we disable the unused-argument warning.
@@ -29,6 +32,28 @@ mock_devices = {
 }
 visible_ids = [i for i, dev in mock_devices.items() if dev.get("host_hidden_status") != "hidden"]
 hidden_ids = [i for i, dev in mock_devices.items() if dev.get("host_hidden_status") == "hidden"]
+
+mock_device_online_states = {
+    "00000000000000000000000000000000": {
+        "id": "00000000000000000000000000000000",
+        "state": "online",
+    },
+    "00000000000000000000000000000001": {
+        "id": "00000000000000000000000000000001",
+        "state": "offline",
+    },
+    "00000000000000000000000000000002": {
+        "id": "00000000000000000000000000000002",
+        "state": "unknown",
+    },
+    "00000000000000000000000000000003": {
+        "id": "00000000000000000000000000000003",
+        "state": "online",
+    },
+}
+online_ids = [i for i, data in mock_device_online_states.items() if data.get("state") == "online"]
+offline_ids = [i for i, data in mock_device_online_states.items() if data.get("state") == "offline"]
+unknown_ids = [i for i, data in mock_device_online_states.items() if data.get("state") == "unknown"]
 
 
 def mock_query_devices_by_filter_scroll(*, filter, limit, offset):
@@ -78,6 +103,15 @@ def mock_get_device_details(ids, *, parameters=None):
     }
 
 
+def mock_query_online_state(ids, *, parameters=None):
+    """Mock method for falconpy.Hosts.get_device_details"""
+    return {
+        "body": {
+            "resources": [mock_device_online_states[id_] for id_ in ids]
+        },
+    }
+
+
 def hosts_test():
     """Decorator that contains common functionality between all hosts tests."""
     def decorator(func):
@@ -111,12 +145,68 @@ def test_describe_devices(auth: Client, **_):
     auth.hosts.hosts_api.configure_mock(**{
         "query_devices_by_filter_scroll.side_effect": mock_query_devices_by_filter_scroll,
         "get_device_details.side_effect": mock_get_device_details,
+        "get_online_state.side_effect": mock_query_online_state,
     })
 
     visible_devices = dict(
         (id_, dev) for id_, dev in mock_devices.items() if dev.get("host_hidden_status") != "hidden"
     )
+    for device_id, data in visible_devices.items():
+        data["state"] = mock_device_online_states[device_id]["state"]
     assert auth.hosts.describe_devices() == visible_devices
+
+
+@hosts_test()
+def test_describe_devices__online_only(auth: Client, **_):
+    """Unit test for HostsApiModule.describe_devices"""
+    # Mock FalconPy methods
+    auth.hosts.hosts_api.configure_mock(**{
+        "query_devices_by_filter_scroll.side_effect": mock_query_devices_by_filter_scroll,
+        "get_device_details.side_effect": mock_get_device_details,
+        "get_online_state.side_effect": mock_query_online_state,
+    })
+
+    online_visible_devices = dict(filter(
+        lambda item: item[0] in list(set(visible_ids) & set(online_ids)),
+        mock_devices.items(),
+    ))
+    for _, dev in online_visible_devices.items():
+        dev["state"] = "online"
+
+    assert auth.hosts.describe_devices(online_state="online") == online_visible_devices
+
+
+@hosts_test()
+def test_describe_devices__enum_online_state(auth: Client, **_):
+    """Unit test for HostsApiModule.describe_devices"""
+    # Mock FalconPy methods
+    auth.hosts.hosts_api.configure_mock(**{
+        "query_devices_by_filter_scroll.side_effect": mock_query_devices_by_filter_scroll,
+        "get_device_details.side_effect": mock_get_device_details,
+        "get_online_state.side_effect": mock_query_online_state,
+    })
+
+    offline_visible_devices = dict(filter(
+        lambda item: item[0] in list(set(visible_ids) & set(offline_ids)),
+        mock_devices.items(),
+    ))
+    for _, dev in offline_visible_devices.items():
+        dev["state"] = "offline"
+    assert auth.hosts.describe_devices(online_state=OnlineState.OFFLINE) == offline_visible_devices
+
+
+@hosts_test()
+def test_describe_devices__invalid_online_state(auth: Client, **_):
+    """Unit test for HostsApiModule.describe_devices"""
+    # Mock FalconPy methods
+    auth.hosts.hosts_api.configure_mock(**{
+        "query_devices_by_filter_scroll.side_effect": mock_query_devices_by_filter_scroll,
+        "get_device_details.side_effect": mock_get_device_details,
+        "get_online_state.side_effect": mock_query_online_state,
+    })
+
+    with pytest.raises(InvalidOnlineState):
+        auth.hosts.describe_devices(online_state="notastate")
 
 
 @hosts_test()
@@ -385,6 +475,42 @@ def test_get_device_ids(auth: Client, **_):
 
 
 @hosts_test()
+def test_get_device_ids__online_only(auth: Client, **_):
+    """Unit test for HostsApiModule.get_device_ids"""
+    auth.hosts.hosts_api.configure_mock(**{
+        "query_devices_by_filter_scroll.side_effect": mock_query_devices_by_filter_scroll,
+        "get_online_state.side_effect": mock_query_online_state,
+    })
+
+    assert set(auth.hosts.get_device_ids(online_state="online")) \
+        == set(online_ids) & set(visible_ids)
+
+
+@hosts_test()
+def test_get_device_ids__enum_online_state(auth: Client, **_):
+    """Unit test for HostsApiModule.get_device_ids"""
+    auth.hosts.hosts_api.configure_mock(**{
+        "query_devices_by_filter_scroll.side_effect": mock_query_devices_by_filter_scroll,
+        "get_online_state.side_effect": mock_query_online_state,
+    })
+
+    assert set(auth.hosts.get_device_ids(online_state=OnlineState.UNKNOWN)) \
+        == set(unknown_ids) & set(visible_ids)
+
+
+@hosts_test()
+def test_get_device_ids__invalid_online_state(auth: Client, **_):
+    """Unit test for HostsApiModule.get_device_ids"""
+    auth.hosts.hosts_api.configure_mock(**{
+        "query_devices_by_filter_scroll.side_effect": mock_query_devices_by_filter_scroll,
+        "get_online_state.side_effect": mock_query_online_state,
+    })
+
+    with pytest.raises(InvalidOnlineState):
+        auth.hosts.get_device_ids(online_state="notastate")
+
+
+@hosts_test()
 def test_get_hidden_ids(auth: Client, **_):
     """Unit test for HostsApiModule.get_hidden_ids"""
     auth.hosts.hosts_api.configure_mock(**{
@@ -392,3 +518,43 @@ def test_get_hidden_ids(auth: Client, **_):
     })
 
     assert auth.hosts.get_hidden_ids() == hidden_ids
+
+
+@hosts_test()
+def test_filter_device_ids__online_only(auth: Client, **_):
+    """Unit test for HostsApiModule.filter_device_ids_by_online_state"""
+    auth.hosts.hosts_api.configure_mock(**{
+        "get_online_state.side_effect": mock_query_online_state,
+    })
+
+    assert auth.hosts.filter_device_ids_by_online_state(
+        list(mock_device_online_states.keys()),
+        "online",
+    ) == online_ids
+
+
+@hosts_test()
+def test_filter_device_ids__enum_online_state(auth: Client, **_):
+    """Unit test for HostsApiModule.filter_device_ids_by_online_state"""
+    auth.hosts.hosts_api.configure_mock(**{
+        "get_online_state.side_effect": mock_query_online_state,
+    })
+
+    assert auth.hosts.filter_device_ids_by_online_state(
+        list(mock_device_online_states.keys()),
+        OnlineState.ONLINE,
+    ) == online_ids
+
+
+@hosts_test()
+def test_filter_device_ids__invalid_online_state(auth: Client, **_):
+    """Unit test for HostsApiModule.filter_device_ids_by_online_state"""
+    auth.hosts.hosts_api.configure_mock(**{
+        "get_online_state.side_effect": mock_query_online_state,
+    })
+
+    with pytest.raises(InvalidOnlineState):
+        auth.hosts.filter_device_ids_by_online_state(
+            list(mock_device_online_states.keys()),
+            "notastate",
+        )
