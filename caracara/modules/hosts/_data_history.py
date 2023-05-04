@@ -71,7 +71,6 @@ def describe_state(
     """Return a dictionary containing online state for devices matching the provided filter.
 
     DEPRECATED. The describe_devices function now captures this functionality.
-    """
 
     Arguments
     ---------
