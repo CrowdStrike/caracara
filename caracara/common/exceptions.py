@@ -1,5 +1,6 @@
 """Caracara exceptions."""
 from typing import Dict, List
+
 from caracara.common.constants import OnlineState
 
 
