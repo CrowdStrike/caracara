@@ -14,6 +14,8 @@ from functools import partial
 from typing import (
     Dict,
     List,
+    Union,
+    Optional,
 )
 
 from falconpy import (
@@ -129,7 +131,7 @@ class HostsApiModule(FalconApiModule):
     def describe_devices(
         self,
         filters: FalconFilter or str = None,
-        online_state: OnlineState or str = None,
+        online_state: Optional[Union[OnlineState, str]] = None,
     ) -> Dict[str, Dict]:
         """Return a dictionary containing details for every device matching the provided filter.
 
@@ -194,7 +196,7 @@ class HostsApiModule(FalconApiModule):
     def get_device_ids(
         self,
         filters: FalconFilter or str = None,
-        online_state: OnlineState or str = None,
+        online_state: Optional[Union[OnlineState, str]] = None,
     ) -> List[str]:
         """Return a list of IDs (string) for every device in your Falcon tenant.
 
