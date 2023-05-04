@@ -14,6 +14,8 @@ from functools import partial
 from typing import (
     Dict,
     List,
+    Union,
+    Optional,
 )
 
 from falconpy import (
@@ -23,6 +25,7 @@ from falconpy import (
 )
 
 from caracara.common.batching import batch_get_data
+from caracara.common.constants import OnlineState
 from caracara.common.exceptions import (
     GenericAPIError,
 )
@@ -93,6 +96,13 @@ class HostsApiModule(FalconApiModule):
         unhide,
     )
 
+    # Import functions to filter by device online state
+    from caracara.modules.hosts._online_state import (
+        get_online_state,
+        filter_device_ids_by_online_state,
+        validate_online_state,
+    )
+
     # Import functions to create and modify device tags
     from caracara.modules.hosts._tagging import (
         _create_tag_list,
@@ -104,7 +114,11 @@ class HostsApiModule(FalconApiModule):
     # Static methods have to be set within the class
     _create_tag_list = staticmethod(_create_tag_list)
 
-    def _perform_action(self, action_name: str, device_ids: List[str]) -> Dict:
+    def _perform_action(
+            self,
+            action_name: str,
+            device_ids: List[str],
+    ) -> Dict:
         """Perform the specified action against the list of targets."""
         returned = self.hosts_api.perform_action(ids=device_ids, action_name=action_name)["body"]
 
@@ -114,13 +128,19 @@ class HostsApiModule(FalconApiModule):
         return returned
 
     @filter_string
-    def describe_devices(self, filters: FalconFilter or str = None) -> Dict[str, Dict]:
+    def describe_devices(
+        self,
+        filters: FalconFilter or str = None,
+        online_state: Optional[Union[OnlineState, str]] = None,
+    ) -> Dict[str, Dict]:
         """Return a dictionary containing details for every device matching the provided filter.
 
         Arguments
         ---------
         filters: FalconFilter or str, optional
             Filters to apply to the device search.
+        online_state: OnlineState or str, optional
+            Device online state to filter devices on. Options are "online", "offline", "unknown"
 
         Returns
         -------
@@ -128,11 +148,30 @@ class HostsApiModule(FalconApiModule):
         """
         self.logger.info("Describing devices according to the filter string %s", filters)
         device_ids = self.get_device_ids(filters)
+
+        # Collect state data
+        device_state_data = self.get_online_state(device_ids)
+
+        # Filter by online state, if applicable.
+        if online_state is not None:
+            self.validate_online_state(online_state)
+            device_ids = list(filter(
+                lambda key: device_state_data[key]["state"] == online_state,
+                device_state_data,
+            ))
+
         device_data = self.get_device_data(device_ids)
+
+        # Enrich the results with the online state field
+        for device_id, data in device_data.items():
+            data["state"] = device_state_data[device_id]["state"]
 
         return device_data
 
-    def get_device_data(self, device_ids: List[str]) -> Dict[str, Dict]:
+    def get_device_data(
+            self,
+            device_ids: List[str],
+    ) -> Dict[str, Dict]:
         """Return a dictionary containing details for every device specified by ID.
 
         You should only use this endpoint if you already have a list of Device IDs / AIDs,
@@ -154,13 +193,19 @@ class HostsApiModule(FalconApiModule):
         return device_data
 
     @filter_string
-    def get_device_ids(self, filters: FalconFilter or str = None) -> List[str]:
+    def get_device_ids(
+        self,
+        filters: FalconFilter or str = None,
+        online_state: Optional[Union[OnlineState, str]] = None,
+    ) -> List[str]:
         """Return a list of IDs (string) for every device in your Falcon tenant.
 
         Arguments
         ---------
         filters: FalconFilter or str, optional
             Filters to apply to the device search.
+        online_state: OnlineState or str, optional
+            Device online state to filter devices on. Options are "online", "offline", "unknown"
 
         Returns
         -------
@@ -169,4 +214,9 @@ class HostsApiModule(FalconApiModule):
         self.logger.info("Searching for device IDs using the filter string %s", filters)
         func = partial(self.hosts_api.query_devices_by_filter_scroll, filter=filters)
         id_list: List[str] = all_pages_token_offset(func=func, logger=self.logger)
+
+        # Filter by online state, if applicable.
+        if online_state is not None:
+            id_list = self.filter_device_ids_by_online_state(id_list, online_state=online_state)
+
         return id_list

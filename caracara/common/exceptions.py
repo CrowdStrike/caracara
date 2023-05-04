@@ -1,6 +1,8 @@
 """Caracara exceptions."""
 from typing import Dict, List
 
+from caracara.common.constants import OnlineState
+
 
 class BaseCaracaraError(Exception):
     """Base exception class from which all other exceptions inherit."""
@@ -112,5 +114,18 @@ class MissingArguments(GenericAPIError):
         self.errors = [{
             "code": 500,
             "message": arg_str
+        }]
+        super().__init__(self.errors)
+
+
+class InvalidOnlineState(GenericAPIError):
+    """The provided online state is invalid."""
+
+    def __init__(self, online_state_string):
+        """Construct an instance of the InvalidOnlineState class."""
+        self.errors = [{
+            "code": 500,
+            "message": f"Invalid online state '{online_state_string}'. \
+                        Expected one of {OnlineState.VALUES}."
         }]
         super().__init__(self.errors)

@@ -70,6 +70,8 @@ def describe_state(
 ) -> Dict[str, Dict]:
     """Return a dictionary containing online state for devices matching the provided filter.
 
+    DEPRECATED. The describe_devices function now captures this functionality.
+
     Arguments
     ---------
     filters: FalconFilter or str, optional
