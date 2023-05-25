@@ -151,8 +151,7 @@ def test_describe_devices(auth: Client, **_):
     visible_devices = dict(
         (id_, dev) for id_, dev in mock_devices.items() if dev.get("host_hidden_status") != "hidden"
     )
-    for device_id, data in visible_devices.items():
-        data["state"] = mock_device_online_states[device_id]["state"]
+
     assert auth.hosts.describe_devices() == visible_devices
 
 
@@ -170,8 +169,6 @@ def test_describe_devices__online_only(auth: Client, **_):
         lambda item: item[0] in list(set(visible_ids) & set(online_ids)),
         mock_devices.items(),
     ))
-    for _, dev in online_visible_devices.items():
-        dev["state"] = "online"
 
     assert auth.hosts.describe_devices(online_state="online") == online_visible_devices
 
@@ -190,8 +187,7 @@ def test_describe_devices__enum_online_state(auth: Client, **_):
         lambda item: item[0] in list(set(visible_ids) & set(offline_ids)),
         mock_devices.items(),
     ))
-    for _, dev in offline_visible_devices.items():
-        dev["state"] = "offline"
+
     assert auth.hosts.describe_devices(online_state=OnlineState.OFFLINE) == offline_visible_devices
 
 

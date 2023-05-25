@@ -132,6 +132,7 @@ class HostsApiModule(FalconApiModule):
         self,
         filters: FalconFilter or str = None,
         online_state: Optional[Union[OnlineState, str]] = None,
+        enrich_with_online_state: Optional[bool] = False,
     ) -> Dict[str, Dict]:
         """Return a dictionary containing details for every device matching the provided filter.
 
@@ -149,11 +150,14 @@ class HostsApiModule(FalconApiModule):
         self.logger.info("Describing devices according to the filter string %s", filters)
         device_ids = self.get_device_ids(filters)
 
-        # Collect state data
-        device_state_data = self.get_online_state(device_ids)
+        if enrich_with_online_state:
+            # Collect state data
+            device_state_data = self.get_online_state(device_ids)
 
         # Filter by online state, if applicable.
         if online_state is not None:
+            if not enrich_with_online_state:
+                device_state_data = self.get_online_state(device_ids)
             self.validate_online_state(online_state)
             device_ids = list(filter(
                 lambda key: device_state_data[key]["state"] == online_state,
@@ -162,9 +166,10 @@ class HostsApiModule(FalconApiModule):
 
         device_data = self.get_device_data(device_ids)
 
-        # Enrich the results with the online state field
-        for device_id, data in device_data.items():
-            data["state"] = device_state_data[device_id]["state"]
+        if enrich_with_online_state:
+            # Enrich the results with the online state field
+            for device_id, data in device_data.items():
+                data["state"] = device_state_data[device_id]["state"]
 
         return device_data
 
