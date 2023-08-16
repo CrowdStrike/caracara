@@ -283,7 +283,7 @@ class HostMACAddressFilterAttribute(FalconFilterAttribute):
         )
 
 class HostDeviceIdFilterAttribute(FalconFilterAttribute):
-    """Filter by host's sensor id."""
+    """Filter by host's device (also known sometimes as sensor or host) id."""
 
     name = "DeviceId"
     fql = "device_id"
@@ -291,9 +291,9 @@ class HostDeviceIdFilterAttribute(FalconFilterAttribute):
     def example(self) -> str:
         """Show filter example."""
         return (
-            "This filter accepts a MAC address string associated with a "
-            "network interface, e.g. 01-22-33-44-55-66. You can also"
-            "comma delimit strings for multiple matches."
+            "This filter accepts a device ID string associated with the "
+            "sensor installed on the host, e.g. 0123a45b789c01defgh2i3456789j0k1. "
+            "You can also comma delimit strings for multiple matches."
         )
 
 
