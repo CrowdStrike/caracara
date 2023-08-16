@@ -268,6 +268,7 @@ class HostOUFilterAttribute(FalconFilterAttribute):
             "OUs. Programmatically, you can pass a Python list of OUs."
         )
 
+
 class HostMACAddressFilterAttribute(FalconFilterAttribute):
     """Filter by host's MAC address."""
 
@@ -281,6 +282,7 @@ class HostMACAddressFilterAttribute(FalconFilterAttribute):
             "network interface, e.g. 01-22-33-44-55-66. You can also"
             "comma delimit strings for multiple matches."
         )
+
 
 class HostDeviceIdFilterAttribute(FalconFilterAttribute):
     """Filter by host's device (also known sometimes as sensor or host) id."""
