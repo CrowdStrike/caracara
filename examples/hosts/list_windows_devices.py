@@ -29,7 +29,7 @@ def list_windows_devices(**kwargs):
 
     logger.info("Grabbing all Windows devices within the tenant")
 
-    filters = client.FalconFilter()
+    filters = client.FalconFilter(dialect='hosts')
     filters.create_new_filter("OS", "Windows")
     logger.info("Using the FQL filter: %s", filters.get_fql())
 

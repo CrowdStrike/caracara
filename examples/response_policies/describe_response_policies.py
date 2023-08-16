@@ -27,7 +27,7 @@ def describe_response_policies(**kwargs):
 
     logger.info("Grabbing all Windows response policies from the Falcon tenant")
 
-    filters = client.FalconFilter()
+    filters = client.FalconFilter(dialect='response_policies')
     filters.create_new_filter("OS", "Windows")
     policies: List[Policy] = client.response_policies.describe_policies(filters=filters)
 

@@ -42,7 +42,7 @@ def find_stale_sensors(**kwargs):
         days = int(settings.get('days', days))
         remove = bool(settings.get("remove", remove))
 
-    filters = client.FalconFilter()
+    filters = client.FalconFilter(dialect='hosts')
     filters.create_new_filter("LastSeen", f"-{days}d", "LTE")
 
     logger.info("Using the FQL filter: %s", filters.get_fql())

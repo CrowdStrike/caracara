@@ -108,12 +108,13 @@ def batch_get_data(
         elif 'uuid' in resource:
             resources_dict[resource['uuid']] = resource
         else:
-            raise Exception("No ID field to build the dictionary from")
+            raise KeyError("No ID field to build the dictionary from")
 
     BATCH_LOGGER.debug("Returned resources")
     BATCH_LOGGER.debug(resources_dict)
 
     if errors:
+        # pylint: disable=W0719
         raise Exception("At least one thread returned an error: " + str(errors))
 
     return resources_dict

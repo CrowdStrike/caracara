@@ -1,0 +1,44 @@
+name: Caracara Code Quality
+on:
+  push:
+    paths:
+      - '**.py'
+      - '**.yml'
+    branches:
+      - main
+      - 'ver_*'
+    tags:
+      - 'v*'
+  pull_request:
+
+jobs:
+  codequality:
+    strategy:
+      matrix:
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install Poetry via pipx
+      run: pipx install poetry
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'poetry'
+    - name: Install dependencies
+      run: poetry install
+    - name: Lint package source with flake8
+      run: poetry run flake8 caracara/ --show-source --statistics
+    - name: Lint package source with pylint
+      if: success() || failure()
+      run: poetry run pylint caracara/
+    - name: Lint package docstrings and comments with pydocstyle
+      if: success() || failure()
+      run: poetry run pydocstyle caracara/
+    - name: Analyse code for security issues with bandit
+      if: success() || failure()
+      run: |
+        poetry run bandit -r caracara --configfile .bandit
+        poetry run bandit -r examples --configfile examples/.bandit
+        poetry run bandit -r tests --configfile tests/.bandit

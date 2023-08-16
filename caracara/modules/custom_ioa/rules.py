@@ -127,7 +127,7 @@ class IoaRuleGroup:
             The rule to add to this rule group
         """
         if rule.group is not None:
-            raise Exception(
+            raise ValueError(
                 "This rule has already been added to a group!"
             )
         rule.group = self
@@ -144,7 +144,7 @@ class IoaRuleGroup:
             Index of the rule to delete within the `rules` member.
         """
         if index_of_rule >= len(self.rules) or index_of_rule < 0:
-            raise Exception("Index of rule out of range!")
+            raise IndexError("Index of rule out of range!")
 
         removed_rule = self.rules.pop(index_of_rule)
         if removed_rule.exists_in_cloud():
@@ -168,7 +168,7 @@ class IoaRuleGroup:
         This object model is defined in the CrowdStrike API Swagger document.
         """
         if not self.exists_in_cloud():
-            raise Exception("This group does not exist in the cloud!")
+            raise ValueError("This group does not exist in the cloud!")
         return {
             "customer_id": self.customer_id,
             "id": self.id_,
@@ -206,7 +206,7 @@ class IoaRuleGroup:
         `dict`: A dictionary structured in conformance with the api.RuleGroupCreateRequestV1 model.
         """
         if verify and self.exists_in_cloud():
-            raise Exception("This group already exists in the cloud!")
+            raise ValueError("This group already exists in the cloud!")
 
         return {
             "name": self.name,
@@ -234,7 +234,7 @@ class IoaRuleGroup:
         `dict`: A dictionary structured in conformance with the api.RuleGroupModifyRequestV1 model.
         """
         if verify and not self.exists_in_cloud():
-            raise Exception("This group does not exist in the cloud!")
+            raise ValueError("This group does not exist in the cloud!")
 
         return {
             "id": self.id_,
@@ -430,7 +430,9 @@ class CustomIoaRule:
         """
         # Check an action / disposition has been set
         if not hasattr(self, "disposition_id"):
-            raise Exception("Rule has no action, make sure to set one with the set_action method")
+            raise AttributeError(
+                "Rule has no action, make sure to set one with the set_action method"
+            )
 
         # Check that at least one excludable field is non-default
         regex_values = [
@@ -439,7 +441,7 @@ class CustomIoaRule:
             for value in field["values"]
         ]
         if len(regex_values) > 0 and all(value == ".*" for value in regex_values):
-            raise Exception(
+            raise ValueError(
                 "All excludable/regex fields set to the default of '.*' which the API will reject, "
                 "set one to something else with the set_excludable_field method"
             )
@@ -467,7 +469,7 @@ class CustomIoaRule:
                 self.disposition_id = action
                 self.action_label = self.rule_type.disposition_map[action]
             else:
-                raise Exception("Invalid action/disposition id!")
+                raise KeyError("Invalid action/disposition id!")
         else:
             matches = [id_ for (id_, label)
                        in self.rule_type.disposition_map.items() if label == action]
@@ -475,7 +477,7 @@ class CustomIoaRule:
                 self.disposition_id = matches[0]
                 self.action_label = action
             else:
-                raise Exception("Invalid action/disposition label!")
+                raise KeyError("Invalid action/disposition label!")
 
     def set_excludable_field(self, name_or_label: str, include: str, exclude: Optional[str] = None):
         """Set a field of type excludable with a matching name or label to the one provided.
@@ -496,7 +498,7 @@ class CustomIoaRule:
         field = self.rule_type.get_field(name_or_label, "excludable")
 
         if field is None:
-            raise Exception(
+            raise ValueError(
                 f"Rule type {repr(self.rule_type.name)} has no fields with name or label "
                 f"{repr(name_or_label)} and type \"excludable\""
             )
@@ -547,7 +549,7 @@ class CustomIoaRule:
         field = self.rule_type.get_field(name_or_label, "set")
 
         if field is None:
-            raise Exception(
+            raise ValueError(
                 f"Rule type {repr(self.rule_type.name)} has no fields with name or label "
                 f"{repr(name_or_label)} and type \"excludable\""
             )
@@ -559,7 +561,7 @@ class CustomIoaRule:
                                 [option.label, option.value]]
 
             if len(matching_options) == 0:
-                raise Exception(
+                raise KeyError(
                     f"No option matching {repr(value)} in field {repr(field.name)} in rule with "
                     f"type \"set\""
                 )
@@ -613,7 +615,7 @@ class CustomIoaRule:
         """
         if verify:
             if not self.exists_in_cloud():
-                raise Exception("Can't update a rule that hasn't been created in the cloud")
+                raise ValueError("Can't update a rule that hasn't been created in the cloud")
             self.validation()
 
         return {
@@ -635,7 +637,7 @@ class CustomIoaRule:
         """
         if verify:
             if self.exists_in_cloud():
-                raise Exception("This rule already exists in the cloud!")
+                raise ValueError("This rule already exists in the cloud!")
             self.validation()
 
         return {

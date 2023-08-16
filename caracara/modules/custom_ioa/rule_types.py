@@ -165,7 +165,7 @@ class RuleTypeField:
         elif self.type == "set":
             field["values"] = [option.dump() for option in self.options]
         else:
-            raise Exception(f"Unknown rule field type {repr(self.type)}")
+            raise ValueError(f"Unknown rule field type {repr(self.type)}")
 
         return field
 

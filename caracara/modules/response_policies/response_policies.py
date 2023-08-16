@@ -65,7 +65,7 @@ class ResponsePoliciesApiModule(FalconApiModule):
         return policies
 
     @platform_name_check
-    def new_policy(self, platform_name: str) -> Policy:  # pylint: disable=R0201
+    def new_policy(self, platform_name: str) -> Policy:
         """
         Return a platform-specific response policy template ready for customisation.
 
@@ -128,7 +128,7 @@ class ResponsePoliciesApiModule(FalconApiModule):
         the configuration of the passed Policy object.
         """
         if policy.policy_id is None:
-            raise Exception(
+            raise TypeError(
                 "You must supply a policy containing an ID. To retrieve a complete policy,"
                 "use the describe_policies function"
             )

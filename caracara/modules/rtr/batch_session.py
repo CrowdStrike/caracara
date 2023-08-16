@@ -28,7 +28,7 @@ def _batch_session_required(func):
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         if self.batch_sessions is None:
-            raise Exception("You must connect to hosts with the connect() function first")
+            raise ValueError("You must connect to hosts with the connect() function first")
 
         self.auto_refresh_sessions(self.default_timeout)
 
@@ -330,7 +330,7 @@ class RTRBatchSession:
         # Check whether we are connected to a session in this function rather than via the
         # _batch_session_required decorator to avoid an infinite loop
         if self.batch_sessions is None:
-            raise Exception("You must connect to hosts with the connect() function first")
+            raise ValueError("You must connect to hosts with the connect() function first")
 
         self.logger.info("Refreshing batch RTR session")
 
@@ -364,7 +364,7 @@ class RTRBatchSession:
         """Execute an RTR command against all systems in the batch session."""
         base_command = command_string.split(' ')[0]
         if base_command not in RTR_COMMANDS:
-            raise Exception(f"{base_command} is not a valid RTR command")
+            raise ValueError(f"{base_command} is not a valid RTR command")
 
         self.logger.info("Executing a command via RTR: %s", command_string)
 
@@ -387,7 +387,7 @@ class RTRBatchSession:
         elif permissions_level == "read_only":
             cmd_func = self.api.batch_command
         else:
-            raise Exception(f"{base_command} does not have a valid permissions level")
+            raise ValueError(f"{base_command} does not have a valid permissions level")
 
         partial_cmd_func = partial(
             cmd_func,
@@ -485,9 +485,9 @@ class RTRBatchSession:
     def __enter__(self):
         """Treat an RTR batch session as a context manager."""
         if not self.batch_sessions:
-            raise Exception(
+            raise ValueError(
                 "You should pass device_ids to the constructor to automatically "
-                "connect and the context manager functionality"
+                "connect and use the context manager functionality."
             )
 
     def __exit__(self, *args, **kwargs):

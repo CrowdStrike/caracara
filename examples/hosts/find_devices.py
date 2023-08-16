@@ -40,7 +40,7 @@ def find_devices(**kwargs):
     settings: Dict = kwargs['settings']
     timer: Timer = Timer()
 
-    filters = client.FalconFilter()
+    filters = client.FalconFilter(dialect='hosts')
     if 'filters' in settings:
         filter_list: List[Dict] = settings['filters']
         parse_filter_list(filter_list, filters)

@@ -145,7 +145,7 @@ def generate_response_template(platform_name: str) -> Policy:
     user or developer modification.
     """
     if platform_name not in OPTION_PLATFORM_MAPPING:
-        raise Exception(f"The platform name {platform_name} is not valid")
+        raise ValueError(f"The platform name {platform_name} is not valid")
 
     policy = Policy(style="response")
     policy.name = "Example Response Policy"

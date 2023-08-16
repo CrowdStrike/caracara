@@ -40,7 +40,7 @@ def filter_string(func: Callable):
         elif isinstance(filters, str):
             filter_str = filters
         else:
-            raise Exception(
+            raise TypeError(
                 "A filter of an incorrect type was passed into the function. "
                 "Expected a FalconFilter or a string"
             )

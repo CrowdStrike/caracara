@@ -743,7 +743,7 @@ def generate_prevention_template(platform_name: str) -> Policy:
     user or developer modification.
     """
     if platform_name not in OPTION_PLATFORM_MAPPING:
-        raise Exception(f"The platform name {platform_name} is not valid")
+        raise ValueError(f"The platform name {platform_name} is not valid")
 
     policy = Policy(style="prevention")
     policy.name = "Example Prevention Policy"

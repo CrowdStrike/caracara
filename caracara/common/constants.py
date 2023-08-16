@@ -1,15 +1,6 @@
 """Common constants to be shared throughout Caracara."""
 from enum import Enum, EnumMeta
 
-FILTER_OPERATORS = {
-    "EQUAL": '',
-    "NOT": '!',
-    "GREATER": '>',
-    "GTE": '>=',
-    "LESS": '<',
-    "LTE": '<=',
-}
-
 # Batch size of data downloaded via a multi-threaded data pull
 DATA_BATCH_SIZE = 500
 

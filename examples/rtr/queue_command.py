@@ -49,7 +49,7 @@ def queue_command(**kwargs):
     cmd: str = settings['command']
     logger.info("Running the command: %s", cmd)
 
-    filters = client.FalconFilter()
+    filters = client.FalconFilter(dialect='rtr')
     filter_list: List[Dict] = settings.get("filters")
     parse_filter_list(filter_list, filters)
 
