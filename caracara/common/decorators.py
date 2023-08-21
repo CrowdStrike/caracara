@@ -33,7 +33,7 @@ def platform_name_check(func: Callable):
 
         if platform_name and isinstance(platform_name, str):
             if platform_name not in PLATFORMS:
-                raise Exception(
+                raise ValueError(
                     f"The platform_name value supplied ({platform_name}) is not valid. "
                     f"Valid options are: {PLATFORMS}"
                 )

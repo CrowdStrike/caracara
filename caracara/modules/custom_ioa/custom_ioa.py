@@ -26,7 +26,7 @@ def instr(func) -> dict:
         errors = response["body"].get("errors", [])
         if len(errors) == 0:
             return response
-        raise Exception(errors)
+        raise ValueError(errors)
     return handle_errors
 
 
@@ -77,7 +77,7 @@ class CustomIoaApiModule(FalconApiModule):
         `IoaRuleGroup`: The object representing the newly created rule group in the cloud
         """
         if group.exists_in_cloud():
-            raise Exception("This group already exists in the cloud!")
+            raise ValueError("This group already exists in the cloud!")
 
         group.validation()
 
@@ -116,7 +116,7 @@ class CustomIoaApiModule(FalconApiModule):
         `IoaRuleGroup`: The updated group.
         """
         if not group.exists_in_cloud():
-            raise Exception("This group does not exist in the cloud!")
+            raise ValueError("This group does not exist in the cloud!")
 
         group.validation()
 

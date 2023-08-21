@@ -193,7 +193,7 @@ class RTRApiModule(FalconApiModule):
         """
         if not os.path.isfile(file_path):
             self.logger.info("%s is not a valid file", file_path)
-            raise Exception("You must provide the path to a valid file on disk")
+            raise FileNotFoundError("You must provide the path to a valid file on disk")
 
         # Default to using the original filename in the case that the user doesn't
         # specify an alternative

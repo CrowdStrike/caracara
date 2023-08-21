@@ -258,7 +258,9 @@ class PolicySettingGroup(PolicySetting):
                 setting_template = SETTINGS_TYPE_MAP[setting_template_name]
                 self.settings.append(setting_template(data_dict=inner_setting_dict))
             else:
-                raise Exception(f"Setting type {setting_template_name} is not yet supported")
+                raise NotImplementedError(
+                    f"Setting type {setting_template_name} is not yet supported"
+                )
 
     def dump(self) -> Dict:
         """Return a dictionary representing a policy settings group.

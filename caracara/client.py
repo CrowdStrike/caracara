@@ -21,11 +21,9 @@ try:
 except ImportError as no_falconpy:
     raise SystemExit("The crowdstrike-falconpy library is not installed.") from no_falconpy
 
-from caracara.common import FILTER_ATTRIBUTES as common_filter_attributes
+from caracara_filters import FQLGenerator
 from caracara.common.interpolation import VariableInterpolator
 from caracara.common.meta import user_agent_string
-from caracara.filters.falcon_filter import FalconFilter
-from caracara.filters.fql import FalconFilterAttribute
 from caracara.modules import (
     CustomIoaApiModule,
     FlightControlApiModule,
@@ -34,7 +32,6 @@ from caracara.modules import (
     ResponsePoliciesApiModule,
     RTRApiModule,
     UsersApiModule,
-    MODULE_FILTER_ATTRIBUTES,
 )
 
 
@@ -45,12 +42,11 @@ class Client:
     the FalconPy library.
     """
 
-    class FalconFilter(FalconFilter):
+    class FalconFilter(FQLGenerator):
         """Falcon Filter wrapper class.
 
-        Create a sub-class of the FalconFilter class which we own locally within
-        the client. This allows us to dynamically calculate the FQL filter attributes
-        that we hava available and make them available at runtime.
+        FalconFilter has now been replaced with the externally provided FQLGenerator functionality.
+        This subclass allows pre-existing code to continue referencing FalconFilter.
         """
 
     def __init__(  # pylint: disable=R0913,R0914,R0915
@@ -70,16 +66,16 @@ class Client:
         self.logger = logging.getLogger(__name__)
 
         if client_id is None and client_secret is None and falconpy_authobject is None:
-            raise Exception(
+            raise ValueError(
                 "You must provide either a Client ID and Client Secret, "
                 "or a pre-created FalconPy OAuth2 object"
             )
 
         if client_id is not None and client_secret is None:
-            raise Exception("You cannot provide a Client ID without a Client Secret")
+            raise ValueError("You cannot provide a Client ID without a Client Secret")
 
         if client_id is not None and falconpy_authobject is not None:
-            raise Exception(
+            raise ValueError(
                 "Please provide either a Client ID/Client Secret pair, "
                 "or a pre-created FalconPy OAuth2 object, but not both"
             )
@@ -143,7 +139,7 @@ class Client:
             )
             self.api_authentication = falconpy_authobject
         else:
-            raise Exception("Impossible authentication scenario")
+            raise TypeError("Impossible authentication scenario")
 
         self.logger.info("Requesting API token")
         self.api_authentication.token()  # Need to force the authentication to resolve the base_url
@@ -164,20 +160,6 @@ class Client:
         self.rtr = RTRApiModule(self.api_authentication)
         self.logger.debug("Setting up the Users module")
         self.users = UsersApiModule(self.api_authentication)
-
-        self.logger.debug("Configuring FQL filters")
-        # Pre-configure the FQL modules for faster instantiation later
-        filter_attribute_classes = [
-            *common_filter_attributes,
-            *MODULE_FILTER_ATTRIBUTES,
-        ]
-        available_filters = {}
-        for filter_attribute_class in filter_attribute_classes:
-            instance: FalconFilterAttribute = filter_attribute_class()
-            available_filters[instance.name] = filter_attribute_class
-
-        # Modify the falcon filter class to contain the available filters
-        self.FalconFilter.available_filters = available_filters
 
         self.logger.info("Caracara client configured")
 

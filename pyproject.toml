@@ -1,14 +1,16 @@
 [tool.poetry]
 name = "caracara"
-version = "0.3.1"
+version = "0.5.0"
 description = "The CrowdStrike Falcon Developer Toolkit"
 authors = [ "CrowdStrike <falconpy@crowdstrike.com>" ]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.7.2"
 py7zr = "^0.20"
 crowdstrike-falconpy = "^1.2.15"
+caracara-filters = "^0.1.2"
+setuptools = "^67.8.0"
 
 [tool.poetry.dev-dependencies]
 bandit = "^1.7.5"
@@ -50,11 +52,6 @@ disable = [
     # implement most of the functionality of the underlying SDK (FalconPy) and APIs
     # (from Falcon) by definition. Therefore, we have switched this rule off globally.
     "too-many-public-methods",
-
-    # Disable pylint rule R0201 as we have functions that are decorated with decorators
-    # that expect a self parameter. In these cases, the functions cannot be decorated
-    # with @staticmethod.
-    "R0201",
 ]
 
 

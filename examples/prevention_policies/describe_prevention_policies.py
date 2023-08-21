@@ -27,7 +27,7 @@ def describe_prevention_policies(**kwargs):
 
     logger.info("Grabbing all Windows prevention policies from the Falcon tenant")
 
-    filters = client.FalconFilter()
+    filters = client.FalconFilter(dialect='hosts')
     filters.create_new_filter("OS", "Windows")
     policies: List[Policy] = client.prevention_policies.describe_policies(filters=filters)
 
