@@ -12,7 +12,7 @@ from typing import (
 )
 
 from caracara.common.batching import batch_get_data
-from caracara.common.constants import OnlineState
+from caracara.common.constants import OnlineState, ONLINE_STATE_DATA_BATCH_SIZE
 from caracara.common.exceptions import InvalidOnlineState
 
 if TYPE_CHECKING:
@@ -59,7 +59,7 @@ def get_online_state(
     device_online_state_data = batch_get_data(
         device_ids,
         self.hosts_api.get_online_state,
-        data_batch_size=100,
+        data_batch_size=ONLINE_STATE_DATA_BATCH_SIZE,
     )
     return device_online_state_data
 
