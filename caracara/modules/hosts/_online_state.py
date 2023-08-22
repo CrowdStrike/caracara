@@ -56,7 +56,11 @@ def get_online_state(
     dict: A dictionary containing online state details for every device listed.
     """
     self.logger.info("Obtaining online state data for %s devices", len(device_ids))
-    device_online_state_data = batch_get_data(device_ids, self.hosts_api.get_online_state)
+    device_online_state_data = batch_get_data(
+        device_ids,
+        self.hosts_api.get_online_state,
+        data_batch_size=100,
+    )
     return device_online_state_data
 
 
