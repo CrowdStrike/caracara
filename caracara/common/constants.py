@@ -2,7 +2,10 @@
 from enum import Enum, EnumMeta
 
 # Batch size of data downloaded via a multi-threaded data pull
-DATA_BATCH_SIZE = 500
+DEFAULT_DATA_BATCH_SIZE = 500
+
+# Batch size of data downloaded via a multi-threaded data pull from the online state endpoint
+ONLINE_STATE_DATA_BATCH_SIZE = 100
 
 # Default pagination limit
 PAGINATION_LIMIT = 100

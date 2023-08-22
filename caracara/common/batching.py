@@ -16,7 +16,7 @@ from functools import partial
 from threading import current_thread
 from typing import Callable, Dict, List, Tuple
 
-from caracara.common.constants import DATA_BATCH_SIZE
+from caracara.common.constants import DEFAULT_DATA_BATCH_SIZE
 
 
 BATCH_LOGGER = logging.getLogger(__name__)
@@ -37,6 +37,7 @@ def batch_data_pull_threads() -> int:
 def batch_get_data(
     lookup_ids: str,
     func: Callable[[object, List[str], str], Dict],
+    data_batch_size: int = DEFAULT_DATA_BATCH_SIZE,
 ) -> Dict[str, Dict]:
     """Retrieve details for the list of AIDs provided.
 
@@ -57,8 +58,8 @@ def batch_get_data(
     BATCH_LOGGER.info("Batch data retrieval for %s (%d items)", func.__name__, len(lookup_ids))
     BATCH_LOGGER.debug(str(lookup_ids))
 
-    # Divide the list of item IDs into a list of lists, each of size DATA_BATCH_SIZE
-    batches = [lookup_ids[i:i+DATA_BATCH_SIZE] for i in range(0, len(lookup_ids), DATA_BATCH_SIZE)]
+    # Divide the list of item IDs into a list of lists, each of size data_batch_size
+    batches = [lookup_ids[i:i+data_batch_size] for i in range(0, len(lookup_ids), data_batch_size)]
     BATCH_LOGGER.info("Divided the item IDs into %d batches", len(batches))
 
     threads = batch_data_pull_threads()
