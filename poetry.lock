@@ -189,13 +189,13 @@ files = [
 
 [[package]]
 name = "caracara-filters"
-version = "0.1.3"
+version = "0.2.0"
 description = "FQL generation engine for Caracara"
 optional = false
 python-versions = ">=3.7.2,<4.0.0"
 files = [
-    {file = "caracara_filters-0.1.3-py3-none-any.whl", hash = "sha256:3c3e1386f0da12a5403d01b149b56aac3bc118e011a6f253356b65b40d8fbef5"},
-    {file = "caracara_filters-0.1.3.tar.gz", hash = "sha256:0cc4ba292fb8700849e7fd72d6afebe962a808d286739187c333d9256dc0563a"},
+    {file = "caracara_filters-0.2.0-py3-none-any.whl", hash = "sha256:853bb9ebf754dc6d707c17b4489dc5c3cf79756071736921b14f60a33cab2b77"},
+    {file = "caracara_filters-0.2.0.tar.gz", hash = "sha256:cc0813a7e0cf64b5e9c20cee289610cd25f7a03b2d84988e5fa21333a2485d5e"},
 ]
 
 [[package]]
@@ -1805,4 +1805,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.7.2"
-content-hash = "17202e86112e72e3668790eeca0c1e79e67c38e5b3b6b006554a56e621cd1280"
+content-hash = "696a5ed1fcecb0bc64ceba9b664da46ba7b8e63240c4bb039b2f02c3b523a0bf"
