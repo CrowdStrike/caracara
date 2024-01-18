@@ -170,7 +170,11 @@ class RTRApiModule(FalconApiModule):
         self.logger.info("Retreived %d PUT file IDs", len(put_file_ids))
         self.logger.debug(put_file_ids)
 
-        put_file_data = batch_get_data(put_file_ids, self.rtr_admin_api.get_put_files)
+        put_file_data = batch_get_data(
+            put_file_ids,
+            self.rtr_admin_api.get_put_files,
+            data_batch_size=100,
+        )
         return put_file_data
 
     def create_put_file(self, file_path: str, name: str = None, description: str = None):
