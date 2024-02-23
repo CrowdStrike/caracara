@@ -55,7 +55,7 @@ CS_STYLE = Style.from_dict({
 })
 
 
-def csradiolist_dialog(
+def csradiolist_dialog(  # pylint: disable=too-many-arguments
     title: AnyFormattedText = "",
     text: AnyFormattedText = "",
     ok_text: str = "Ok",
