@@ -34,7 +34,10 @@ def _create_app(dialog: AnyContainer, style: BaseStyle | None) -> Application[An
 
 
 def _return_none() -> None:
-    "Button handler that returns None."
+    """Button handler that returns None.
+
+    This is used by cancel buttons.
+    """
     get_app().exit()
 
 
