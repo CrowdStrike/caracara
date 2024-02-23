@@ -10,7 +10,6 @@ python = "^3.8.2"
 py7zr = "^0.20"
 crowdstrike-falconpy = "^1.4.0"
 caracara-filters = "^0.2"
-setuptools = "^69.0"
 
 [tool.poetry.dev-dependencies]
 bandit = "^1.7.7"
