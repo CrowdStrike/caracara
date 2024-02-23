@@ -9,8 +9,8 @@ from typing import Dict
 
 import yaml
 
-from bullet import Bullet
 from caracara import Client
+from caracara.common.csdialog import csradiolist_dialog
 
 
 _config_path = os.path.join(
@@ -19,14 +19,36 @@ _config_path = os.path.join(
 )
 
 
-def _select_profile(profile_names: str) -> str:
+def _select_profile(config: dict) -> str:
     """Display a selection menu for the user to choose a profile from config.yml."""
-    cli = Bullet(
-        prompt="Choose a profile from your examples config.yml",
-        choices=profile_names,
-        bullet='=>',
-    )
-    profile_name = cli.launch()
+    profiles = config["profiles"]
+    profile_names = profiles.keys()
+    profile_pairs = []
+    for profile_name in profile_names:
+        falcon = profiles[profile_name].get("falcon")
+        if falcon is None:
+            print(f"{profile_name} does not have a falcon stanza; skipping")
+            continue
+
+        client_id = falcon.get("client_id")
+        if client_id is None:
+            print(f"The falcon stanza in {profile_name} does not contain a client ID; skipping")
+            continue
+
+        client_id = str(client_id)
+        profile_text = f"{profile_name} (Client ID: {client_id[0:7]}{"x"*24})"
+        profile_pairs.append((profile_name, profile_text))
+
+    profile_name = csradiolist_dialog(
+        title="Profile Selection",
+        text="Choose a profile from your examples config.yml",
+        values=profile_pairs,
+    ).run()
+
+    if profile_name is None:
+        print("No profile chosen. Exiting example.")
+        sys.exit(1)
+
     print(f"Using the {profile_name} profile")
     return profile_name
 
@@ -34,13 +56,13 @@ def _select_profile(profile_names: str) -> str:
 def _get_profile() -> Dict:
     """Load a profile from config.yml and return its settings as a Dictionary."""
     if not os.path.exists(_config_path):
-        raise Exception(f"You must create the file {_config_path}")
+        raise FileNotFoundError(f"You must create the file {_config_path}")
 
     with open(_config_path, 'r', encoding='utf8') as yaml_config_file:
         config = yaml.safe_load(yaml_config_file)
 
     if 'profiles' not in config:
-        raise Exception("You must create a profiles stanza in the configuration YAML file")
+        raise KeyError("You must create a profiles stanza in the configuration YAML file")
 
     profile_names = list(config['profiles'].keys())
     # Check to see if the user provided us with a profile name as the first argument
@@ -48,9 +70,9 @@ def _get_profile() -> Dict:
     if len(sys.argv) > 1:
         profile_name = sys.argv[1]
         if profile_name not in profile_names:
-            raise Exception(f"The profile named {profile_name} does not exist in config.yml")
+            raise KeyError(f"The profile named {profile_name} does not exist in config.yml")
     else:
-        profile_name = _select_profile(profile_names)
+        profile_name = _select_profile(config)
 
     profile = config['profiles'][profile_name]
     return profile
@@ -68,7 +90,7 @@ def _configure_logging(profile: Dict) -> None:
             if hasattr(logging, level_str):
                 log_level = getattr(logging, level_str)
             else:
-                raise Exception(f"{level_str} is not a valid logging level")
+                raise ValueError(f"{level_str} is not a valid logging level")
 
         if 'format' in logging_data:
             log_format = logging_data['format']
@@ -121,10 +143,10 @@ def caracara_example(example_func):
     def wrapped(*args, **kwargs):
         profile = _get_profile()
         if not profile:
-            raise Exception("No profile chosen; aborting")
+            raise TypeError("No profile chosen; aborting")
 
         if 'falcon' not in profile:
-            raise Exception(
+            raise KeyError(
                 "You must create a falcon stanza within the profile's "
                 "section of the configuration YAML file"
             )
@@ -132,7 +154,7 @@ def caracara_example(example_func):
         falcon_config: Dict = profile['falcon']
 
         if 'client_id' not in falcon_config or 'client_secret' not in falcon_config:
-            raise Exception("You must include, at minimum, a client_id and client_secret")
+            raise KeyError("You must include, at minimum, a client_id and client_secret")
 
         _configure_logging(profile)
 

@@ -19,11 +19,11 @@ def parse_filter_list(filter_list: List[Dict], filters: FalconFilter) -> None:
         return
 
     if not isinstance(filter_list, List):
-        raise Exception("Filters should be provided as a YAML list")
+        raise TypeError("Filters should be provided as a YAML list")
 
     for filter_dict in filter_list:
         if not isinstance(filter_dict, Dict):
-            raise Exception(f"Filter {filter_dict} is not in the correct format")
+            raise ValueError(f"Filter {filter_dict} is not in the correct format")
 
         for key, value in filter_dict.items():
             filters.create_new_filter_from_kv_string(key, value)
