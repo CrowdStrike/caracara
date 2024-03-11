@@ -13,7 +13,7 @@ caracara-filters = "^0.2"
 setuptools = "^69.0"
 
 [tool.poetry.dev-dependencies]
-bandit = "^1.7.7"
+bandit = "^1.7.8"
 coverage = "^7.4.0"
 flake8 = "^7.0.0"
 pydocstyle = "^6.3.0"
