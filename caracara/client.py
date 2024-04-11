@@ -31,6 +31,7 @@ from caracara.modules import (
     PreventionPoliciesApiModule,
     ResponsePoliciesApiModule,
     RTRApiModule,
+    SensorUpdatePoliciesApiModule,
     UsersApiModule,
 )
 
@@ -158,6 +159,8 @@ class Client:
         self.response_policies = ResponsePoliciesApiModule(self.api_authentication)
         self.logger.debug("Setting up the RTR module")
         self.rtr = RTRApiModule(self.api_authentication)
+        self.logger.debug("Setting up the Sensor Update Policies module")
+        self.sensor_update_policies = SensorUpdatePoliciesApiModule(self.api_authentication)
         self.logger.debug("Setting up the Users module")
         self.users = UsersApiModule(self.api_authentication)
 
