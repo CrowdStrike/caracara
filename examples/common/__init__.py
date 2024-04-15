@@ -15,11 +15,13 @@ from examples.common.exceptions import (
     NoSessionsConnected,
 )
 from examples.common.filter_loader import parse_filter_list
+from examples.common.prompts import choose_item
 from examples.common.timer import Timer
 from examples.common.utils import pretty_print
 
 __all__ = [
     "caracara_example",
+    "choose_item",
     "parse_filter_list",
     "pretty_print",
     "MissingArgument",

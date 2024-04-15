@@ -11,6 +11,7 @@ __all__ = [
     'PreventionPoliciesApiModule',
     'ResponsePoliciesApiModule',
     'RTRApiModule',
+    'SensorUpdatePoliciesApiModule',
     'UsersApiModule',
 ]
 
@@ -20,4 +21,5 @@ from caracara.modules.hosts import HostsApiModule
 from caracara.modules.prevention_policies import PreventionPoliciesApiModule
 from caracara.modules.response_policies import ResponsePoliciesApiModule
 from caracara.modules.rtr import RTRApiModule
+from caracara.modules.sensor_update_policies import SensorUpdatePoliciesApiModule
 from caracara.modules.users import UsersApiModule
