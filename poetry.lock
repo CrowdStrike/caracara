@@ -445,13 +445,13 @@ toml = ["tomli"]
 
 [[package]]
 name = "crowdstrike-falconpy"
-version = "1.4.2"
+version = "1.4.4"
 description = "The CrowdStrike Falcon SDK for Python 3"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "crowdstrike-falconpy-1.4.2.tar.gz", hash = "sha256:4fb4030d83dcd294ec782eb976ea9b03a05807ff0819a8622f240c401954124f"},
-    {file = "crowdstrike_falconpy-1.4.2-py3-none-any.whl", hash = "sha256:776a0fe9274f31ca4b3e174a9e7c2c6ca3afedf36e201a2ee030dd0aff230ea4"},
+    {file = "crowdstrike_falconpy-1.4.4-py3-none-any.whl", hash = "sha256:f940cba595e8ff548fb74514faebd1bf019e576b7909d73ec25ed914a325a079"},
+    {file = "crowdstrike_falconpy-1.4.4.tar.gz", hash = "sha256:c906ec5edb02a4cec07401087720cb1e3e4bad37ea1738c1199fafe53dc4f8c9"},
 ]
 
 [package.dependencies]
