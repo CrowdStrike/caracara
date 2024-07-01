@@ -15,7 +15,7 @@ setuptools = "^69.0"
 [tool.poetry.dev-dependencies]
 bandit = "^1.7.7"
 coverage = "^7.4.0"
-flake8 = "^7.0.0"
+flake8 = "^7.1.0"
 pydocstyle = "^6.3.0"
 pylint = "^3.0.3"
 pytest = "^8.0.1"
