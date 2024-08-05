@@ -445,13 +445,13 @@ toml = ["tomli"]
 
 [[package]]
 name = "crowdstrike-falconpy"
-version = "1.4.4"
+version = "1.4.5"
 description = "The CrowdStrike Falcon SDK for Python 3"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "crowdstrike_falconpy-1.4.4-py3-none-any.whl", hash = "sha256:f940cba595e8ff548fb74514faebd1bf019e576b7909d73ec25ed914a325a079"},
-    {file = "crowdstrike_falconpy-1.4.4.tar.gz", hash = "sha256:c906ec5edb02a4cec07401087720cb1e3e4bad37ea1738c1199fafe53dc4f8c9"},
+    {file = "crowdstrike_falconpy-1.4.5-py3-none-any.whl", hash = "sha256:854b3d0d2aa97411ceba6503dc11368edab26f5536988200b2c4ad88f57c87bb"},
+    {file = "crowdstrike_falconpy-1.4.5.tar.gz", hash = "sha256:b33be3667d82c9a05c8b99c9d765f9d1510856275561c8eee581f3b6131ef2f6"},
 ]
 
 [package.dependencies]
@@ -459,7 +459,7 @@ requests = "*"
 urllib3 = "*"
 
 [package.extras]
-dev = ["bandit", "coverage", "flake8", "pydocstyle", "pylint", "pytest", "pytest-cov"]
+dev = ["bandit", "coverage", "flake8", "pydocstyle", "pylint", "pytest", "pytest-cov", "setuptools (>=70.3.0,<70.4.0)"]
 
 [[package]]
 name = "dill"
