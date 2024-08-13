@@ -24,6 +24,7 @@ except ImportError as no_falconpy:
 from caracara_filters import FQLGenerator
 from caracara.common.interpolation import VariableInterpolator
 from caracara.common.meta import user_agent_string
+from caracara.common.module import ModuleMapper
 from caracara.modules import (
     CustomIoaApiModule,
     FlightControlApiModule,
@@ -31,6 +32,7 @@ from caracara.modules import (
     PreventionPoliciesApiModule,
     ResponsePoliciesApiModule,
     RTRApiModule,
+    SensorDownloadApiModule,
     SensorUpdatePoliciesApiModule,
     UsersApiModule,
 )
@@ -146,23 +148,44 @@ class Client:
         self.api_authentication.token()  # Need to force the authentication to resolve the base_url
         self.logger.info("Resolved Base URL: %s", self.api_authentication.base_url)
 
+        mapper = ModuleMapper()
+
         # Configure modules here so that IDEs can pick them up
         self.logger.debug("Setting up Custom IOA module")
-        self.custom_ioas = CustomIoaApiModule(self.api_authentication)
+        self.custom_ioas = CustomIoaApiModule(self.api_authentication, mapper)
+        mapper.custom_ioas = self.custom_ioas
+
         self.logger.debug("Setting up the Flight Control module")
-        self.flight_control = FlightControlApiModule(self.api_authentication)
+        self.flight_control = FlightControlApiModule(self.api_authentication, mapper)
+        mapper.flight_control = self.flight_control
+
         self.logger.debug("Setting up the Hosts module")
-        self.hosts = HostsApiModule(self.api_authentication)
+        self.hosts = HostsApiModule(self.api_authentication, mapper)
+        mapper.hosts = self.hosts
+
         self.logger.debug("Setting up the Prevention Policies module")
-        self.prevention_policies = PreventionPoliciesApiModule(self.api_authentication)
+        self.prevention_policies = PreventionPoliciesApiModule(self.api_authentication, mapper)
+        mapper.prevention_policies = self.prevention_policies
+
         self.logger.debug("Setting up the Response Policies module")
-        self.response_policies = ResponsePoliciesApiModule(self.api_authentication)
+        self.response_policies = ResponsePoliciesApiModule(self.api_authentication, mapper)
+        mapper.response_policies = self.response_policies
+
         self.logger.debug("Setting up the RTR module")
-        self.rtr = RTRApiModule(self.api_authentication)
+        self.rtr = RTRApiModule(self.api_authentication, mapper)
+        mapper.rtr = self.rtr
+
+        self.logger.debug("Setting up the Sensor Download module")
+        self.sensor_download = SensorDownloadApiModule(self.api_authentication, mapper)
+        mapper.sensor_download = self.sensor_download
+
         self.logger.debug("Setting up the Sensor Update Policies module")
-        self.sensor_update_policies = SensorUpdatePoliciesApiModule(self.api_authentication)
+        self.sensor_update_policies = SensorUpdatePoliciesApiModule(self.api_authentication, mapper)
+        mapper.sensor_update_policies = self.sensor_update_policies
+
         self.logger.debug("Setting up the Users module")
-        self.users = UsersApiModule(self.api_authentication)
+        self.users = UsersApiModule(self.api_authentication, mapper)
+        mapper.users = self.users
 
         self.logger.info("Caracara client configured")
 

@@ -13,7 +13,7 @@ from falconpy import (
 )
 
 from caracara.common.exceptions import BaseCaracaraError
-from caracara.common.module import FalconApiModule
+from caracara.common.module import FalconApiModule, ModuleMapper
 
 
 class SensorUpdatePoliciesApiModule(FalconApiModule):
@@ -22,9 +22,9 @@ class SensorUpdatePoliciesApiModule(FalconApiModule):
     name = "CrowdStrike Sensor Update Policies API Module"
     help = "Interact with the Sensor Update Policies API, and get maintenance tokens"
 
-    def __init__(self, api_authentication: OAuth2):
+    def __init__(self, api_authentication: OAuth2, mapper: ModuleMapper):
         """Construct an instance of the SensorUpdatePoliciesApiModule."""
-        super().__init__(api_authentication)
+        super().__init__(api_authentication, mapper)
 
         self.logger.debug("Configuring the FalconPy Sensor Update Policies module")
         self.sensor_update_policies_api = SensorUpdatePolicies(auth_object=self.api_authentication)
