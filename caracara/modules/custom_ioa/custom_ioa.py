@@ -7,10 +7,10 @@ from falconpy import OAuth2, CustomIOA
 
 from caracara.common.batching import batch_get_data
 from caracara.common.constants import DEFAULT_COMMENT
+from caracara.common.module import FalconApiModule, ModuleMapper
 from caracara.common.pagination import all_pages_numbered_offset_parallel
 from caracara.filters import FalconFilter
 from caracara.filters.decorators import filter_string
-from caracara.common.module import FalconApiModule
 from caracara.modules.custom_ioa.rules import CustomIoaRule, IoaRuleGroup, RuleType
 
 
@@ -41,9 +41,9 @@ class CustomIoaApiModule(FalconApiModule):
     _rule_type_cache_time: int = None
     _rule_type_cache_ttl: int = 10 * 60  # 10 minute default cache TTL
 
-    def __init__(self, api_authentication: OAuth2):
+    def __init__(self, api_authentication: OAuth2, mapper: ModuleMapper):
         """Create an Custom IOA API object and configure it with a FalconPy OAuth2 object."""
-        super().__init__(api_authentication)
+        super().__init__(api_authentication, mapper)
         self.custom_ioa_api = CustomIOA(auth_object=api_authentication)
 
     def _get_rule_types_cached(self, force_update: bool = False) -> Dict[str, RuleType]:

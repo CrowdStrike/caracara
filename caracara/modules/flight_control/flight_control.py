@@ -18,7 +18,7 @@ from falconpy import (
 )
 
 from caracara.common.batching import batch_get_data
-from caracara.common.module import FalconApiModule
+from caracara.common.module import FalconApiModule, ModuleMapper
 from caracara.common.pagination import all_pages_numbered_offset_parallel
 
 
@@ -28,9 +28,9 @@ class FlightControlApiModule(FalconApiModule):
     name = "CrowdStrike Falcon Flight Control API Module"
     help = "Interact with the management API calls in a Falcon Flight Control (MSSP) Parent CID"
 
-    def __init__(self, api_authentication: OAuth2):
+    def __init__(self, api_authentication: OAuth2, mapper: ModuleMapper):
         """Construct an instance of the FlightControlApiModule class."""
-        super().__init__(api_authentication)
+        super().__init__(api_authentication, mapper)
 
         self.logger.debug("Configuring the FalconPy Flight Control API")
         self.flight_control_api = FlightControl(auth_object=self.api_authentication)

@@ -29,7 +29,7 @@ from caracara.common.constants import OnlineState
 from caracara.common.exceptions import (
     GenericAPIError,
 )
-from caracara.common.module import FalconApiModule
+from caracara.common.module import FalconApiModule, ModuleMapper
 from caracara.common.pagination import (
     all_pages_token_offset,
 )
@@ -46,9 +46,9 @@ class HostsApiModule(FalconApiModule):
     name = "CrowdStrike Hosts API Module"
     help = "Interact with hosts and host groups within your Falcon tenant."
 
-    def __init__(self, api_authentication: OAuth2):
+    def __init__(self, api_authentication: OAuth2, mapper: ModuleMapper):
         """Construct an instance of HostApiModule class."""
-        super().__init__(api_authentication)
+        super().__init__(api_authentication, mapper)
 
         self.logger.debug("Configuring the FalconPy Hosts API")
         self.hosts_api = Hosts(auth_object=self.api_authentication)
@@ -150,19 +150,17 @@ class HostsApiModule(FalconApiModule):
         self.logger.info("Describing devices according to the filter string %s", filters)
         device_ids = self.get_device_ids(filters)
 
-        if enrich_with_online_state:
+        if enrich_with_online_state or online_state is not None:
             # Collect state data
             device_state_data = self.get_online_state(device_ids)
 
-        # Filter by online state, if applicable.
-        if online_state is not None:
-            if not enrich_with_online_state:
-                device_state_data = self.get_online_state(device_ids)
-            self.validate_online_state(online_state)
-            device_ids = list(filter(
-                lambda key: device_state_data[key]["state"] == online_state,
-                device_state_data,
-            ))
+            # Filter by online state, if applicable.
+            if online_state is not None:
+                self.validate_online_state(online_state)
+                device_ids = list(filter(
+                    lambda key: device_state_data[key]["state"] == online_state,
+                    device_state_data,
+                ))
 
         device_data = self.get_device_data(device_ids)
 

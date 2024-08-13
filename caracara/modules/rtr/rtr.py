@@ -21,7 +21,7 @@ from falconpy import (
 )
 
 from caracara.common.batching import batch_get_data
-from caracara.common.module import FalconApiModule
+from caracara.common.module import FalconApiModule, ModuleMapper
 from caracara.common.pagination import all_pages_numbered_offset_parallel
 from caracara.filters import FalconFilter
 from caracara.filters.decorators import filter_string
@@ -36,9 +36,9 @@ class RTRApiModule(FalconApiModule):
 
     default_timeout = 30
 
-    def __init__(self, api_authentication: OAuth2):
+    def __init__(self, api_authentication: OAuth2, mapper: ModuleMapper):
         """Create an RTR module object and configure it with a FalconPy OAuth2 object."""
-        super().__init__(api_authentication)
+        super().__init__(api_authentication, mapper)
         self.rtr_api = RealTimeResponse(auth_object=self.api_authentication)
         self.rtr_admin_api = RealTimeResponseAdmin(auth_object=self.api_authentication)
 

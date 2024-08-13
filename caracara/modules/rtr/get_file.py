@@ -66,7 +66,9 @@ class GetFile:
                 full_output_path_7z = full_output_path + ".7z"
             else:
                 # We should ensure that the user's path ends in .7z if they are not extracting
-                if not full_output_path.endswith(".7z"):
+                if full_output_path.endswith(".7z"):
+                    full_output_path_7z = full_output_path
+                else:
                     full_output_path_7z = full_output_path + ".7z"
 
         file_contents = self.batch_session.api.get_extracted_file_contents(

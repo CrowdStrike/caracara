@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "caracara"
-version = "0.7.0"
+version = "0.8.0"
 description = "The CrowdStrike Falcon Developer Toolkit"
 authors = [ "CrowdStrike <falconpy@crowdstrike.com>" ]
 readme = "README.md"
@@ -10,7 +10,7 @@ python = "^3.8.2"
 py7zr = ">=0.20,<0.22"
 crowdstrike-falconpy = "^1.4.0"
 caracara-filters = "^0.2"
-setuptools = ">=69,<73"
+setuptools = "^69.0"
 
 [tool.poetry.dev-dependencies]
 bandit = "^1.7.7"

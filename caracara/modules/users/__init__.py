@@ -1,5 +1,6 @@
 """Caracara User Management module."""
+
 __all__ = [
-    'UsersApiModule',
+    "UsersApiModule",
 ]
 from caracara.modules.users.users import UsersApiModule

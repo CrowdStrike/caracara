@@ -8,7 +8,7 @@ from falconpy import (
 )
 
 from caracara.common.decorators import platform_name_check
-from caracara.common.module import FalconApiModule
+from caracara.common.module import FalconApiModule, ModuleMapper
 from caracara.common.pagination import all_pages_numbered_offset_parallel
 from caracara.common.policy_wrapper import Policy
 from caracara.common.sorting import SORT_ASC, SORTING_OPTIONS
@@ -27,9 +27,9 @@ class PreventionPoliciesApiModule(FalconApiModule):
     name = "CrowdStrike Prevention Policies API Module"
     help = "Describe, create, delete and edit Falcon Prevention policies"
 
-    def __init__(self, api_authentication: OAuth2):
+    def __init__(self, api_authentication: OAuth2, mapper: ModuleMapper):
         """Construct an instance of the PreventionPoliciesApiModule class."""
-        super().__init__(api_authentication)
+        super().__init__(api_authentication, mapper)
         self.logger.debug("Configuring the FalconPy Prevention Policies API")
         self.prevention_policies_api = PreventionPolicies(auth_object=self.api_authentication)
 
