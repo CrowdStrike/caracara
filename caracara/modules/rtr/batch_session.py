@@ -398,7 +398,7 @@ class RTRBatchSession:
             self.logger.info("Refreshed session %s", complete)
 
     @_batch_session_required
-    def run_generic_command(
+    def run_generic_command(  # pylint: disable=too-many-locals
         self,
         command_string: str,
         device_ids: List[str] = None,
@@ -459,7 +459,11 @@ class RTRBatchSession:
                     thread_name,
                 )
                 continue
-            self.logger.info("%s | Executed commands on a batch of %d hosts", thread_name, len(devices))
+            self.logger.info(
+                "%s | Executed commands on a batch of %d hosts",
+                thread_name,
+                len(devices)
+            )
             all_responses.update(devices)
 
         return all_responses
