@@ -8,7 +8,6 @@ This example will create a Windows prevention rolicy based on the included templ
 You can use this code sample to customise the policy.
 """
 from caracara import Client
-
 from examples.common import caracara_example, pretty_print
 
 

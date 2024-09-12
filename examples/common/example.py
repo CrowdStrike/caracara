@@ -4,7 +4,6 @@
 import logging
 import os
 import sys
-
 from functools import wraps
 from typing import Dict
 
@@ -12,7 +11,6 @@ import yaml
 
 from caracara import Client
 from caracara.common.csdialog import csradiolist_dialog
-
 
 _config_path = os.path.join(
     os.path.dirname(os.path.dirname(__file__)),
@@ -33,13 +31,11 @@ def _select_profile(config: dict) -> str:
 
         client_id = falcon.get("client_id")
         if client_id is None:
-            print(
-                f"The falcon stanza in {profile_name} does not contain a client ID; skipping"
-            )
+            print(f"The falcon stanza in {profile_name} does not contain a client ID; skipping")
             continue
 
         client_id = str(client_id)
-        profile_text = f"{profile_name} (Client ID: {client_id[0:7]}{"x"*24})"
+        profile_text = f"{profile_name} (Client ID: {client_id[0:7]}{'x'*24})"
         profile_pairs.append((profile_name, profile_text))
 
     profile_name = csradiolist_dialog(
@@ -65,9 +61,7 @@ def _get_profile() -> Dict:
         config = yaml.safe_load(yaml_config_file)
 
     if "profiles" not in config:
-        raise KeyError(
-            "You must create a profiles stanza in the configuration YAML file"
-        )
+        raise KeyError("You must create a profiles stanza in the configuration YAML file")
 
     profile_names = list(config["profiles"].keys())
     # Check to see if the user provided us with a profile name as the first argument
@@ -75,9 +69,7 @@ def _get_profile() -> Dict:
     if len(sys.argv) > 1:
         profile_name = sys.argv[1]
         if profile_name not in profile_names:
-            raise KeyError(
-                f"The profile named {profile_name} does not exist in config.yml"
-            )
+            raise KeyError(f"The profile named {profile_name} does not exist in config.yml")
     else:
         profile_name = _select_profile(config)
 
@@ -162,9 +154,7 @@ def caracara_example(example_func):
         falcon_config: Dict = profile["falcon"]
 
         if "client_id" not in falcon_config or "client_secret" not in falcon_config:
-            raise KeyError(
-                "You must include, at minimum, a client_id and client_secret"
-            )
+            raise KeyError("You must include, at minimum, a client_id and client_secret")
 
         _configure_logging(profile)
 

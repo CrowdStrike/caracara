@@ -5,7 +5,6 @@ A series of functions to improve example output.
 """
 
 import json
-
 from typing import Dict, List, Union
 
 

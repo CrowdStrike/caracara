@@ -10,7 +10,6 @@ You can use this code sample to customise the policy.
 import logging
 
 from caracara import Client
-
 from examples.common import caracara_example, pretty_print
 
 

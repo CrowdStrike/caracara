@@ -18,17 +18,15 @@ hosts are returned.
 The example demonstrates how to use the Hosts API.
 """
 import logging
-
 from typing import Dict, List
 
 from caracara import Client
-
 from examples.common import (
+    NoDevicesFound,
+    Timer,
     caracara_example,
     parse_filter_list,
     pretty_print,
-    NoDevicesFound,
-    Timer,
 )
 
 
@@ -46,13 +44,9 @@ def find_devices(**kwargs):
         parse_filter_list(filter_list, filters)
 
     if filters.filters:
-        logger.info(
-            "Getting a list of hosts that match the FQL string %s", filters.get_fql()
-        )
+        logger.info("Getting a list of hosts that match the FQL string %s", filters.get_fql())
     else:
-        logger.info(
-            "No filter provided; getting a list of all devices within the tenant"
-        )
+        logger.info("No filter provided; getting a list of all devices within the tenant")
 
     with client:
         response_data = client.hosts.describe_devices(filters)

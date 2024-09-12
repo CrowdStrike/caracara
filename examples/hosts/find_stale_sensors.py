@@ -13,19 +13,13 @@ find stale sensors deployments within your Falcon tenant.
 The example demonstrates how to use the Hosts API and a FalconFilter using a date.
 """
 import logging
-
 from datetime import datetime, timezone
 from typing import Dict
 
 from dateutil import parser as dparser
 
 from caracara import Client
-
-from examples.common import (
-    caracara_example,
-    NoDevicesFound,
-    Timer,
-)
+from examples.common import NoDevicesFound, Timer, caracara_example
 
 
 @caracara_example

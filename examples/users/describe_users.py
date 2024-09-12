@@ -10,7 +10,6 @@ show all the users configured within the Falcon tenant.
 import logging
 
 from caracara import Client
-
 from examples.common import caracara_example, pretty_print
 
 

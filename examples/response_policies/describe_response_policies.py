@@ -11,11 +11,9 @@ This example demonstrates using a combination of the FalconFilter class and
 the response policies API.
 """
 import logging
-
 from typing import List
 
 from caracara import Client, Policy
-
 from examples.common import caracara_example, pretty_print
 
 

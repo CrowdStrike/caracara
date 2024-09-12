@@ -17,17 +17,15 @@ queue_command:
   command: CommandToRun
 """
 import logging
-
 from typing import Dict, List
 
 from caracara import Client
-
 from examples.common import (
-    caracara_example,
-    parse_filter_list,
     MissingArgument,
     NoDevicesFound,
     NoSessionsConnected,
+    caracara_example,
+    parse_filter_list,
 )
 
 
@@ -55,9 +53,7 @@ def queue_command(**kwargs):
     filter_list: List[Dict] = settings.get("filters")
     parse_filter_list(filter_list, filters)
 
-    logger.info(
-        "Getting a list of hosts that match the FQL string %s", filters.get_fql()
-    )
+    logger.info("Getting a list of hosts that match the FQL string %s", filters.get_fql())
     device_ids = client.hosts.get_device_ids(filters=filters)
     if not device_ids:
         logger.warning("No devices matched the filter. Aborting.")

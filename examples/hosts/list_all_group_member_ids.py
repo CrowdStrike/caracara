@@ -11,12 +11,7 @@ The example demonstrates how to use the Hosts API.
 import logging
 
 from caracara import Client
-
-from examples.common import (
-    caracara_example,
-    NoGroupsFound,
-    Timer,
-)
+from examples.common import NoGroupsFound, Timer, caracara_example
 
 
 @caracara_example

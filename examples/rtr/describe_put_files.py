@@ -10,7 +10,6 @@ list all the files that can be used with the PUT command.
 import logging
 
 from caracara import Client
-
 from examples.common import caracara_example, pretty_print
 
 

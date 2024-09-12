@@ -10,7 +10,6 @@ list all the scripts that are stored in the associated Falcon tenant
 import logging
 
 from caracara import Client
-
 from examples.common import caracara_example, pretty_print
 
 

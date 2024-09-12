@@ -1,7 +1,6 @@
 """⏰ Caracara Example execution timer."""
 
 import time
-
 from math import ceil
 
 

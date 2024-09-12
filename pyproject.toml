@@ -89,3 +89,6 @@ get-maintenance-token = "examples.sensor_update_policies.get_maintenance_token:g
 # Users
 describe-roles = "examples.users.describe_roles:describe_roles"
 describe-users = "examples.users.describe_users:describe_users"
+
+[tool.isort]
+profile = "black"

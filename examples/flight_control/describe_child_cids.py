@@ -7,7 +7,6 @@ describe_child_cids.py
 This example will show all Child CIDs within a Parent Falcon Flight Control / MSSP CID.
 """
 from caracara import Client
-
 from examples.common import caracara_example, pretty_print
 
 

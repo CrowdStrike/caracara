@@ -9,16 +9,10 @@ list the network history for systems within your Falcon tenant.
 The example demonstrates how to use the Hosts API.
 """
 import logging
-
 from typing import Dict, List
 
 from caracara import Client
-
-from examples.common import (
-    caracara_example,
-    NoDevicesFound,
-    Timer,
-)
+from examples.common import NoDevicesFound, Timer, caracara_example
 
 
 @caracara_example

@@ -10,7 +10,6 @@ list all queued RTR sesisons, as well as the commands scheduled for exection.
 import logging
 
 from caracara import Client
-
 from examples.common import caracara_example, pretty_print
 
 

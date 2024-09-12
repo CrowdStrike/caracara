@@ -13,7 +13,6 @@ as the Falcon API will not let you clear somebody else's queued session.
 import logging
 
 from caracara import Client
-
 from examples.common import caracara_example
 
 

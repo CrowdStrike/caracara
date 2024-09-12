@@ -27,13 +27,11 @@ download_event_log:
 import logging
 import os
 import time
-
 from typing import Dict, List
 
 from caracara import Client
 from caracara.modules.rtr.batch_session import BatchGetCmdRequest, RTRBatchSession
 from caracara.modules.rtr.get_file import GetFile
-
 from examples.common import caracara_example, parse_filter_list
 
 
@@ -110,9 +108,7 @@ def download_event_log(**kwargs):  # pylint: disable=too-many-locals
     # function contained within the FalconFilter class.
     parse_filter_list(filter_list, filters)
 
-    logger.info(
-        "Getting a list of hosts that match the FQL string %s", filters.get_fql()
-    )
+    logger.info("Getting a list of hosts that match the FQL string %s", filters.get_fql())
     device_ids = client.hosts.get_device_ids(filters=filters)
     if not device_ids:
         logger.warning("No devices matched the filter. Aborting.")

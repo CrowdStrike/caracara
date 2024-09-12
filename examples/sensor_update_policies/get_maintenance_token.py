@@ -9,11 +9,7 @@ This example will allow you to search for a system in the CID and get its mainte
 from typing import Dict
 
 from caracara import Client
-
-from examples.common import (
-    caracara_example,
-    choose_item,
-)
+from examples.common import caracara_example, choose_item
 
 
 @caracara_example
