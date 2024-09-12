@@ -6,16 +6,10 @@ can be interfaced with directly.
 This module handles interactions with the Parent CID's management APIs. To authenticate to
 a child/member CID, use the member_cid kwarg when initialising a Caracara Client object.
 """
-from typing import (
-    Dict,
-    List,
-    Union,
-)
 
-from falconpy import (
-    FlightControl,
-    OAuth2,
-)
+from typing import Dict, List, Union
+
+from falconpy import FlightControl, OAuth2
 
 from caracara.common.batching import batch_get_data
 from caracara.common.module import FalconApiModule, ModuleMapper

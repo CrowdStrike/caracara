@@ -22,8 +22,8 @@ from examples.common import (
 @caracara_example
 def list_all_groups(**kwargs):
     """List All Host Groups."""
-    client: Client = kwargs['client']
-    logger: logging.Logger = kwargs['logger']
+    client: Client = kwargs["client"]
+    logger: logging.Logger = kwargs["logger"]
     timer: Timer = Timer()
 
     logger.info("Listing all host groups within the tenant")

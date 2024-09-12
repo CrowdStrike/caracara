@@ -1,13 +1,17 @@
 """Unit tests for ResponsePoliciesApiModule"""
+
 import copy
 from unittest.mock import patch
+
 import falconpy
+
 from caracara import Client, Policy
 from caracara.common.sorting import SORT_ASC
 
 
 def respol_test():
     """Decorator that contains common functionality between all prevention policy tests."""
+
     def decorator(func):
         @patch(
             "caracara.modules.response_policies.response_policies.ResponsePolicies",
@@ -28,7 +32,9 @@ def respol_test():
                 mock_oauth2=mock_oauth2,
                 mock_prevpol=mock_prevpol,
             )
+
         return test_new_func
+
     return decorator
 
 
@@ -63,12 +69,8 @@ def mock_query_combined_policies(filter, sort, offset, limit):  # pylint: disabl
 
     return {
         "body": {
-            "resources": mock_policies[offset:offset+limit],
-            "meta": {
-                "pagination": {
-                    "total": len(mock_policies)
-                }
-            }
+            "resources": mock_policies[offset : offset + limit],
+            "meta": {"pagination": {"total": len(mock_policies)}},
         }
     }
 
@@ -77,26 +79,25 @@ def mock_query_combined_policies(filter, sort, offset, limit):  # pylint: disabl
 def test_describe_policies_raw(auth, **_):
     """Unit test for ResponsePoliciesApiModule.describe_policies_raw"""
 
-    auth.response_policies.response_policies_api.configure_mock(**{
-        "query_combined_policies.side_effect": mock_query_combined_policies
-    })
+    auth.response_policies.response_policies_api.configure_mock(
+        **{"query_combined_policies.side_effect": mock_query_combined_policies}
+    )
 
-    assert auth.response_policies.describe_policies_raw(
-        filters=test_filters, sort=test_sort
-    ) == mock_policies
+    assert (
+        auth.response_policies.describe_policies_raw(filters=test_filters, sort=test_sort)
+        == mock_policies
+    )
 
 
 @respol_test()
 def test_describe_policies(auth, **_):
     """Unit test for ResponsePoliciesApiModule.describe_policies"""
 
-    auth.response_policies.response_policies_api.configure_mock(**{
-        "query_combined_policies.side_effect": mock_query_combined_policies
-    })
-
-    results = auth.response_policies.describe_policies(
-        filters=test_filters, sort=test_sort
+    auth.response_policies.response_policies_api.configure_mock(
+        **{"query_combined_policies.side_effect": mock_query_combined_policies}
     )
+
+    results = auth.response_policies.describe_policies(filters=test_filters, sort=test_sort)
 
     result_dumps = [pol.dump() for pol in results]
 
@@ -120,9 +121,9 @@ def test_push_policy(auth, **_):
         body["resources"][0]["cid"] = mock_cid
         return {"body": body}
 
-    auth.response_policies.response_policies_api.configure_mock(**{
-        "create_policies.side_effect": mock_create_policies
-    })
+    auth.response_policies.response_policies_api.configure_mock(
+        **{"create_policies.side_effect": mock_create_policies}
+    )
 
     res = auth.response_policies.push_policy(Policy(data_dict=mock_policy, style="response"))
 
@@ -150,13 +151,15 @@ def test_add_policy_to_group(auth, **_):
                     "pagination": {
                         "total": 1,
                     }
-                }
+                },
             }
         }
 
-    auth.response_policies.response_policies_api.configure_mock(**{
-        "query_combined_policies": mock_query_combined_policies_,
-    })
+    auth.response_policies.response_policies_api.configure_mock(
+        **{
+            "query_combined_policies": mock_query_combined_policies_,
+        }
+    )
 
     updated_policy = auth.response_policies.add_policy_to_group(policy_id, group_id)
 
@@ -180,15 +183,11 @@ def test_modify_policy(auth, **_):
     policy = Policy(data_dict=raw_policy, style="response")
 
     def mock_update_policies(body):  # pylint: disable=unused-argument
-        return {
-            "body": {
-                "resources": [raw_updated_policy]
-            }
-        }
+        return {"body": {"resources": [raw_updated_policy]}}
 
-    auth.response_policies.response_policies_api.configure_mock(**{
-        "update_policies.side_effect": mock_update_policies
-    })
+    auth.response_policies.response_policies_api.configure_mock(
+        **{"update_policies.side_effect": mock_update_policies}
+    )
 
     updated_policy = auth.response_policies.modify_policy(policy)
 

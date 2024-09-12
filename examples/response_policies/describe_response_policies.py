@@ -22,12 +22,12 @@ from examples.common import caracara_example, pretty_print
 @caracara_example
 def describe_response_policies(**kwargs):
     """List Response Policies Example."""
-    client: Client = kwargs['client']
-    logger: logging.Logger = kwargs['logger']
+    client: Client = kwargs["client"]
+    logger: logging.Logger = kwargs["logger"]
 
     logger.info("Grabbing all Windows response policies from the Falcon tenant")
 
-    filters = client.FalconFilter(dialect='response_policies')
+    filters = client.FalconFilter(dialect="response_policies")
     filters.create_new_filter("OS", "Windows")
     policies: List[Policy] = client.response_policies.describe_policies(filters=filters)
 
@@ -43,5 +43,5 @@ def describe_response_policies(**kwargs):
         i += 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     describe_response_policies()

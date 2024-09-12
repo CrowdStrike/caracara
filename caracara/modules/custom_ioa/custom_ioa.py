@@ -1,9 +1,10 @@
 """Caracara Indicator of Attack (IOA) API module."""
+
 from functools import partial
 from time import monotonic
-from typing import Dict, List
+from typing import Dict, List, Union
 
-from falconpy import OAuth2, CustomIOA
+from falconpy import CustomIOA, OAuth2
 
 from caracara.common.batching import batch_get_data
 from caracara.common.constants import DEFAULT_COMMENT
@@ -21,12 +22,14 @@ def instr(func) -> dict:
     This is an internal function, and therefore developers should not expect this function to
     remain consistent.
     """
+
     def handle_errors(*args, **kwargs):
         response = func(*args, **kwargs)
         errors = response["body"].get("errors", [])
         if len(errors) == 0:
             return response
         raise ValueError(errors)
+
     return handle_errors
 
 
@@ -85,7 +88,9 @@ class CustomIoaApiModule(FalconApiModule):
         group_create = group.dump_create(comment=comment)
         response = instr(self.custom_ioa_api.create_rule_group)(body=group_create)
         new_group = IoaRuleGroup.from_data_dict(
-            data_dict=response["body"]["resources"][0], rule_type_map=self._get_rule_types_cached())
+            data_dict=response["body"]["resources"][0],
+            rule_type_map=self._get_rule_types_cached(),
+        )
         new_group.rules = group.rules
         for rule in new_group.rules:
             rule.group = new_group
@@ -124,7 +129,9 @@ class CustomIoaApiModule(FalconApiModule):
         group_update = group.dump_update(comment=comment)
         response = instr(self.custom_ioa_api.update_rule_group)(body=group_update)
         new_group = IoaRuleGroup.from_data_dict(
-            data_dict=response["body"]["resources"][0], rule_type_map=self._get_rule_types_cached())
+            data_dict=response["body"]["resources"][0],
+            rule_type_map=self._get_rule_types_cached(),
+        )
 
         # Retain staged rules (as these aren't in the cloud yet, but will be soon)
         new_group.rules = group.rules
@@ -136,7 +143,9 @@ class CustomIoaApiModule(FalconApiModule):
         return new_group
 
     def delete_rule_groups(
-        self, rule_groups: List[IoaRuleGroup or str], comment: str = DEFAULT_COMMENT
+        self,
+        rule_groups: List[Union[IoaRuleGroup, str]],
+        comment: str = DEFAULT_COMMENT,
     ):
         """Delete a list of rule groups in the cloud.
 
@@ -170,22 +179,25 @@ class CustomIoaApiModule(FalconApiModule):
         # Create the new rules
         new_rules = []
         for rule in to_be_created:
-            resp = instr(self.custom_ioa_api.create_rule)(
-                body=rule.dump_create(comment=comment))
+            resp = instr(self.custom_ioa_api.create_rule)(body=rule.dump_create(comment=comment))
             raw_rule = resp["body"]["resources"][0]
             new_rule = CustomIoaRule.from_data_dict(
-                raw_rule, rule_type=self._get_rule_types_cached()[raw_rule["ruletype_id"]])
+                raw_rule,
+                rule_type=self._get_rule_types_cached()[raw_rule["ruletype_id"]],
+            )
             new_rule.rulegroup_id = group.id_
             new_rules.append(new_rule)
 
         # Update the existing rules, if there are any
         if len(existing_rules) > 0:
-            response = instr(self.custom_ioa_api.update_rules)(body={
-                "comment": comment,
-                "rule_updates": [rule.dump_update() for rule in existing_rules],
-                "rulegroup_version": group.version + 1,
-                "rulegroup_id": group.id_,
-            })
+            response = instr(self.custom_ioa_api.update_rules)(
+                body={
+                    "comment": comment,
+                    "rule_updates": [rule.dump_update() for rule in existing_rules],
+                    "rulegroup_version": group.version + 1,
+                    "rulegroup_id": group.id_,
+                }
+            )
             raw_group = response["body"]["resources"][0]
 
             # Create the object representing the updated group
@@ -199,13 +211,14 @@ class CustomIoaApiModule(FalconApiModule):
         if len(group.rules_to_delete) > 0:
             ids_to_delete = [rule.instance_id for rule in group.rules_to_delete]
             instr(self.custom_ioa_api.delete_rules)(
-                rule_group_id=group.id_, ids=ids_to_delete, comment=comment)
+                rule_group_id=group.id_, ids=ids_to_delete, comment=comment
+            )
             # If successful (i.e. no exceptions raised), clear the deletion queue
             group.rules_to_delete = []
         return new_group
 
     @filter_string
-    def describe_rule_groups_raw(self, filters: str or FalconFilter = None) -> Dict[str, dict]:
+    def describe_rule_groups_raw(self, filters: Union[FalconFilter, str] = None) -> Dict[str, dict]:
         """Return all IOA Rule Groups as raw dicts returned from the API, optionally filtered.
 
         Arguments
@@ -232,7 +245,10 @@ class CustomIoaApiModule(FalconApiModule):
         return result
 
     @filter_string
-    def describe_rule_groups(self, filters: str or FalconFilter = None) -> Dict[str, IoaRuleGroup]:
+    def describe_rule_groups(
+        self,
+        filters: Union[FalconFilter, str] = None,
+    ) -> Dict[str, IoaRuleGroup]:
         """Return all IOA Rule Groups, optionally filtered.
 
         Arguments
@@ -249,9 +265,10 @@ class CustomIoaApiModule(FalconApiModule):
         groups = {}
         rule_types = self._get_rule_types_cached()
 
-        for (group_id, raw_group) in raw_groups.items():
+        for group_id, raw_group in raw_groups.items():
             groups[group_id] = IoaRuleGroup.from_data_dict(
-                data_dict=raw_group, rule_type_map=rule_types)
+                data_dict=raw_group, rule_type_map=rule_types
+            )
         return groups
 
     def get_rule_types_raw(self, rule_type_ids: List[str]) -> Dict[str, dict]:
@@ -267,9 +284,7 @@ class CustomIoaApiModule(FalconApiModule):
         `Dict[str, dict]`:
             Dictionary mapping ID to its associated rule type as a raw dict returned by the api.
         """
-        rule_types = batch_get_data(
-            rule_type_ids, instr(self.custom_ioa_api.get_rule_types)
-        )
+        rule_types = batch_get_data(rule_type_ids, instr(self.custom_ioa_api.get_rule_types))
 
         return rule_types
 
@@ -299,7 +314,8 @@ class CustomIoaApiModule(FalconApiModule):
         `List[str]` list of rule type IDs
         """
         rule_type_ids = all_pages_numbered_offset_parallel(
-            instr(self.custom_ioa_api.query_rule_types), logger=self.logger)
+            instr(self.custom_ioa_api.query_rule_types), logger=self.logger
+        )
         return rule_type_ids
 
     def describe_rule_types(self) -> Dict[str, RuleType]:

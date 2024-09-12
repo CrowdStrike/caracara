@@ -15,7 +15,7 @@ from examples.common import caracara_example, pretty_print
 @caracara_example
 def create_prevention_policy(**kwargs):
     """Create a new Windows prevention policy with everything enabled."""
-    client: Client = kwargs['client']
+    client: Client = kwargs["client"]
 
     prevention_policy = client.prevention_policies.new_policy("Windows")
     pretty_print(prevention_policy.flat_dump())

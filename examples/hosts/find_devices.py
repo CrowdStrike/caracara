@@ -35,20 +35,24 @@ from examples.common import (
 @caracara_example
 def find_devices(**kwargs):
     """Find devices by hostname."""
-    client: Client = kwargs['client']
-    logger: logging.Logger = kwargs['logger']
-    settings: Dict = kwargs['settings']
+    client: Client = kwargs["client"]
+    logger: logging.Logger = kwargs["logger"]
+    settings: Dict = kwargs["settings"]
     timer: Timer = Timer()
 
-    filters = client.FalconFilter(dialect='hosts')
-    if 'filters' in settings:
-        filter_list: List[Dict] = settings['filters']
+    filters = client.FalconFilter(dialect="hosts")
+    if "filters" in settings:
+        filter_list: List[Dict] = settings["filters"]
         parse_filter_list(filter_list, filters)
 
     if filters.filters:
-        logger.info("Getting a list of hosts that match the FQL string %s", filters.get_fql())
+        logger.info(
+            "Getting a list of hosts that match the FQL string %s", filters.get_fql()
+        )
     else:
-        logger.info("No filter provided; getting a list of all devices within the tenant")
+        logger.info(
+            "No filter provided; getting a list of all devices within the tenant"
+        )
 
     with client:
         response_data = client.hosts.describe_devices(filters)

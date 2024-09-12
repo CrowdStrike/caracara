@@ -8,17 +8,13 @@ r"""Caracara Real Time Response (RTR) module.
 |_|   |_|_____)_____|\_)    |_|  |_|_|_|_|_____)  |_|   |_|_____|___/|  __/ \___/|_| |_(___/|_____)
                                                                      |_|
 """
+
+import datetime
 import os
-
-from datetime import datetime
 from functools import partial
-from typing import Dict, List
+from typing import Dict, List, Union
 
-from falconpy import (
-    OAuth2,
-    RealTimeResponse,
-    RealTimeResponseAdmin,
-)
+from falconpy import OAuth2, RealTimeResponse, RealTimeResponseAdmin
 
 from caracara.common.batching import batch_get_data
 from caracara.common.module import FalconApiModule, ModuleMapper
@@ -60,13 +56,13 @@ class RTRApiModule(FalconApiModule):
         return rtr_batch_session
 
     @filter_string
-    def _search_sessions(self, filters: str or FalconFilter = None):
+    def _search_sessions(self, filters: Union[str, FalconFilter] = None):
         """
         Get RTR Session IDs based on filters.
 
         Arguments
         ---------
-        filters: FalconFilter or str, optional
+        filters: Union[FalconFilter, str], optional
             Filters to apply to the RTR session search.
 
         Returns
@@ -124,12 +120,10 @@ class RTRApiModule(FalconApiModule):
         """Delete a specific command within a queued session."""
         self.logger.info(
             "Deleting command with ID %s from queued session %s",
-            cloud_request_id, session_id,
+            cloud_request_id,
+            session_id,
         )
-        self.rtr_api.delete_queued_session(
-            session_id=session_id,
-            cloud_request_id=cloud_request_id
-        )
+        self.rtr_api.delete_queued_session(session_id=session_id, cloud_request_id=cloud_request_id)
 
     def clear_queued_sessions(self):
         """
@@ -148,13 +142,13 @@ class RTRApiModule(FalconApiModule):
             self.delete_queued_session(session_id)
 
     @filter_string
-    def describe_put_files(self, filters: str or FalconFilter = None) -> Dict:
+    def describe_put_files(self, filters: Union[str, FalconFilter] = None) -> Dict:
         """
         Query RTR PUT files and return a list. Falcon (FQL) filters are supported.
 
         Arguments
         ---------
-        filters: FalconFilter or str, optional
+        filters: Union[FalconFilter, str], optional
             Filters to apply to the PUT file search.
 
         Returns
@@ -205,21 +199,25 @@ class RTRApiModule(FalconApiModule):
             name = os.path.basename(file_path)
 
         if description is None:
-            timestamp_str = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+            timestamp_str = datetime.datetime.now(datetime.timezone.utc).strftime(
+                "%Y-%m-%dT%H:%M:%SZ"
+            )
             description = f"File uploaded via Caracara at {timestamp_str}"
 
         self.logger.info(
             "Uploading %s to Falcon with name %s and description %s",
-            file_path, name, description,
+            file_path,
+            name,
+            description,
         )
 
-        with open(file_path, 'rb') as put_file:
+        with open(file_path, "rb") as put_file:
             file_contents = put_file.read()
 
         self.rtr_admin_api.create_put_files(
             name=name,
             description=description,
-            files=[(name, (name, file_contents, 'application/script'))]
+            files=[(name, (name, file_contents, "application/script"))],
         )
 
     def delete_put_file(self, put_file_id: str):
@@ -239,13 +237,13 @@ class RTRApiModule(FalconApiModule):
         self.rtr_admin_api.delete_put_files(put_file_id)
 
     @filter_string
-    def describe_scripts(self, filters: str or FalconFilter = None) -> Dict:
+    def describe_scripts(self, filters: Union[str, FalconFilter] = None) -> Dict:
         """
         Query RTR scripts and return a list. Falcon (FQL) filters are supported.
 
         Arguments
         ---------
-        filters: str or FalconFilter, optional
+        filters: Union[FalconFilter, str], optional
             Filters to apply to the script search
 
         Returns

@@ -15,27 +15,55 @@ jobs:
   codequality:
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
     - name: Install Poetry via pipx
       run: pipx install poetry
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
         cache: 'poetry'
+
     - name: Install dependencies
       run: poetry install
+
     - name: Lint package source with flake8
-      run: poetry run flake8 caracara/ --show-source --statistics
+      run: |
+        poetry run flake8 caracara/ --show-source --statistics
+        poetry run flake8 examples/ --show-source --statistics
+        poetry run flake8 tests/ --show-source --statistics
+
     - name: Lint package source with pylint
       if: success() || failure()
-      run: poetry run pylint caracara/
+      run: |
+        poetry run pylint caracara/
+        poetry run pylint examples/
+        poetry run pylint tests/
+
     - name: Lint package docstrings and comments with pydocstyle
       if: success() || failure()
-      run: poetry run pydocstyle caracara/
+      run: |
+        poetry run pydocstyle caracara/
+        poetry run pydocstyle examples/
+
+    - name: Lint imports with isort
+      if: success() || failure()
+      run: |
+        poetry run isort -c caracara/
+        poetry run isort -c examples/
+        poetry run isort -c tests/
+
+    - name: Lint package with black
+      if: success() || failure()
+      run: |
+        poetry run black -l 100 --check caracara/
+        poetry run black -l 100 --check examples/
+        poetry run black -l 100 --check tests/
+
     - name: Analyse code for security issues with bandit
       if: success() || failure()
       run: |

@@ -14,7 +14,6 @@ from examples.common import caracara_example, pretty_print
 from caracara import Client
 
 
-
 @caracara_example
 def add_user(first_name, last_name, email_address, **kwargs):
     """Add User Example."""

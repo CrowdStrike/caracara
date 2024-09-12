@@ -20,8 +20,8 @@ from examples.common import caracara_example
 @caracara_example
 def clear_queued_sessions(**kwargs):
     """Clear all RTR sessions queued up by this API client."""
-    client: Client = kwargs['client']
-    logger: logging.Logger = kwargs['logger']
+    client: Client = kwargs["client"]
+    logger: logging.Logger = kwargs["logger"]
 
     logger.info("Clearing all queued RTR sessions")
     client.rtr.clear_queued_sessions()

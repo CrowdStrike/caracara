@@ -22,8 +22,8 @@ from examples.common import (
 @caracara_example
 def list_all_devices(**kwargs):
     """List All Devices."""
-    client: Client = kwargs['client']
-    logger: logging.Logger = kwargs['logger']
+    client: Client = kwargs["client"]
+    logger: logging.Logger = kwargs["logger"]
     timer: Timer = Timer()
 
     logger.info("Listing all devices within the tenant")
