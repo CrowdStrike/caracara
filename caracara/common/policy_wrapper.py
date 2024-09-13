@@ -3,9 +3,11 @@
 This file contains wrapper classes that can represent policies in a generic way.
 It is to be extended by the respective modules (response_policies, prevention_policies, etc.)
 """
+
 # Disable TODO warning, to be removed when a wrapper is implemented for `ioa_rule_groups`
 # pylint: disable=W0511
 from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Any, Dict, List
@@ -401,7 +403,7 @@ class Policy:
         """
         settings: List[Dict] = []
         for settings_group in self.settings_groups:
-            settings.extend(settings_group.flat_dump()['settings'])
+            settings.extend(settings_group.flat_dump()["settings"])
 
         data = {
             "description": self.description,
@@ -410,6 +412,6 @@ class Policy:
             "settings": settings,
         }
         if self.policy_id:
-            data['id'] = self.policy_id
+            data["id"] = self.policy_id
 
         return data

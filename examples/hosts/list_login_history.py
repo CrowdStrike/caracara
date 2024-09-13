@@ -9,23 +9,17 @@ list the login history for systems within your Falcon tenant.
 The example demonstrates how to use the Hosts API.
 """
 import logging
-
 from typing import Dict, List
 
 from caracara import Client
-
-from examples.common import (
-    caracara_example,
-    NoDevicesFound,
-    Timer,
-)
+from examples.common import NoDevicesFound, Timer, caracara_example
 
 
 @caracara_example
 def list_login_history(**kwargs):
     """List All Devices."""
-    client: Client = kwargs['client']
-    logger: logging.Logger = kwargs['logger']
+    client: Client = kwargs["client"]
+    logger: logging.Logger = kwargs["logger"]
     timer: Timer = Timer()
 
     logger.info("Listing login history for all devices within the tenant")
@@ -34,15 +28,17 @@ def list_login_history(**kwargs):
         response_data = client.hosts.describe_login_history()
 
     for device_id, device_data in response_data.items():
-        recents: List[Dict] = device_data.get('recent_logins')
+        recents: List[Dict] = device_data.get("recent_logins")
         logins = "No logins found"
         found = []
         if recents:
             for login in recents:
-                login_detail = "".join([
-                    f"{login.get('user_name', 'Username not found')}: ",
-                    f"{login.get('login_time', 'Unknown')}",
-                ])
+                login_detail = "".join(
+                    [
+                        f"{login.get('user_name', 'Username not found')}: ",
+                        f"{login.get('login_time', 'Unknown')}",
+                    ]
+                )
                 if login_detail not in found:
                     found.append(login_detail)
 

@@ -1,12 +1,9 @@
 """Falcon Sensor Download API."""
 
-from falconpy import (
-    OAuth2,
-    SensorDownload,
-)
+from falconpy import OAuth2, SensorDownload
 
-from caracara.common.module import FalconApiModule, ModuleMapper
 from caracara.common.exceptions import GenericAPIError
+from caracara.common.module import FalconApiModule, ModuleMapper
 
 
 class SensorDownloadApiModule(FalconApiModule):
@@ -45,8 +42,7 @@ class SensorDownloadApiModule(FalconApiModule):
             ccid = response["body"]["resources"][0]
         except (KeyError, IndexError) as exc:
             self.logger.info(
-                "Failed to retrieve the CCID from the cloud. "
-                "Check your API credentials."
+                "Failed to retrieve the CCID from the cloud. Check your API credentials."
             )
             raise GenericAPIError(response["body"]["errors"]) from exc
 

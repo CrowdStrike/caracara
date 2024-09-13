@@ -13,36 +13,30 @@ find stale sensors deployments within your Falcon tenant.
 The example demonstrates how to use the Hosts API and a FalconFilter using a date.
 """
 import logging
-
 from datetime import datetime, timezone
 from typing import Dict
 
 from dateutil import parser as dparser
 
 from caracara import Client
-
-from examples.common import (
-    caracara_example,
-    NoDevicesFound,
-    Timer,
-)
+from examples.common import NoDevicesFound, Timer, caracara_example
 
 
 @caracara_example
 def find_stale_sensors(**kwargs):
     """Find devices that have not checked in after X number of days."""
-    client: Client = kwargs['client']
-    logger: logging.Logger = kwargs['logger']
-    settings: Dict = kwargs['settings']
+    client: Client = kwargs["client"]
+    logger: logging.Logger = kwargs["logger"]
+    settings: Dict = kwargs["settings"]
     timer: Timer = Timer()
 
     days = 7
     remove = False
     if settings:
-        days = int(settings.get('days', days))
+        days = int(settings.get("days", days))
         remove = bool(settings.get("remove", remove))
 
-    filters = client.FalconFilter(dialect='hosts')
+    filters = client.FalconFilter(dialect="hosts")
     filters.create_new_filter("LastSeen", f"-{days}d", "LTE")
 
     logger.info("Using the FQL filter: %s", filters.get_fql())
@@ -62,12 +56,12 @@ def find_stale_sensors(**kwargs):
         time_now = datetime.now(timezone.utc)
 
         for device_id, device_data in response_data.items():
-            last_seen = dparser.isoparse(device_data['last_seen'])
+            last_seen = dparser.isoparse(device_data["last_seen"])
             last_seen_days = (time_now - last_seen).days
             logger.info(
                 "[%s] %s was last seen %d days ago",
                 device_id,
-                device_data['hostname'],
+                device_data["hostname"],
                 last_seen_days,
             )
 

@@ -3,10 +3,7 @@
 from functools import partial
 from typing import Dict, List, Optional, Union
 
-from falconpy import (
-    OAuth2,
-    UserManagement,
-)
+from falconpy import OAuth2, UserManagement
 
 from caracara.common.batching import batch_get_data
 from caracara.common.exceptions import GenericAPIError
@@ -38,10 +35,7 @@ class UsersApiModule(FalconApiModule):
         self.user_management_api = UserManagement(auth_object=self.api_authentication)
 
     @filter_string
-    def get_user_uuids(
-        self,
-        filters: Optional[Union[FalconFilter, str]] = None
-    ) -> List[str]:
+    def get_user_uuids(self, filters: Optional[Union[FalconFilter, str]] = None) -> List[str]:
         """Get a list of IDs of users (UUIDs) configured in the Falcon tenant."""
         self.logger.info("Obtaining a list of all users in the Falcon tenant")
 

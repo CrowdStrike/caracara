@@ -24,6 +24,7 @@ allow for the examples to be configured with values provided as environment vari
 It may also be advantageous for some scripting implementations, where the user may wish
 to configure Caracara dynamically or interactively by using environment variables.
 """
+
 import logging
 import os
 import re
@@ -45,7 +46,7 @@ class VariableInterpolator:  # pylint: disable=too-few-public-methods
         an escape character.
         The pattern will return just the inner text (without the $ or {}).
         """
-        self._pattern = re.compile(r'(?<!\$)\$\{(\w+)\}')
+        self._pattern = re.compile(r"(?<!\$)\$\{(\w+)\}")
 
         self.logger = logging.getLogger(__name__)
         self.logger.debug("Instantiating a Variable Interpolator")
@@ -70,12 +71,9 @@ class VariableInterpolator:  # pylint: disable=too-few-public-methods
             actual curly brace character, plus a third curly brace for the
             f-string variable name.
             """
-            interpolation_str = f'${{{match}}}'
+            interpolation_str = f"${{{match}}}"
             self.logger.debug("Interpolating the environment variable: %s", match)
-            output_string = output_string.replace(
-                interpolation_str,
-                os.environ.get(match, match)
-            )
+            output_string = output_string.replace(interpolation_str, os.environ.get(match, match))
 
         # Unescape by replacing double dollar signs with single dollar signs
         output_string = output_string.replace("$$", "$")

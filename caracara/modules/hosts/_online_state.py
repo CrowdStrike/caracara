@@ -3,16 +3,15 @@
 In order to avoid the main hosts.py file getting too unwieldly, this file contains
 the implementations of the host online state query functions.
 """
+
 # Disable the protected access rule because this file is an extension of the class in hosts.py.
 # pylint: disable=protected-access
 from __future__ import annotations
-from typing import (
-    List,
-    TYPE_CHECKING,
-)
+
+from typing import TYPE_CHECKING, List, Union
 
 from caracara.common.batching import batch_get_data
-from caracara.common.constants import OnlineState, ONLINE_STATE_DATA_BATCH_SIZE
+from caracara.common.constants import ONLINE_STATE_DATA_BATCH_SIZE, OnlineState
 from caracara.common.exceptions import InvalidOnlineState
 
 if TYPE_CHECKING:
@@ -20,8 +19,8 @@ if TYPE_CHECKING:
 
 
 def validate_online_state(
-        self: HostsApiModule,
-        online_state: OnlineState or str,
+    self: HostsApiModule,
+    online_state: Union[OnlineState, str],
 ):
     """Raise an exception if the online_state_string is not a valid online state.
 
@@ -36,8 +35,8 @@ def validate_online_state(
 
 
 def get_online_state(
-        self: HostsApiModule,
-        device_ids: List[str],
+    self: HostsApiModule,
+    device_ids: List[str],
 ) -> List[str]:
     """Return a dictionary containing online state details for every device specified by ID.
 
@@ -67,7 +66,7 @@ def get_online_state(
 def filter_device_ids_by_online_state(
     self: HostsApiModule,
     device_ids: List[str],
-    online_state: OnlineState or str,
+    online_state: Union[OnlineState, str],
 ) -> List[str]:
     """Filter a list of device IDs by an online state.
 
@@ -86,7 +85,9 @@ def filter_device_ids_by_online_state(
 
     device_state_data = self.get_online_state(device_ids)
 
-    return list(filter(
-        lambda device_id: device_state_data[device_id]["state"] == online_state,
-        device_state_data,
-    ))
+    return list(
+        filter(
+            lambda device_id: device_state_data[device_id]["state"] == online_state,
+            device_state_data,
+        )
+    )

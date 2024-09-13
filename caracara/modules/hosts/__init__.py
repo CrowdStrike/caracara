@@ -1,6 +1,7 @@
 """Caracara HostsApiModule."""
+
 __all__ = [
-    'HostsApiModule',
+    "HostsApiModule",
 ]
 
 from caracara.modules.hosts.hosts import HostsApiModule

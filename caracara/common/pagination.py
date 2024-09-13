@@ -87,19 +87,19 @@ this function takes a parameter name / parameter value list pair.
 Param Name = the name of the kwarg that should be swapped out in each call
 Value List = a list of strings to be iterated over
 """
+
 import concurrent.futures
 import logging
-
 from functools import partial
 from threading import current_thread
-from typing import Callable, Dict, List
+from typing import Callable, Dict, List, Union
 
 from caracara.common.batching import batch_data_pull_threads
 from caracara.common.constants import PAGINATION_LIMIT, SCROLL_BATCH_SIZE
 
 
 def all_pages_numbered_offset(
-    func: Callable[[Dict[str, Dict]], List[Dict] or List[str]],
+    func: Callable[[Dict[str, Dict]], Union[List[Dict], List[str]]],
     logger: logging.Logger,
     body: Dict = None,
     limit: int = PAGINATION_LIMIT,
@@ -121,8 +121,8 @@ def all_pages_numbered_offset(
         if body:
             req_body.update(body)
 
-        response = func(body=req_body)['body']
-        resources = response['resources']
+        response = func(body=req_body)["body"]
+        resources = response["resources"]
         logger.info(f"Retrieved a batch of {len(resources)} items")
         logger.debug(response)
         all_resources.extend(resources)
@@ -131,8 +131,8 @@ def all_pages_numbered_offset(
         if not all_resources:
             return []
 
-        if response['meta']['pagination']['total'] > len(all_resources):
-            offset = response['meta']['pagination']['offset']
+        if response["meta"]["pagination"]["total"] > len(all_resources):
+            offset = response["meta"]["pagination"]["offset"]
         else:
             found_all = True
 
@@ -140,7 +140,7 @@ def all_pages_numbered_offset(
 
 
 def _numbered_offset_parallel_worker(
-    func: Callable[[Dict[str, Dict]], List[Dict] or List[str]] or partial,
+    func: Union[Callable[[Dict[str, Dict]], Union[List[Dict], List[str]]], partial],
     limit: int,
     logger: logging.Logger,
     batch_offset: int,
@@ -149,23 +149,28 @@ def _numbered_offset_parallel_worker(
     if isinstance(func, partial):
         logger.info(
             "%s | Batch worker started with limit %d and offset %d; partial function: %s",
-            thread_name, limit, batch_offset, func.func.__name__,
+            thread_name,
+            limit,
+            batch_offset,
+            func.func.__name__,
         )
     else:
         logger.info(
             "%s | Batch worker started with offset %s; function: %s",
-            thread_name, limit, func.__name__,
+            thread_name,
+            limit,
+            func.__name__,
         )
-    response = func(offset=batch_offset, limit=limit)['body']
+    response = func(offset=batch_offset, limit=limit)["body"]
     logger.debug("%s | %s", thread_name, response)
-    resources = response.get('resources', [])
+    resources = response.get("resources", [])
     logger.info("%s | Retrieved %d resources", thread_name, len(resources))
 
     return resources
 
 
 def all_pages_numbered_offset_parallel(
-    func: Callable[[Dict[str, Dict]], List[Dict] or List[str]] or partial,
+    func: Union[Callable[[Dict[str, Dict]], Union[List[Dict], List[str]]], partial],
     logger: logging.Logger,
     limit: int = PAGINATION_LIMIT,
 ) -> List[Dict]:
@@ -174,27 +179,29 @@ def all_pages_numbered_offset_parallel(
     if isinstance(func, partial):
         logger.info(
             "Pagination Style 1: Grabbing all pages from the partial %s function (limit: %d)",
-            func.func.__name__, limit,
+            func.func.__name__,
+            limit,
         )
     else:
         logger.info(
             "Pagination Style 1: Grabbing all pages from the %s function (limit: %d)",
-            func.__name__, limit,
+            func.__name__,
+            limit,
         )
 
     # Get the first page to figure out how many items to pull
     logger.info("Grabbing first batch of items 1 to up to %s", limit)
-    response: Dict = func(offset=0, limit=limit)['body']
+    response: Dict = func(offset=0, limit=limit)["body"]
     logger.debug(response)
 
-    all_resources: List[Dict] = response.get('resources', [])
+    all_resources: List[Dict] = response.get("resources", [])
     logger.info("Retrieved a batch of %d items", len(all_resources))
 
     if not all_resources:
         logger.info("No resources received; returning an empty list")
         return []
 
-    total = response['meta']['pagination']['total']
+    total = response["meta"]["pagination"]["total"]
     logger.info("Total number of resources: %s", total)
     if total == len(all_resources):
         # Received all resources in the first batch
@@ -233,7 +240,7 @@ def all_pages_numbered_offset_parallel(
 
 
 def all_pages_token_offset(
-    func: Callable[[Dict[str, Dict]], List[Dict] or List[str]] or partial,
+    func: Union[Callable[[Dict[str, Dict]], Union[List[Dict], List[str]]], partial],
     logger: logging.Logger,
     limit: int = SCROLL_BATCH_SIZE,
     offset_key_named_after: bool = False,
@@ -248,12 +255,14 @@ def all_pages_token_offset(
     if isinstance(func, partial):
         logger.info(
             "Pagination Style 2: Grabbing all pages from the partial %s function (limit: %d)",
-            func.func.__name__, limit,
+            func.func.__name__,
+            limit,
         )
     else:
         logger.info(
             "Pagination Style 2: Grabbing all pages from the %s function (limit: %d)",
-            func.__name__, limit,
+            func.__name__,
+            limit,
         )
 
     complete = False
@@ -266,25 +275,27 @@ def all_pages_token_offset(
         current_page += 1
         logger.info(
             "Fetching page %d: %d to up to %d",
-            current_page, len(item_ids) + 1, limit * current_page,
+            current_page,
+            len(item_ids) + 1,
+            limit * current_page,
         )
         if offset_key_named_after:
-            response = func(limit=limit, after=offset)['body']
+            response = func(limit=limit, after=offset)["body"]
         else:
-            response = func(limit=limit, offset=offset)['body']
+            response = func(limit=limit, offset=offset)["body"]
         logger.debug(response)
-        resources = response.get('resources', [])
+        resources = response.get("resources", [])
         item_ids.extend(resources)
         if not item_ids:
             # Nothing was returned, so bail out in case the pagination data does not exist
             return []
 
-        pagination_data = response['meta']['pagination']
-        if pagination_data['total'] > len(item_ids):
+        pagination_data = response["meta"]["pagination"]
+        if pagination_data["total"] > len(item_ids):
             if offset_key_named_after:
-                offset = pagination_data['after']
+                offset = pagination_data["after"]
             else:
-                offset = pagination_data['offset']
+                offset = pagination_data["offset"]
         else:
             complete = True
 
@@ -295,7 +306,7 @@ def all_pages_token_offset(
 
 
 def _generic_parallel_list_execution_worker(
-    func: Callable[[Dict[str, Dict]], List[Dict] or List[str]] or partial,
+    func: Union[Callable[[Dict[str, Dict]], Union[List[Dict], List[str]]], partial],
     logger: logging.Logger,
     param_name: str,
     param_value: str,
@@ -304,27 +315,29 @@ def _generic_parallel_list_execution_worker(
     if isinstance(func, partial):
         logger.info(
             "%s | Batch worker started with partial function: %s",
-            thread_name, func.func.__name__,
+            thread_name,
+            func.func.__name__,
         )
     else:
         logger.info(
             "%s | Batch worker started with function: %s",
-            thread_name, func.__name__,
+            thread_name,
+            func.__name__,
         )
 
-    response = func(**{param_name: param_value})['body']
+    response = func(**{param_name: param_value})["body"]
     logger.debug("%s | %s", thread_name, response)
-    resources = response.get('resources', [])
+    resources = response.get("resources", [])
     logger.info("%s | Retrieved %d resources", thread_name, len(resources))
 
     return resources
 
 
 def generic_parallel_list_execution(
-        func: Callable[[Dict[str, Dict]], List[Dict] or List[str]] or partial,
-        logger: logging.Logger,
-        param_name: str,
-        value_list: List[str],
+    func: Union[Callable[[Dict[str, Dict]], Union[List[Dict], List[str]]], partial],
+    logger: logging.Logger,
+    param_name: str,
+    value_list: List[str],
 ):
     """Call a function many times in a thread pool based on a list of kwarg values.
 

@@ -1,14 +1,12 @@
 """
 Caracara general tests
 """
+
 import os
 
 from falconpy import BaseURL
 
-from caracara import (
-    __version__,
-    Client,
-)
+from caracara import Client, __version__
 
 AUTH = Client(
     client_id=os.getenv("FALCON_CLIENT_ID"),
@@ -19,7 +17,7 @@ AUTH = Client(
 
 def test_version():
     """Assert that the reflective version loading code works"""
-    assert __version__ == '0.1.2'
+    assert __version__ == "0.1.2"
 
 
 def cloud_validation_testing():

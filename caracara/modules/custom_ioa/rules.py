@@ -1,7 +1,9 @@
 """Module that provides wrappers around IOA Rule Groups and Custom IOA Rules."""
+
 from __future__ import annotations
+
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 from caracara.modules.custom_ioa.rule_types import RuleType
 
@@ -89,7 +91,7 @@ class IoaRuleGroup:
         rule_group = IoaRuleGroup(
             name=data_dict["name"],
             description=data_dict["description"],
-            platform=data_dict["platform"]
+            platform=data_dict["platform"],
         )
 
         rule_group.comment = data_dict["comment"]
@@ -127,9 +129,7 @@ class IoaRuleGroup:
             The rule to add to this rule group
         """
         if rule.group is not None:
-            raise ValueError(
-                "This rule has already been added to a group!"
-            )
+            raise ValueError("This rule has already been added to a group!")
         rule.group = self
         self.rules.append(rule)
 
@@ -437,7 +437,8 @@ class CustomIoaRule:
         # Check that at least one excludable field is non-default
         regex_values = [
             value["value"]
-            for field in self.fields.values() if field["type"] == "excludable"
+            for field in self.fields.values()
+            if field["type"] == "excludable"
             for value in field["values"]
         ]
         if len(regex_values) > 0 and all(value == ".*" for value in regex_values):
@@ -454,7 +455,7 @@ class CustomIoaRule:
         """Return a list of possible actions to set using the `set_action` method."""
         return list(self.rule_type.disposition_map.values())
 
-    def set_action(self, action: str or int):
+    def set_action(self, action: Union[int, str]):
         """Set the action/disposition for this rule.
 
         An action must be set for the API to accept this rule.
@@ -471,8 +472,9 @@ class CustomIoaRule:
             else:
                 raise KeyError("Invalid action/disposition id!")
         else:
-            matches = [id_ for (id_, label)
-                       in self.rule_type.disposition_map.items() if label == action]
+            matches = [
+                id_ for (id_, label) in self.rule_type.disposition_map.items() if label == action
+            ]
             if len(matches) > 0:
                 self.disposition_id = matches[0]
                 self.action_label = action
@@ -500,19 +502,18 @@ class CustomIoaRule:
         if field is None:
             raise ValueError(
                 f"Rule type {repr(self.rule_type.name)} has no fields with name or label "
-                f"{repr(name_or_label)} and type \"excludable\""
+                f'{repr(name_or_label)} and type "excludable"'
             )
 
-        values = [{
-            "label": "include",
-            "value": include,
-        }]
+        values = [
+            {
+                "label": "include",
+                "value": include,
+            }
+        ]
 
         if exclude is not None:
-            values.append({
-                "label": "exclude",
-                "value": exclude
-            })
+            values.append({"label": "exclude", "value": exclude})
 
         self.fields[(field.name, "excludable")] = {
             "name": field.name,
@@ -551,19 +552,20 @@ class CustomIoaRule:
         if field is None:
             raise ValueError(
                 f"Rule type {repr(self.rule_type.name)} has no fields with name or label "
-                f"{repr(name_or_label)} and type \"excludable\""
+                f'{repr(name_or_label)} and type "excludable"'
             )
 
         values = []
         for value in selected_options:
             # Find all options that have 'label' or 'value' matching the selected option
-            matching_options = [option for option in field.options if value in
-                                [option.label, option.value]]
+            matching_options = [
+                option for option in field.options if value in [option.label, option.value]
+            ]
 
             if len(matching_options) == 0:
                 raise KeyError(
                     f"No option matching {repr(value)} in field {repr(field.name)} in rule with "
-                    f"type \"set\""
+                    f'type "set"'
                 )
 
             option = matching_options[0]

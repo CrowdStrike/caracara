@@ -1,6 +1,6 @@
 """Unit tests for PreventionPoliciesApiModule"""
-import copy
 
+import copy
 from unittest.mock import patch
 
 import falconpy
@@ -11,6 +11,7 @@ from caracara.common.sorting import SORT_ASC
 
 def prevpol_test():
     """Decorator that contains common functionality between all prevention policy tests."""
+
     def decorator(func):
         @patch(
             "caracara.modules.prevention_policies.prevention_policies.PreventionPolicies",
@@ -32,7 +33,9 @@ def prevpol_test():
                 mock_oauth2=mock_oauth2,
                 mock_prevpol=mock_prevpol,
             )
+
         return test_new_func
+
     return decorator
 
 
@@ -68,7 +71,7 @@ def mock_query_combined_policies(filter, sort, offset, limit):  # pylint: disabl
 
     return {
         "body": {
-            "resources": mock_policies[offset:offset+limit],
+            "resources": mock_policies[offset : offset + limit],
             "meta": {
                 "pagination": {
                     "total": len(mock_policies),
@@ -82,23 +85,30 @@ def mock_query_combined_policies(filter, sort, offset, limit):  # pylint: disabl
 def test_describe_policies_raw(auth: Client, **_):
     """Unit test for PreventionPoliciesApiModule.describe_policies_raw."""
 
-    auth.prevention_policies.prevention_policies_api.configure_mock(**{
-        "query_combined_policies.side_effect": mock_query_combined_policies,
-    })
+    auth.prevention_policies.prevention_policies_api.configure_mock(
+        **{
+            "query_combined_policies.side_effect": mock_query_combined_policies,
+        }
+    )
 
-    assert auth.prevention_policies.describe_policies_raw(
-        filters=test_filters,
-        sort=test_sort,
-    ) == mock_policies
+    assert (
+        auth.prevention_policies.describe_policies_raw(
+            filters=test_filters,
+            sort=test_sort,
+        )
+        == mock_policies
+    )
 
 
 @prevpol_test()
 def test_describe_policies(auth, **_):
     """Unit test for PreventionPoliciesApiModule.describe_policies"""
 
-    auth.prevention_policies.prevention_policies_api.configure_mock(**{
-        "query_combined_policies.side_effect": mock_query_combined_policies,
-    })
+    auth.prevention_policies.prevention_policies_api.configure_mock(
+        **{
+            "query_combined_policies.side_effect": mock_query_combined_policies,
+        }
+    )
 
     results = auth.prevention_policies.describe_policies(
         filters=test_filters,
@@ -128,14 +138,18 @@ def test_push_policy(auth: Client, **_):
         body["resources"][0]["cid"] = mock_cid
         return {"body": body}
 
-    auth.prevention_policies.prevention_policies_api.configure_mock(**{
-        "create_policies.side_effect": mock_create_policies,
-    })
+    auth.prevention_policies.prevention_policies_api.configure_mock(
+        **{
+            "create_policies.side_effect": mock_create_policies,
+        }
+    )
 
-    res = auth.prevention_policies.push_policy(Policy(
-        data_dict=mock_policy,
-        style="prevention",
-    ))
+    res = auth.prevention_policies.push_policy(
+        Policy(
+            data_dict=mock_policy,
+            style="prevention",
+        )
+    )
 
     assert res.cid == mock_cid
 

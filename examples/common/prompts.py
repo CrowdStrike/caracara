@@ -3,6 +3,7 @@ Caracara Example Collection.
 
 This file contains a pretty prompt_toolkit-based completer for devices.
 """
+
 from typing import Dict, Iterable
 
 from prompt_toolkit import prompt

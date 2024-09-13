@@ -8,16 +8,15 @@ and return back a dictionary of data.
 For paginated results that send back IDs, the pagination code file contains
 the required code to pull this data down as quickly as possible.
 """
+
 import concurrent.futures
 import logging
 import multiprocessing
-
 from functools import partial
 from threading import current_thread
 from typing import Callable, Dict, List, Tuple
 
 from caracara.common.constants import DEFAULT_DATA_BATCH_SIZE
-
 
 BATCH_LOGGER = logging.getLogger(__name__)
 
@@ -59,7 +58,9 @@ def batch_get_data(
     BATCH_LOGGER.debug(str(lookup_ids))
 
     # Divide the list of item IDs into a list of lists, each of size data_batch_size
-    batches = [lookup_ids[i:i+data_batch_size] for i in range(0, len(lookup_ids), data_batch_size)]
+    batches = [
+        lookup_ids[i : i + data_batch_size] for i in range(0, len(lookup_ids), data_batch_size)
+    ]
     BATCH_LOGGER.info("Divided the item IDs into %d batches", len(batches))
 
     threads = batch_data_pull_threads()
@@ -72,7 +73,9 @@ def batch_get_data(
         thread_name = current_thread().name
         BATCH_LOGGER.info(
             "%s | Batch worker started with a list of %d items. Function: %s",
-            thread_name, len(worker_lookup_ids), batch_func.__name__,
+            thread_name,
+            len(worker_lookup_ids),
+            batch_func.__name__,
         )
         body: Dict = batch_func(ids=worker_lookup_ids)["body"]
         # Gracefully handle a lack of returned resources, usually as a result of an error
@@ -100,14 +103,14 @@ def batch_get_data(
 
     resources_dict = {}
     for resource in resources:
-        if 'id' in resource:
-            resources_dict[resource['id']] = resource
-        elif 'device_id' in resource:
-            resources_dict[resource['device_id']] = resource
-        elif 'child_cid' in resource:
-            resources_dict[resource['child_cid']] = resource
-        elif 'uuid' in resource:
-            resources_dict[resource['uuid']] = resource
+        if "id" in resource:
+            resources_dict[resource["id"]] = resource
+        elif "device_id" in resource:
+            resources_dict[resource["device_id"]] = resource
+        elif "child_cid" in resource:
+            resources_dict[resource["child_cid"]] = resource
+        elif "uuid" in resource:
+            resources_dict[resource["uuid"]] = resource
         else:
             raise KeyError("No ID field to build the dictionary from")
 

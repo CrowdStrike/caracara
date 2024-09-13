@@ -12,24 +12,19 @@ The example demonstrates how to use the FalconFilter() class and the Hosts API.
 import logging
 
 from caracara import Client
-
-from examples.common import (
-    caracara_example,
-    NoDevicesFound,
-    Timer,
-)
+from examples.common import NoDevicesFound, Timer, caracara_example
 
 
 @caracara_example
 def list_windows_devices(**kwargs):
     """List Windows Devices."""
-    client: Client = kwargs['client']
-    logger: logging.Logger = kwargs['logger']
+    client: Client = kwargs["client"]
+    logger: logging.Logger = kwargs["logger"]
     timer: Timer = Timer()
 
     logger.info("Grabbing all Windows devices within the tenant")
 
-    filters = client.FalconFilter(dialect='hosts')
+    filters = client.FalconFilter(dialect="hosts")
     filters.create_new_filter("OS", "Windows")
     logger.info("Using the FQL filter: %s", filters.get_fql())
 
@@ -42,7 +37,11 @@ def list_windows_devices(**kwargs):
         hostname = device_data.get("hostname", "Unknown Hostname")
         logger.info("%s (%s)", device_id, hostname)
 
-    logger.info("Found %d devices running Windows in %s seconds", len(response_data), float(timer))
+    logger.info(
+        "Found %d devices running Windows in %s seconds",
+        len(response_data),
+        float(timer),
+    )
 
 
 if __name__ in ["__main__", "examples.hosts.list_windows_devices"]:

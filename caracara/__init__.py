@@ -17,6 +17,7 @@ $$$        c$$$cc$$$c $$$$$$c   c$$$cc$$$c $$$        c$$$cc$$$c $$$$$$c   c$$$c
 
                                                     Developer Toolkit for FalconPy
 """
+
 __all__ = ["Client", "Policy"]
 
 from caracara.client import Client

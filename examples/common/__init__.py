@@ -1,8 +1,9 @@
 """Caracara Examples: Common Module."""
+
 __all__ = [
-    'caracara_example',
-    'parse_filter_list',
-    'pretty_print',
+    "caracara_example",
+    "parse_filter_list",
+    "pretty_print",
 ]
 
 from examples.common.example import caracara_example

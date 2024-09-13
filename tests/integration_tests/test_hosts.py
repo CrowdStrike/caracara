@@ -4,6 +4,7 @@ REQUIRED API SCOPES
     Hosts: READ, WRITE
     Host Group: READ, WRITE
 """
+
 from .test_general import AUTH
 
 HOST_TARGET_FILTER = "falconpy"
@@ -31,6 +32,7 @@ def test_describe_network_address_history():
 
 # def test_get_device_id():
 #     assert bool(AUTH.hosts.get_device_ids(filters="hostname:'falconpy'"))
+
 
 def test_contain_host():
     """Attempts to network contain hosts based on a hostname filter"""
@@ -72,7 +74,7 @@ def test_tag_host():
     assert bool(
         AUTH.hosts.tag(
             filters=f"hostname:'{HOST_TARGET_FILTER}'",
-            tags="FalconGroupingTags/unittesttag"
+            tags="FalconGroupingTags/unittesttag",
         )[0]["updated"]
     )
 
@@ -82,7 +84,7 @@ def test_tag_host_list():
     assert bool(
         AUTH.hosts.tag(
             filters=f"hostname:'{HOST_TARGET_FILTER}'",
-            tags=["FalconGroupingTags/unittesttaglist"]
+            tags=["FalconGroupingTags/unittesttaglist"],
         )[0]["updated"]
     )
 
@@ -92,7 +94,7 @@ def test_tag_host_delimit():
     assert bool(
         AUTH.hosts.tag(
             filters=f"hostname:'{HOST_TARGET_FILTER}'",
-            tags="FalconGroupingTags/unittesttagdelimit,FalconGroupingTags/unittesttagdelimit2"
+            tags="FalconGroupingTags/unittesttagdelimit,FalconGroupingTags/unittesttagdelimit2",
         )[0]["updated"]
     )
 
@@ -106,7 +108,7 @@ def test_untag_host():
                 "FalconGroupingTags/unittesttag",
                 "FalconGroupingTags/unittesttaglist",
                 "FalconGroupingTags/unittesttagdelimit",
-                "FalconGroupingTags/unittesttagdelimit2"
-            ]
+                "FalconGroupingTags/unittesttagdelimit2",
+            ],
         )[0]["updated"]
     )

@@ -1,4 +1,5 @@
 """Common constants to be shared throughout Caracara."""
+
 from enum import Enum, EnumMeta
 
 # Batch size of data downloaded via a multi-threaded data pull

@@ -41,6 +41,8 @@ A few of the developer experience enhancements provided by the Caracara toolkit 
 
 Caracara supports all major Python packaging solutions. Instructions for [Poetry](https://python-poetry.org) and [Pip](https://pypi.org/project/pip/) are provided below.
 
+Caracara supports Python versions that are still supported by the Python Software Foundation, i.e., **Python 3.8 and up**.
+
 <details>
 <summary><h3>Installing Caracara from PyPI using Poetry (Recommended!)</h3></summary>
 

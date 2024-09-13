@@ -4,16 +4,17 @@ Caracara Modules Package Initialisation.
 Proides pipework to link together the various modules within Caracara and expose them to
 the Client object at setup.
 """
+
 __all__ = [
-    'CustomIoaApiModule',
-    'FlightControlApiModule',
-    'HostsApiModule',
-    'PreventionPoliciesApiModule',
-    'ResponsePoliciesApiModule',
-    'RTRApiModule',
-    'SensorDownloadApiModule',
-    'SensorUpdatePoliciesApiModule',
-    'UsersApiModule',
+    "CustomIoaApiModule",
+    "FlightControlApiModule",
+    "HostsApiModule",
+    "PreventionPoliciesApiModule",
+    "ResponsePoliciesApiModule",
+    "RTRApiModule",
+    "SensorDownloadApiModule",
+    "SensorUpdatePoliciesApiModule",
+    "UsersApiModule",
 ]
 
 from caracara.modules.custom_ioa import CustomIoaApiModule

@@ -1,5 +1,7 @@
 """Caracara: CrowdStrike Style Radio Dialog for Prompt Toolkit."""
+
 from __future__ import annotations
+
 from typing import Any, Sequence, TypeVar
 
 from prompt_toolkit.application import Application
@@ -12,7 +14,6 @@ from prompt_toolkit.layout import Layout
 from prompt_toolkit.layout.containers import AnyContainer, HSplit
 from prompt_toolkit.styles import BaseStyle, Style, merge_styles
 from prompt_toolkit.widgets import Button, Dialog, Label, RadioList
-
 
 # Prompt Toolkit uses _T for the generic type
 _T = TypeVar("_T")
@@ -41,21 +42,23 @@ def _return_none() -> None:
     get_app().exit()
 
 
-CS_STYLE = Style.from_dict({
-    'button': 'fg:#1A1A1A bold',
-    'button.arrow': 'fg:#FC0000 bold',
-    'button.focused': 'fg:#FFFFFF bg:#2F8BAA',
-    'button.text': 'fg:#1A1A1A bold',
-    'dialog': 'bg:#58595B',
-    'dialog.body': 'bg:#F3F3F4',
-    'dialog.body label': 'fg:#FC0000',
-    'dialog frame.label': 'bg:#F3F4F4 #1A1A1A',
-    'dialog shadow': 'bg:#68696B',
-    'frame.label': 'fg:#FC0000',
-    'label': '#FC0000',
-    'radio-list': '#1A1A1A',
-    'radio-checked': 'fg:#2F8BAA',
-})
+CS_STYLE = Style.from_dict(
+    {
+        "button": "fg:#1A1A1A bold",
+        "button.arrow": "fg:#FC0000 bold",
+        "button.focused": "fg:#FFFFFF bg:#2F8BAA",
+        "button.text": "fg:#1A1A1A bold",
+        "dialog": "bg:#58595B",
+        "dialog.body": "bg:#F3F3F4",
+        "dialog.body label": "fg:#FC0000",
+        "dialog frame.label": "bg:#F3F4F4 #1A1A1A",
+        "dialog shadow": "bg:#68696B",
+        "frame.label": "fg:#FC0000",
+        "label": "#FC0000",
+        "radio-list": "#1A1A1A",
+        "radio-checked": "fg:#2F8BAA",
+    }
+)
 
 
 def csradiolist_dialog(  # pylint: disable=too-many-arguments

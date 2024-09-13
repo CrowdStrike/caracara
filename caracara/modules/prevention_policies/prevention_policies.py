@@ -1,11 +1,9 @@
 """Falcon Prevention Policies API."""
-from functools import partial
-from typing import List, Dict
 
-from falconpy import (
-    OAuth2,
-    PreventionPolicies,
-)
+from functools import partial
+from typing import Dict, List, Union
+
+from falconpy import OAuth2, PreventionPolicies
 
 from caracara.common.decorators import platform_name_check
 from caracara.common.module import FalconApiModule, ModuleMapper
@@ -35,7 +33,7 @@ class PreventionPoliciesApiModule(FalconApiModule):
 
     @filter_string
     def describe_policies_raw(
-        self, filters: str or FalconFilter = None, sort: str = SORT_ASC
+        self, filters: Union[FalconFilter, str] = None, sort: str = SORT_ASC
     ) -> List[Dict]:
         """Return a list of dictionaries containing all prevention policies in the Falcon tenant."""
         if sort not in SORTING_OPTIONS:
@@ -53,7 +51,7 @@ class PreventionPoliciesApiModule(FalconApiModule):
 
     @filter_string
     def describe_policies(
-        self, filters: str or FalconFilter = None, sort: str = SORT_ASC
+        self, filters: Union[FalconFilter, str] = None, sort: str = SORT_ASC
     ) -> List[Policy]:
         """Return a list of all prevention policies packaged as custom Python Policy objects."""
         raw_policies_dict = self.describe_policies_raw(filters=filters, sort=sort)
@@ -76,10 +74,10 @@ class PreventionPoliciesApiModule(FalconApiModule):
     def push_policy(self, policy: Policy) -> Policy:
         """Push a policy to the CrowdStrike Cloud, and return the resultant policy."""
         self.logger.info("Creating the prevention policy named %s", policy.name)
-        response = self.prevention_policies_api.create_policies(body={
-            "resources": [
-                policy.flat_dump()
-            ],
-        })['body']
-        new_policy = Policy(data_dict=response['resources'][0], style="prevention")
+        response = self.prevention_policies_api.create_policies(
+            body={
+                "resources": [policy.flat_dump()],
+            }
+        )["body"]
+        new_policy = Policy(data_dict=response["resources"][0], style="prevention")
         return new_policy

@@ -13,15 +13,12 @@ CrowdStrike Caracara
 import logging
 
 try:
-    from falconpy import (
-        OAuth2,
-        confirm_base_region,
-        confirm_base_url
-    )
+    from falconpy import OAuth2, confirm_base_region, confirm_base_url
 except ImportError as no_falconpy:
     raise SystemExit("The crowdstrike-falconpy library is not installed.") from no_falconpy
 
 from caracara_filters import FQLGenerator
+
 from caracara.common.interpolation import VariableInterpolator
 from caracara.common.meta import user_agent_string
 from caracara.common.module import ModuleMapper
@@ -117,7 +114,9 @@ class Client:
 
             self.logger.info(
                 "Client ID: %s; Cloud: %s; Member CID: %s",
-                client_id, cloud_name, member_cid,
+                client_id,
+                cloud_name,
+                member_cid,
             )
             self.logger.debug("SSL verification is %s", ssl_verify)
             self.logger.debug("Timeout: %s", str(timeout))

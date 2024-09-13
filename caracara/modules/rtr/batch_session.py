@@ -1,17 +1,14 @@
 """Real Time Response (RTR) batch session abstraction class."""
-import concurrent.futures
-from dataclasses import dataclass
-import logging
 
+import concurrent.futures
+import logging
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 from functools import partial, wraps
 from threading import current_thread
 from typing import Dict, List
 
-from falconpy import (
-    RealTimeResponse,
-    RealTimeResponseAdmin,
-)
+from falconpy import RealTimeResponse, RealTimeResponseAdmin
 
 from caracara.common.batching import batch_data_pull_threads
 from caracara.modules.rtr.constants import (
@@ -33,6 +30,7 @@ def _batch_session_required(func):
         self.auto_refresh_sessions(self.default_timeout)
 
         return func(self, *args, **kwargs)
+
     return wrapper
 
 
@@ -51,13 +49,7 @@ class InnerRTRBatchSession:  # pylint: disable=too-few-public-methods
     expiry: datetime = None
     logger: logging.Logger = None
 
-    def __init__(
-        self,
-        batch_id: str,
-        devices: Dict,
-        expiry: datetime,
-        logger: logging.Logger
-    ):
+    def __init__(self, batch_id: str, devices: Dict, expiry: datetime, logger: logging.Logger):
         """Configure an inner batch of RTR sessions."""
         self.batch_id = batch_id
         self.devices = devices
@@ -93,14 +85,16 @@ def generic_rtr_worker(
     logger = logger.getChild(__name__)
     logger.info(
         "%s | Executing %s function against RTR batch: %s (args: %s; kwargs: %s)",
-        thread_name, func.func.__name__, session.batch_id, func.args, func.keywords,
+        thread_name,
+        func.func.__name__,
+        session.batch_id,
+        func.args,
+        func.keywords,
     )
     if device_ids:
-        device_ids_in_batch = list(
-            filter(lambda x: x in session.devices.keys(), device_ids)
-        )
-        func.keywords['optional_hosts'] = device_ids_in_batch
-    response = func(batch_id=session.batch_id)['body']
+        device_ids_in_batch = list(filter(lambda x: x in session.devices.keys(), device_ids))
+        func.keywords["optional_hosts"] = device_ids_in_batch
+    response = func(batch_id=session.batch_id)["body"]
     logger.debug("%s | %s", thread_name, response)
     return response
 
@@ -145,21 +139,22 @@ class RTRBatchSession:
 
         batches = []
         for i in range(0, len(device_ids), MAX_BATCH_SESSION_HOSTS):
-            batches.append(device_ids[i:i+MAX_BATCH_SESSION_HOSTS])
+            batches.append(device_ids[i : i + MAX_BATCH_SESSION_HOSTS])
         self.logger.info("Divided up devices into %d batches", len(batches))
 
         def worker(batch_device_ids: List[str], batch_func: partial):
             thread_name = current_thread().name
             self.logger.info(
                 "%s | Batch worker started with a list of %d devices",
-                thread_name, len(batch_device_ids),
+                thread_name,
+                len(batch_device_ids),
             )
-            response = batch_func(host_ids=batch_device_ids)['body']
-            resources = response['resources']
+            response = batch_func(host_ids=batch_device_ids)["body"]
+            resources = response["resources"]
             self.logger.info("%s | Connected to %s systems", thread_name, len(resources))
             self.logger.debug("%s | %s", thread_name, response)
             batch_data = InnerRTRBatchSession(
-                batch_id=response['batch_id'],
+                batch_id=response["batch_id"],
                 devices=resources,
                 expiry=datetime.now() + timedelta(seconds=SESSION_EXPIRY),
                 logger=self.logger,
@@ -170,7 +165,7 @@ class RTRBatchSession:
             self.api.batch_init_sessions,
             queue_offline=queueing,
             timeout=timeout,
-            timeout_duration=f'{timeout}s',
+            timeout_duration=f"{timeout}s",
         )
 
         with concurrent.futures.ThreadPoolExecutor(
@@ -214,7 +209,7 @@ class RTRBatchSession:
             self.api.batch_get_command,
             file_path=file_path,
             timeout=timeout,
-            timeout_duration=f'{timeout}s',
+            timeout_duration=f"{timeout}s",
         )
         partial_worker = partial(generic_rtr_worker, logger=self.logger, device_ids=device_ids)
         with concurrent.futures.ThreadPoolExecutor(
@@ -230,8 +225,8 @@ class RTRBatchSession:
         for complete in completed:
             self.logger.info("Executed commands on a batch of %d hosts", len(complete))
             batch_get_cmd_req = BatchGetCmdRequest(
-                batch_get_cmd_req_id=complete['batch_get_cmd_req_id'],
-                devices=complete['combined']['resources'],
+                batch_get_cmd_req_id=complete["batch_get_cmd_req_id"],
+                devices=complete["combined"]["resources"],
             )
             batch_get_cmd_reqs.append(batch_get_cmd_req)
 
@@ -240,7 +235,7 @@ class RTRBatchSession:
     def get_status(
         self,
         batch_get_cmd_reqs: List[BatchGetCmdRequest],
-        timeout: int = default_timeout
+        timeout: int = default_timeout,
     ) -> List[GetFile]:
         """
         Get a list of successful file uploads based on a list of batch get command requests.
@@ -255,20 +250,21 @@ class RTRBatchSession:
             logger = self.logger.getChild(__name__)
             logger.info(
                 "%s | Getting the status of batch get request %s",
-                thread_name, batch_get_cmd_req.batch_get_cmd_req_id,
+                thread_name,
+                batch_get_cmd_req.batch_get_cmd_req_id,
             )
-            response = func(batch_get_cmd_req_id=batch_get_cmd_req.batch_get_cmd_req_id)['body']
+            response = func(batch_get_cmd_req_id=batch_get_cmd_req.batch_get_cmd_req_id)["body"]
             logger.debug("%s | %s", thread_name, response)
 
-            resources: Dict = response['resources']
+            resources: Dict = response["resources"]
             get_files: List[GetFile] = []
             for device_id, get_data in resources.items():
                 get_file = GetFile(
                     device_id=device_id,
-                    filename=get_data['name'],
-                    session_id=get_data['session_id'],
-                    sha256=get_data['sha256'],
-                    size=get_data['size'],
+                    filename=get_data["name"],
+                    session_id=get_data["session_id"],
+                    sha256=get_data["sha256"],
+                    size=get_data["size"],
                     batch_session=self,
                 )
                 get_files.append(get_file)
@@ -279,7 +275,7 @@ class RTRBatchSession:
         partial_func = partial(
             self.api.batch_get_command_status,
             timeout=timeout,
-            timeout_duration=f'{timeout}s',
+            timeout_duration=f"{timeout}s",
         )
         with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
             completed = executor.map(worker, batch_get_cmd_reqs, [partial_func])
@@ -301,10 +297,10 @@ class RTRBatchSession:
         response = self.api.batch_get_command_status(
             batch_get_cmd_req_id=batch_get_cmd_req_id,
             timeout=timeout,
-            timeout_duration=f'{timeout}s',
-        )['body']
+            timeout_duration=f"{timeout}s",
+        )["body"]
         self.logger.debug(response)
-        resources: List[Dict] = response['resources']
+        resources: List[Dict] = response["resources"]
         self.logger.info("Batch GET has retrieved %d files so far", len(resources))
         self.logger.debug(resources)
 
@@ -315,10 +311,10 @@ class RTRBatchSession:
         for device_id in resources.keys():
             get_file = GetFile(
                 device_id=device_id,
-                filename=resources[device_id]['name'],
-                session_id=resources[device_id]['session_id'],
-                sha256=resources[device_id]['sha256'],
-                size=resources[device_id]['size'],
+                filename=resources[device_id]["name"],
+                session_id=resources[device_id]["session_id"],
+                sha256=resources[device_id]["sha256"],
+                size=resources[device_id]["size"],
                 batch_session=self,
             )
             get_files.append(get_file)
@@ -343,7 +339,7 @@ class RTRBatchSession:
         batch_func = partial(
             self.api.batch_refresh_sessions,
             timeout=timeout,
-            timeout_duration=f'{timeout}s',
+            timeout_duration=f"{timeout}s",
         )
 
         with concurrent.futures.ThreadPoolExecutor(
@@ -362,7 +358,7 @@ class RTRBatchSession:
         timeout: int = default_timeout,
     ) -> Dict:
         """Execute an RTR command against all systems in the batch session."""
-        base_command = command_string.split(' ')[0]
+        base_command = command_string.split(" ")[0]
         if base_command not in RTR_COMMANDS:
             raise ValueError(f"{base_command} is not a valid RTR command")
 
@@ -374,11 +370,11 @@ class RTRBatchSession:
         # -Raw for the runscript command)
         permissions_level = RTR_COMMANDS[base_command]
         if isinstance(permissions_level, dict):
-            command_parameter_1 = command_string.split(' ')[1].split('=')[0]
+            command_parameter_1 = command_string.split(" ")[1].split("=")[0]
             if command_parameter_1 in permissions_level:
                 permissions_level = permissions_level[command_parameter_1]
             else:
-                permissions_level = permissions_level['_default']
+                permissions_level = permissions_level["_default"]
 
         if permissions_level == "admin":
             cmd_func = self.admin_api.batch_admin_command
@@ -394,7 +390,7 @@ class RTRBatchSession:
             base_command=base_command,
             command_string=command_string,
             timeout=timeout,
-            timeout_duration=f'{timeout}s',
+            timeout_duration=f"{timeout}s",
         )
         partial_worker = partial(generic_rtr_worker, logger=self.logger, device_ids=device_ids)
         with concurrent.futures.ThreadPoolExecutor(
@@ -409,7 +405,7 @@ class RTRBatchSession:
         all_responses: Dict = {}
         for complete in completed:
             self.logger.info("Executed commands on a batch of %d hosts", len(complete))
-            all_responses.update(complete['combined']['resources'])
+            all_responses.update(complete["combined"]["resources"])
 
         return all_responses
 
@@ -427,7 +423,8 @@ class RTRBatchSession:
 
         self.logger.info(
             "Running a raw script via RTR. Timeout: %d; script timeout: %d",
-            timeout, script_timeout,
+            timeout,
+            script_timeout,
         )
 
         command_string = f"runscript -Raw=```{script_text}``` -Timeout={script_timeout}"

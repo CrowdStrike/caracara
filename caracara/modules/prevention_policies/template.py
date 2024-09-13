@@ -3,17 +3,16 @@ Caracara: Prevention Policies.
 
 This file contains platform-specific templates representing standard, blank Prevention policies.
 """
+
 from caracara.common.policy_wrapper import (
+    SETTINGS_TYPE_MAP,
     ChangeablePolicySetting,
     Policy,
     PolicySettingGroup,
-    SETTINGS_TYPE_MAP,
 )
 
-
 COMMAND_TEMPLATES = {
-    "AdditionalUserModeData":
-    {
+    "AdditionalUserModeData": {
         "description": (
             "Allows the sensor to get more data from a user-mode component it loads into all "
             "eligible processes, which augments online machine learning and turns on additional "
@@ -99,7 +98,7 @@ COMMAND_TEMPLATES = {
     "CustomBlacklisting": {
         "description": (
             "Block processes matching hashes that you add to IOC Management with the action "
-            "set to \"Block\" or \"Block, hide detection\"."
+            'set to "Block" or "Block, hide detection".'
         ),
         "name": "Custom Blocking",
         "setting_type": "toggle",
@@ -583,7 +582,7 @@ COMMAND_TEMPLATES = {
             "A command line process associated with Windows logon bypass was prevented "
             "from executing."
         ),
-        "name": "Windows Logon Bypass (\"Sticky Keys\")",
+        "name": 'Windows Logon Bypass ("Sticky Keys")',
         "setting_type": "toggle",
         "value": {
             "enabled": False,
@@ -756,12 +755,12 @@ def generate_prevention_template(platform_name: str) -> Policy:
 
         for setting_id in group_settings:
             setting_data = COMMAND_TEMPLATES[setting_id]
-            setting_desc = setting_data['description']
+            setting_desc = setting_data["description"]
             if isinstance(setting_desc, dict):
                 setting_desc = setting_desc[platform_name]
-            setting_name = setting_data['name']
-            setting_type = setting_data['setting_type']
-            setting_value = setting_data['value']
+            setting_name = setting_data["name"]
+            setting_type = setting_data["setting_type"]
+            setting_value = setting_data["value"]
             setting_template: ChangeablePolicySetting = SETTINGS_TYPE_MAP[setting_type]
             loadable_setting_data = {
                 "description": setting_desc,

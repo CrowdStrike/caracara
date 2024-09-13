@@ -1,11 +1,10 @@
 """⏰ Caracara Example execution timer."""
 
 import time
-
 from math import ceil
 
 
-class Timer():
+class Timer:
     """Timer class to track example execution times."""
 
     def __init__(self):

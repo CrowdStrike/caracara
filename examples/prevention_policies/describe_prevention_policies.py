@@ -11,23 +11,21 @@ This example demonstrates using a combination of the FalconFilter class and
 the response policies API.
 """
 import logging
-
 from typing import List
 
 from caracara import Client, Policy
-
 from examples.common import caracara_example, pretty_print
 
 
 @caracara_example
 def describe_prevention_policies(**kwargs):
     """List Prevention Policies."""
-    client: Client = kwargs['client']
-    logger: logging.Logger = kwargs['logger']
+    client: Client = kwargs["client"]
+    logger: logging.Logger = kwargs["logger"]
 
     logger.info("Grabbing all Windows prevention policies from the Falcon tenant")
 
-    filters = client.FalconFilter(dialect='hosts')
+    filters = client.FalconFilter(dialect="hosts")
     filters.create_new_filter("OS", "Windows")
     policies: List[Policy] = client.prevention_policies.describe_policies(filters=filters)
 
@@ -46,5 +44,5 @@ def describe_prevention_policies(**kwargs):
         i += 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     describe_prevention_policies()

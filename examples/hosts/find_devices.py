@@ -18,31 +18,29 @@ hosts are returned.
 The example demonstrates how to use the Hosts API.
 """
 import logging
-
 from typing import Dict, List
 
 from caracara import Client
-
 from examples.common import (
+    NoDevicesFound,
+    Timer,
     caracara_example,
     parse_filter_list,
     pretty_print,
-    NoDevicesFound,
-    Timer,
 )
 
 
 @caracara_example
 def find_devices(**kwargs):
     """Find devices by hostname."""
-    client: Client = kwargs['client']
-    logger: logging.Logger = kwargs['logger']
-    settings: Dict = kwargs['settings']
+    client: Client = kwargs["client"]
+    logger: logging.Logger = kwargs["logger"]
+    settings: Dict = kwargs["settings"]
     timer: Timer = Timer()
 
-    filters = client.FalconFilter(dialect='hosts')
-    if 'filters' in settings:
-        filter_list: List[Dict] = settings['filters']
+    filters = client.FalconFilter(dialect="hosts")
+    if "filters" in settings:
+        filter_list: List[Dict] = settings["filters"]
         parse_filter_list(filter_list, filters)
 
     if filters.filters:

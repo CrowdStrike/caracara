@@ -3,18 +3,14 @@
 In order to avoid the main hosts.py file getting too unwieldly, this file contains
 the implementations of functions that can tag and untag hosts within the Falcon UI.
 """
+
 # Disable the protected access rule because this file is an extension of the class in hosts.py.
 # pylint: disable=protected-access
 from __future__ import annotations
-from typing import (
-    Dict,
-    List,
-    TYPE_CHECKING,
-)
 
-from caracara.common.exceptions import (
-    MustProvideFilter,
-)
+from typing import TYPE_CHECKING, Dict, List, Union
+
+from caracara.common.exceptions import MustProvideFilter
 from caracara.filters import FalconFilter
 from caracara.filters.decorators import filter_string
 
@@ -22,7 +18,7 @@ if TYPE_CHECKING:
     from caracara.modules.hosts import HostsApiModule
 
 
-def _create_tag_list(potential_list: List[str] or str) -> List[str]:
+def _create_tag_list(potential_list: Union[List[str], str]) -> List[str]:
     """Create a properly formatted list from a list, a string or a comma-delimited string."""
     tag_list = potential_list
     if not isinstance(potential_list, list):
@@ -32,23 +28,19 @@ def _create_tag_list(potential_list: List[str] or str) -> List[str]:
 
 
 def _update_device_tags(
-    self: HostsApiModule,
-    action_name: str,
-    device_ids: List[str],
-    tag_list: List[str]
+    self: HostsApiModule, action_name: str, device_ids: List[str], tag_list: List[str]
 ) -> Dict:
     """Tag or untag a device within the tenant."""
     return self.hosts_api.update_device_tags(
-        action_name=action_name,
-        ids=device_ids,
-        tags=tag_list
+        action_name=action_name, ids=device_ids, tags=tag_list
     )["body"]
 
 
 @filter_string
 def tag(
     self: HostsApiModule,
-    tags: List[str] or str, filters: FalconFilter or str = None,
+    tags: Union[List[str], str],
+    filters: Union[FalconFilter, str] = None,
 ) -> Dict:
     """Tag a host or list of hosts within your Falcon tenant.
 
@@ -56,7 +48,7 @@ def tag(
     ---------
     tags: List of strings
         Tags to be applied to the discovered devices.
-    filters: FalconFilter or str, optional
+    filters: Union[FalconFilter, str], optional
         Filters to apply to the device search.
 
     Returns
@@ -69,14 +61,15 @@ def tag(
     return self._update_device_tags(
         action_name="add",
         tag_list=self._create_tag_list(tags),
-        device_ids=self.get_device_ids(filters)
+        device_ids=self.get_device_ids(filters),
     )["resources"]
 
 
 @filter_string
 def untag(
     self: HostsApiModule,
-    tags: List[str] or str, filters: FalconFilter or str = None,
+    tags: Union[List[str], str],
+    filters: Union[FalconFilter, str] = None,
 ) -> Dict:
     """Untag a host or list of hosts within your Falcon tenant.
 
@@ -84,7 +77,7 @@ def untag(
     ---------
     tags: List of strings
         Tags to be applied to the discovered devices.
-    filters: FalconFilter or str, optional
+    filters: Union[FalconFilter, str], optional
         Filters to apply to the device search.
 
     Returns
@@ -97,5 +90,5 @@ def untag(
     return self._update_device_tags(
         action_name="remove",
         tag_list=self._create_tag_list(tags),
-        device_ids=self.get_device_ids(filters)
+        device_ids=self.get_device_ids(filters),
     )["resources"]

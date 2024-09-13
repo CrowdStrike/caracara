@@ -1,7 +1,9 @@
 """Caracara Sensor Policies API Module."""
+
 __all__ = [
-    'SensorUpdatePoliciesApiModule',
+    "SensorUpdatePoliciesApiModule",
 ]
 
-from caracara.modules.sensor_update_policies.sensor_update_policies \
-    import SensorUpdatePoliciesApiModule
+from caracara.modules.sensor_update_policies.sensor_update_policies import (
+    SensorUpdatePoliciesApiModule,
+)

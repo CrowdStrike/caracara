@@ -10,15 +10,14 @@ show all the users configured within the Falcon tenant.
 import logging
 
 from caracara import Client
-
 from examples.common import caracara_example, pretty_print
 
 
 @caracara_example
 def describe_users(**kwargs):
     """List Users Example."""
-    client: Client = kwargs['client']
-    logger: logging.Logger = kwargs['logger']
+    client: Client = kwargs["client"]
+    logger: logging.Logger = kwargs["logger"]
 
     logger.info("Describing all users in the Falcon tenant")
 
@@ -26,5 +25,5 @@ def describe_users(**kwargs):
     logger.info(pretty_print(users))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     describe_users()
