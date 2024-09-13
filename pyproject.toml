@@ -7,9 +7,9 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.8.2"
-py7zr = ">=0.20,<0.22"
+py7zr = "^0.22.0"
 crowdstrike-falconpy = "^1.4.0"
-caracara-filters = "^0.2"
+caracara-filters = "^1.0.0"
 
 [tool.poetry.group.dev.dependencies]
 bandit = "^1.7.9"

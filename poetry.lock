@@ -217,13 +217,13 @@ cffi = ">=1.0.0"
 
 [[package]]
 name = "caracara-filters"
-version = "0.2.0"
+version = "1.0.0"
 description = "FQL generation engine for Caracara"
 optional = false
-python-versions = ">=3.7.2,<4.0.0"
+python-versions = "<4.0.0,>=3.8.2"
 files = [
-    {file = "caracara_filters-0.2.0-py3-none-any.whl", hash = "sha256:853bb9ebf754dc6d707c17b4489dc5c3cf79756071736921b14f60a33cab2b77"},
-    {file = "caracara_filters-0.2.0.tar.gz", hash = "sha256:cc0813a7e0cf64b5e9c20cee289610cd25f7a03b2d84988e5fa21333a2485d5e"},
+    {file = "caracara_filters-1.0.0-py3-none-any.whl", hash = "sha256:7c9d2ddac483e4ec94b288fe7369bb8633401a9743fa8ea84da9fbeadbed1809"},
+    {file = "caracara_filters-1.0.0.tar.gz", hash = "sha256:f31c03ceb884ff1db371e9bcb72158446ca1f2ba2e2de402028d504de111fb44"},
 ]
 
 [[package]]
@@ -872,13 +872,13 @@ test = ["enum34", "ipaddress", "mock", "pywin32", "wmi"]
 
 [[package]]
 name = "py7zr"
-version = "0.21.1"
+version = "0.22.0"
 description = "Pure python 7-zip library"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "py7zr-0.21.1-py3-none-any.whl", hash = "sha256:57e5be6fafaa417fe93fa9c81f7f01bb579d3cfe1631f535a3e641200ac87dc2"},
-    {file = "py7zr-0.21.1.tar.gz", hash = "sha256:dede8ed8b7b32b3586ac476da3a482b69dd433229420bf0f62c495404b72c799"},
+    {file = "py7zr-0.22.0-py3-none-any.whl", hash = "sha256:993b951b313500697d71113da2681386589b7b74f12e48ba13cc12beca79d078"},
+    {file = "py7zr-0.22.0.tar.gz", hash = "sha256:c6c7aea5913535184003b73938490f9a4d8418598e533f9ca991d3b8e45a139e"},
 ]
 
 [package.dependencies]
@@ -897,7 +897,7 @@ texttable = "*"
 check = ["black (>=23.1.0)", "check-manifest", "flake8 (<8)", "flake8-black (>=0.3.6)", "flake8-deprecated", "flake8-isort", "isort (>=5.0.3)", "lxml", "mypy (>=0.940)", "mypy-extensions (>=0.4.1)", "pygments", "readme-renderer", "twine", "types-psutil"]
 debug = ["pytest", "pytest-leaks", "pytest-profiling"]
 docs = ["docutils", "sphinx (>=5.0)", "sphinx-a4doc", "sphinx-py3doc-enhanced-theme"]
-test = ["coverage[toml] (>=5.2)", "coveralls (>=2.1.1)", "py-cpuinfo", "pyannotate", "pytest", "pytest-benchmark", "pytest-cov", "pytest-remotedata", "pytest-timeout"]
+test = ["coverage[toml] (>=5.2)", "coveralls (>=2.1.1)", "py-cpuinfo", "pytest", "pytest-benchmark", "pytest-cov", "pytest-remotedata", "pytest-timeout"]
 test-compat = ["libarchive-c"]
 
 [[package]]
@@ -1547,4 +1547,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.2"
-content-hash = "9575b53adf835dfc959a35b81257d5faf8a1e98890bc7532cbf83dab82284365"
+content-hash = "a8de05f42ce2a83d4a0280de1cab63a8e752646e2854cdc8047fce01548a9d0c"
