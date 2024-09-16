@@ -171,13 +171,13 @@ cffi = ">=1.0.0"
 
 [[package]]
 name = "caracara-filters"
-version = "0.2.0"
+version = "1.0.0"
 description = "FQL generation engine for Caracara"
 optional = false
-python-versions = ">=3.7.2,<4.0.0"
+python-versions = "<4.0.0,>=3.8.2"
 files = [
-    {file = "caracara_filters-0.2.0-py3-none-any.whl", hash = "sha256:853bb9ebf754dc6d707c17b4489dc5c3cf79756071736921b14f60a33cab2b77"},
-    {file = "caracara_filters-0.2.0.tar.gz", hash = "sha256:cc0813a7e0cf64b5e9c20cee289610cd25f7a03b2d84988e5fa21333a2485d5e"},
+    {file = "caracara_filters-1.0.0-py3-none-any.whl", hash = "sha256:7c9d2ddac483e4ec94b288fe7369bb8633401a9743fa8ea84da9fbeadbed1809"},
+    {file = "caracara_filters-1.0.0.tar.gz", hash = "sha256:f31c03ceb884ff1db371e9bcb72158446ca1f2ba2e2de402028d504de111fb44"},
 ]
 
 [[package]]
@@ -1495,4 +1495,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.2"
-content-hash = "c61a7e0844f6842124930c7ecbb6674e6026438f89301d766314ceadb166ff1d"
+content-hash = "ecdbfa064106deaa212022a5a0dd30c1d598fcf276ed4579e8cb5d5f95ccf3ec"
