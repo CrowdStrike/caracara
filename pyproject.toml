@@ -9,7 +9,7 @@ readme = "README.md"
 python = "^3.8.2"
 py7zr = ">=0.20,<0.22"
 crowdstrike-falconpy = "^1.4.0"
-caracara-filters = "^0.2"
+caracara-filters = ">=0.2,<1.1"
 setuptools = "^69.0"
 
 [tool.poetry.dev-dependencies]
