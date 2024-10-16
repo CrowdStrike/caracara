@@ -17,39 +17,39 @@ queue_command:
   command: CommandToRun
 """
 import logging
-
 from typing import Dict, List
 
 from caracara import Client
-
 from examples.common import (
-    caracara_example,
-    parse_filter_list,
     MissingArgument,
     NoDevicesFound,
     NoSessionsConnected,
+    caracara_example,
+    parse_filter_list,
 )
 
 
 @caracara_example
 def queue_command(**kwargs):
     """Run a single RTR command against all hosts matching the filter, even if offline."""
-    client: Client = kwargs['client']
-    logger: logging.Logger = kwargs['logger']
-    settings: Dict = kwargs['settings']
+    client: Client = kwargs["client"]
+    logger: logging.Logger = kwargs["logger"]
+    settings: Dict = kwargs["settings"]
 
-    if not settings or 'command' not in settings:
-        error_message = "".join([
-            "You must configure the 'cmd' argument within your "
-            "YAML file to proceed with this example."
-        ])
+    if not settings or "command" not in settings:
+        error_message = "".join(
+            [
+                "You must configure the 'cmd' argument within your "
+                "YAML file to proceed with this example."
+            ]
+        )
         logger.critical(error_message)
         raise MissingArgument("cmd", error_message)
 
-    cmd: str = settings['command']
+    cmd: str = settings["command"]
     logger.info("Running the command: %s", cmd)
 
-    filters = client.FalconFilter(dialect='rtr')
+    filters = client.FalconFilter(dialect="rtr")
     filter_list: List[Dict] = settings.get("filters")
     parse_filter_list(filter_list, filters)
 

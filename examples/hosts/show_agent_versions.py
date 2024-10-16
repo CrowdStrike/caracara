@@ -18,19 +18,14 @@ import logging
 from tabulate import tabulate
 
 from caracara import Client
-
-from examples.common import (
-    caracara_example,
-    NoDevicesFound,
-    Timer,
-)
+from examples.common import NoDevicesFound, Timer, caracara_example
 
 
 @caracara_example
 def show_agent_versions(**kwargs):
     """List all devices and agent versions."""
-    client: Client = kwargs['client']
-    logger: logging.Logger = kwargs['logger']
+    client: Client = kwargs["client"]
+    logger: logging.Logger = kwargs["logger"]
     timer: Timer = Timer()
 
     logger.info("Grabbing all devices within the tenant")
@@ -41,7 +36,7 @@ def show_agent_versions(**kwargs):
         "hostname": "Hostname",
         "local_ip": "Internal IP",
         "external_ip": "External IP",
-        "agent_version": "Agent Version"
+        "agent_version": "Agent Version",
     }
     devices = []
     with client:

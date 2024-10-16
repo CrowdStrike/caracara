@@ -3,15 +3,13 @@
 In order to avoid the main hosts.py file getting too unwieldly, this file contains
 the implementations of all functions associated with host groups.
 """
+
 # Disable the protected access rule because this file is an extension of the class in hosts.py.
 # pylint: disable=protected-access
 from __future__ import annotations
+
 from functools import partial
-from typing import (
-    Dict,
-    List,
-    TYPE_CHECKING,
-)
+from typing import TYPE_CHECKING, Dict, List, Union
 
 from caracara.common.batching import batch_get_data
 from caracara.common.constants import HOST_GROUP_SCROLL_BATCH_SIZE
@@ -47,7 +45,7 @@ def _create_host_group(
         name=group_name,
         description=description,
         group_type=group_type,
-        assignment_rule=assignment_rule
+        assignment_rule=assignment_rule,
     )["body"]
     if returned["errors"]:
         raise GenericAPIError(returned["errors"])
@@ -76,21 +74,21 @@ def _perform_group_action(
 @filter_string
 def add_to_group(
     self: HostsApiModule,
-    filters: FalconFilter or str = None,
-    group_ids: List[str] or str = None,
-    device_filters: FalconFilter or str = None,
-    device_ids: List[str] or str = None,
+    filters: Union[FalconFilter, str] = None,
+    group_ids: Union[List[str], str] = None,
+    device_filters: Union[FalconFilter, str] = None,
+    device_ids: Union[List[str], str] = None,
 ) -> Dict:
     """Add a host or list of hosts to a host group within your Falcon tenant.
 
     Arguments
     ---------
-    filters: FalconFilter or str, optional
+    filters: Union[FalconFilter, str], optional
         Group filter to apply to the host group search. Not required if group_ids are provided.
     group_ids: List[str] or str, optional
         List of host group IDs to update. Comma delimited strings are converted.
         Not required if a group filter is provided. Takes precedence over provided filters.
-    device_filters: FalconFilter or str, optional
+    device_filters: Union[FalconFilter, str], optional
         Filters to apply to the device search. Not required if device_ids are provided.
     device_ids: List[str] or str, optional
         List of device IDs to add to the host group. Comma delimited strings are converted.
@@ -140,24 +138,19 @@ def create_group(
     -------
     dict: A dictionary containing details for the host group creation result.
     """
-    return self._create_host_group(
-        group_name,
-        description,
-        group_type,
-        assignment_rule
-    )
+    return self._create_host_group(group_name, description, group_type, assignment_rule)
 
 
 def delete_group(
     self: HostsApiModule,
     group_ids: List[str] = None,
-    filters: FalconFilter or str = None,
+    filters: Union[FalconFilter, str] = None,
 ) -> Dict:
     """Delete a host group from within your Falcon tenant.
 
     Arguments
     ---------
-    filters: FalconFilter or str, optional
+    filters: Union[FalconFilter, str], optional
         Group filter to apply to the host group search. Not required if group_ids are provided.
     group_ids: List[str] or str, optional
         List of host group IDs to update. Comma delimited strings are converted.
@@ -175,7 +168,7 @@ def delete_group(
 
     returned = self.host_group_api.delete_host_groups(
         ids=group_ids if group_ids else self.get_group_ids(filters)
-        )["body"]
+    )["body"]
     if returned["errors"]:
         raise GenericAPIError(returned["errors"])
 
@@ -185,13 +178,13 @@ def delete_group(
 @filter_string
 def describe_group_member_ids(
     self: HostsApiModule,
-    filters: FalconFilter or str = None,
+    filters: Union[FalconFilter, str] = None,
 ) -> Dict[str, List[str]]:
     """Return a dictionary with member IDs for all host groups matching the provided filter.
 
     Arguments
     ---------
-    filters: FalconFilter or str, optional
+    filters: Union[FalconFilter, str], optional
         Filters to apply to the host group search.
 
     Returns
@@ -210,13 +203,13 @@ def describe_group_member_ids(
 @filter_string
 def describe_group_members(
     self: HostsApiModule,
-    filters: FalconFilter or str = None,
+    filters: Union[FalconFilter, str] = None,
 ) -> Dict:
     """Return a dictionary with member details for all host groups matching the provided filter.
 
     Arguments
     ---------
-    filters: FalconFilter or str, optional
+    filters: Union[FalconFilter, str], optional
         Filters to apply to the host group search.
 
     Returns
@@ -230,13 +223,13 @@ def describe_group_members(
 @filter_string
 def describe_groups(
     self: HostsApiModule,
-    filters: FalconFilter or str = None,
+    filters: Union[FalconFilter, str] = None,
 ) -> Dict[str, Dict]:
     """Return a dictionary containing detail for every host group matching the provided filter.
 
     Arguments
     ---------
-    filters: FalconFilter or str, optional
+    filters: Union[FalconFilter, str], optional
         Filters to apply to the host group search.
 
     Returns
@@ -253,13 +246,13 @@ def describe_groups(
 @filter_string
 def get_group_ids(
     self: HostsApiModule,
-    filters: FalconFilter or str = None,
+    filters: Union[FalconFilter, str] = None,
 ) -> List[str]:
     """Return a list of IDs (string) for every host group within your Falcon tenant.
 
     Arguments
     ---------
-    filters: FalconFilter or str, optional
+    filters: Union[FalconFilter, str], optional
         Filters to apply to the host group search.
 
     Returns
@@ -269,9 +262,7 @@ def get_group_ids(
     self.logger.info("Searching for host group IDs using the filter string %s", filters)
     func = partial(self.host_group_api.query_host_groups, filter=filters)
     id_list: List[str] = all_pages_numbered_offset_parallel(
-        func=func,
-        logger=self.logger,
-        limit=HOST_GROUP_SCROLL_BATCH_SIZE
+        func=func, logger=self.logger, limit=HOST_GROUP_SCROLL_BATCH_SIZE
     )
     if not id_list:
         raise HostGroupNotFound
@@ -308,13 +299,13 @@ def get_group_member_ids(
 @filter_string
 def get_group_members(
     self: HostsApiModule,
-    filters: FalconFilter or str = None,
+    filters: Union[FalconFilter, str] = None,
 ) -> Dict[str, Dict]:
     """Return a dictionary containing every host group and their members.
 
     Arguments
     ---------
-    filters: FalconFilter or str, optional
+    filters: Union[FalconFilter, str], optional
         Filters to apply to the host group member search.
 
     Returns
@@ -327,14 +318,14 @@ def get_group_members(
     all_group_data: Dict[str, Dict] = {}
     for group_id, group_data in groups.items():
         all_group_data[group_id] = group_data
-        all_group_data[group_id]['devices'] = []
+        all_group_data[group_id]["devices"] = []
 
         for device in device_data:
-            if 'groups' not in device:
+            if "groups" not in device:
                 continue
-            for group_identifier in device['groups']:
+            for group_identifier in device["groups"]:
                 if group_identifier == group_id:
-                    all_group_data[group_identifier]['devices'].append(device)
+                    all_group_data[group_identifier]["devices"].append(device)
 
     return all_group_data
 
@@ -368,28 +359,30 @@ def group(
         description,
         "static",
         assignment_rule,
-    )[0]["id"]
+    )[
+        0
+    ]["id"]
     return self.add_to_group(group_ids=new_group, device_ids=device_ids)["resources"]
 
 
 @filter_string
 def remove_from_group(
     self: HostsApiModule,
-    filters: FalconFilter or str = None,
-    group_ids: List[str] or str = None,
-    device_filters: FalconFilter or str = None,
-    device_ids: List[str] or str = None,
+    filters: Union[FalconFilter, str] = None,
+    group_ids: Union[List[str], str] = None,
+    device_filters: Union[FalconFilter, str] = None,
+    device_ids: Union[List[str], str] = None,
 ) -> Dict:
     """Remove a host or list of hosts to a host group within your Falcon tenant.
 
     Arguments
     ---------
-    filters: FalconFilter or str, optional
+    filters: Union[FalconFilter, str], optional
         Group filter to apply to the host group search. Not required if group_ids are provided.
     group_ids: List[str] or str, optional
         List of host group IDs to update. Comma delimited strings are converted.
         Not required if a group filter is provided. Takes precedence over provided filters.
-    device_filters: FalconFilter or str, optional
+    device_filters: Union[FalconFilter, str], optional
         Filters to apply to the device search. Not required if device_ids are provided.
     device_ids: List[str] or str, optional
         List of device IDs to add to the host group. Comma delimited strings are converted.
@@ -420,7 +413,7 @@ def remove_from_group(
 
 def ungroup(
     self: HostsApiModule,
-    group_ids: List[str] or str = None,
+    group_ids: Union[List[str], str] = None,
     remove_groups: bool = False,
 ) -> Dict[str, Dict]:
     """Remove all members from host groups and then remove the group (if specified).
@@ -451,7 +444,7 @@ def ungroup(
             self.logger.info(
                 "Removed %d members from group %s",
                 len(returned[group_id]["result"]),
-                group_id
+                group_id,
             )
         if remove_groups:
             self.logger.info("Remove group %s", group_id)
@@ -468,7 +461,7 @@ def update_group(
     group_name: str = None,
     group_description: str = None,
     assignment_rule: str = None,
- ) -> Dict:
+) -> Dict:
     """Update the name, assignment rule or description for a Host Group wihtin your tenant.
 
     Arguments
@@ -491,5 +484,5 @@ def update_group(
         id=group_id,
         assignment_rule=assignment_rule,
         description=group_description,
-        name=group_name
+        name=group_name,
     )["body"]["resources"]

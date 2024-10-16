@@ -9,17 +9,13 @@ This example will allow you to search for a system in the CID and get its mainte
 from typing import Dict
 
 from caracara import Client
-
-from examples.common import (
-    caracara_example,
-    choose_item,
-)
+from examples.common import caracara_example, choose_item
 
 
 @caracara_example
 def get_maintenance_token(**kwargs):
     """Search for a system and get its maintenance token."""
-    client: Client = kwargs['client']
+    client: Client = kwargs["client"]
 
     print("Getting all devices in the Falcon tenant")
     devices: Dict[str, Dict] = client.hosts.describe_devices()
@@ -28,7 +24,7 @@ def get_maintenance_token(**kwargs):
         "MAINTENANCE": "Bulk Maintenance Token",
     }
     for device_id, device_data in devices.items():
-        id_name_mapping[device_id] = device_data['hostname']
+        id_name_mapping[device_id] = device_data["hostname"]
 
     chosen_id = choose_item(id_name_mapping, prompt_text="Search for a Device")
 

@@ -3,14 +3,11 @@
 This module allows for interaction with the Sensor Update policies, and facilitates
 the retrieval of maintenance tokens.
 """
-import datetime
 
+import datetime
 from typing import Optional
 
-from falconpy import (
-    OAuth2,
-    SensorUpdatePolicies,
-)
+from falconpy import OAuth2, SensorUpdatePolicies
 
 from caracara.common.exceptions import BaseCaracaraError
 from caracara.common.module import FalconApiModule, ModuleMapper
@@ -50,9 +47,9 @@ class SensorUpdatePoliciesApiModule(FalconApiModule):
         str: The maintenance token.
         """
         if audit_message is None:
-            timestamp = datetime.datetime.now(tz=datetime.timezone.utc,).strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
+            timestamp = datetime.datetime.now(
+                tz=datetime.timezone.utc,
+            ).strftime("%Y-%m-%d %H:%M:%S")
 
             audit_message = f"Generated via Caracara at {timestamp} UTC"
 
@@ -61,9 +58,9 @@ class SensorUpdatePoliciesApiModule(FalconApiModule):
             device_id=device_id,
         )
 
-        if response['status_code'] == 200:
-            body = response['body']
-            return body['resources'][0]['uninstall_token']
+        if response["status_code"] == 200:
+            body = response["body"]
+            return body["resources"][0]["uninstall_token"]
 
         raise BaseCaracaraError(
             "The API operation failed to generate a maintenance token."

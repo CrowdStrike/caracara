@@ -10,15 +10,14 @@ list all the scripts that are stored in the associated Falcon tenant
 import logging
 
 from caracara import Client
-
 from examples.common import caracara_example, pretty_print
 
 
 @caracara_example
 def describe_scripts(**kwargs):
     """Describe all available cloud scripts and and write the output to the log."""
-    client: Client = kwargs['client']
-    logger: logging.Logger = kwargs['logger']
+    client: Client = kwargs["client"]
+    logger: logging.Logger = kwargs["logger"]
 
     with client:
         logger.info("Listing available PUT files")

@@ -9,10 +9,8 @@ add a user in the Falcon tenant.
 """
 import logging
 
-from examples.common import caracara_example, pretty_print
-
 from caracara import Client
-
+from examples.common import caracara_example, pretty_print
 
 
 @caracara_example

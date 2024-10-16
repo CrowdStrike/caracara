@@ -1,4 +1,5 @@
 """Unit tests for CustomIoaApiModule"""
+
 import copy
 from typing import List
 from unittest.mock import MagicMock
@@ -8,8 +9,8 @@ import pytest
 
 from caracara import Client
 from caracara.modules.custom_ioa import IoaRuleGroup
-from caracara.modules.custom_ioa.rules import CustomIoaRule
 from caracara.modules.custom_ioa.rule_types import RuleType
+from caracara.modules.custom_ioa.rules import CustomIoaRule
 
 # We have to disable redefined-outer-name, as pytest fixtures break this linting check by design.
 # pylint: disable=redefined-outer-name
@@ -60,6 +61,7 @@ def simple_rule_type():
 
 def create_mock_create_rule_group(assigned_id: str):
     """Creates a mock function for `create_rule_group` which assigns the given id"""
+
     def mock_create_rule_group(body):
         new_body = {
             "customer_id": "test_customer",
@@ -80,6 +82,7 @@ def create_mock_create_rule_group(assigned_id: str):
             "comment": body["comment"],
         }
         return {"body": {"resources": [new_body]}}
+
     return mock_create_rule_group
 
 
@@ -116,6 +119,7 @@ def create_mock_create_rule(assigned_id: str, rule_types: List[RuleType]):
             "comment": body["comment"] if comment is None else comment,
         }
         return {"body": {"resources": [new_body]}}
+
     return mock_create_rule
 
 
@@ -128,18 +132,24 @@ def create_mock_get_rule_types(rule_types):
 
 def create_mock_query_resources(resources):
     """Creates a generic mock to fetch Style 1 paginated resources"""
+
     def mock_resources(limit, offset):
-        return {"body": {
-            "meta": {"pagination": {"total": len(resources)}},
-            "resources": resources[offset:offset+limit],
-        }}
+        return {
+            "body": {
+                "meta": {"pagination": {"total": len(resources)}},
+                "resources": resources[offset : offset + limit],
+            }
+        }
+
     return mock_resources
 
 
 def create_mock_get_resources(resource_map):
     """Creates a generic get resources by id given a map"""
+
     def mock_get_resources(ids):
         return {"body": {"resources": [resource_map[id_] for id_ in ids]}}
+
     return mock_get_resources
 
 
@@ -154,19 +164,23 @@ def test_create_rule_group_no_rules(client: Client, custom_ioa_api: falconpy.Cus
 
     # Mock functions
     custom_ioa_api.create_rule_group.side_effect = create_mock_create_rule_group(
-        assigned_id="test_rule_group")
+        assigned_id="test_rule_group"
+    )
 
     # Call caracara function
     new_group = client.custom_ioas.create_rule_group(
-        group=group, comment="rule group creation test")
+        group=group, comment="rule group creation test"
+    )
 
     # Assert falconpy called correctly
-    custom_ioa_api.create_rule_group.assert_called_once_with(body={
-        "name": "test rule group",
-        "description": "test description",
-        "platform": "windows",
-        "comment": "rule group creation test",
-    })
+    custom_ioa_api.create_rule_group.assert_called_once_with(
+        body={
+            "name": "test rule group",
+            "description": "test description",
+            "platform": "windows",
+            "comment": "rule group creation test",
+        }
+    )
     # Assert returned group is as expected
     assert group.name == new_group.name
     assert group.description == new_group.description
@@ -175,7 +189,8 @@ def test_create_rule_group_no_rules(client: Client, custom_ioa_api: falconpy.Cus
 
 
 def test_create_rule_group_with_rules(
-        client: Client, custom_ioa_api: falconpy.CustomIOA, simple_rule_type: RuleType):
+    client: Client, custom_ioa_api: falconpy.CustomIOA, simple_rule_type: RuleType
+):
     """Tests `CustomIoaApiModule.create_rule_group` on a group with rules"""
     # Setup
     group = IoaRuleGroup(
@@ -194,25 +209,32 @@ def test_create_rule_group_with_rules(
 
     # Mock functions
     custom_ioa_api.create_rule_group.side_effect = create_mock_create_rule_group(
-        assigned_id="test_rule_group")
+        assigned_id="test_rule_group"
+    )
     custom_ioa_api.create_rule.side_effect = create_mock_create_rule(
-        assigned_id="test_rule", rule_types=[simple_rule_type])
+        assigned_id="test_rule", rule_types=[simple_rule_type]
+    )
     custom_ioa_api.query_rule_types.side_effect = create_mock_query_resources(
-        resources=[simple_rule_type.id_])
+        resources=[simple_rule_type.id_]
+    )
     custom_ioa_api.get_rule_types.side_effect = create_mock_get_rule_types(
-        rule_types=[simple_rule_type])
+        rule_types=[simple_rule_type]
+    )
 
     # Call caracara function
     new_group = client.custom_ioas.create_rule_group(
-        group=group, comment="Rule group creation test")
+        group=group, comment="Rule group creation test"
+    )
 
     # Assert falconpy called correctly
-    custom_ioa_api.create_rule_group.assert_called_once_with(body={
-        "name": "test rule group name",
-        "description": "test rule group desc",
-        "platform": "windows",
-        "comment": "Rule group creation test",
-    })
+    custom_ioa_api.create_rule_group.assert_called_once_with(
+        body={
+            "name": "test rule group name",
+            "description": "test rule group desc",
+            "platform": "windows",
+            "comment": "Rule group creation test",
+        }
+    )
     custom_ioa_api.create_rule.assert_called_once_with(
         body={
             "name": "test rule name",
@@ -275,9 +297,7 @@ def test_describe_rule_groups_no_rules(client: Client, custom_ioa_api: falconpy.
     custom_ioa_api.query_rule_groups_full.side_effect = mock_query_rule_groups_full
 
     # Call caracara
-    groups = client.custom_ioas.describe_rule_groups(
-        filters="test_filter"
-    )
+    groups = client.custom_ioas.describe_rule_groups(filters="test_filter")
 
     assert len(mock_groups) == len(groups)
     for mock_group in mock_groups:
@@ -286,7 +306,8 @@ def test_describe_rule_groups_no_rules(client: Client, custom_ioa_api: falconpy.
 
 
 def test_describe_rule_groups_with_rules(
-        client: Client, custom_ioa_api: falconpy.CustomIOA, simple_rule_type: RuleType):
+    client: Client, custom_ioa_api: falconpy.CustomIOA, simple_rule_type: RuleType
+):
     """Tests `CustomIoaApiModule.describe_rule_groups"""
     # Setup
     mock_groups = [
@@ -299,30 +320,32 @@ def test_describe_rule_groups_with_rules(
             "enabled": False,
             "deleted": False,
             "rule_ids": ["test_rule_01"],
-            "rules": [{
-                "customer_id": "test_customer",
-                "instance_id": "test_rule_01",
-                "name": "test rule",
-                "description": "test rule desc",
-                "pattern_id": "41000",
-                "pattern_severity": "critical",
-                "disposition_id": list(simple_rule_type.disposition_map.keys())[0],
-                "action_label": list(simple_rule_type.disposition_map.values())[0],
-                "ruletype_id": simple_rule_type.id_,
-                "ruletype_name": simple_rule_type.name,
-                "field_values": [],
-                "enabled": True,
-                "deleted": False,
-                "instance_version": 1,
-                "version_ids": [1],
-                "magic_cookie": 1,
-                "committed_on": "2022-01-01T12:00:00.000000000Z",
-                "created_on": "2022-01-01T12:00:00.000000000Z",
-                "created_by": "caracara@test.com",
-                "modified_on": "2022-01-01T12:00:00.000000000Z",
-                "modified_by": "caracara@test.com",
-                "comment": "test comment 2",
-            }],
+            "rules": [
+                {
+                    "customer_id": "test_customer",
+                    "instance_id": "test_rule_01",
+                    "name": "test rule",
+                    "description": "test rule desc",
+                    "pattern_id": "41000",
+                    "pattern_severity": "critical",
+                    "disposition_id": list(simple_rule_type.disposition_map.keys())[0],
+                    "action_label": list(simple_rule_type.disposition_map.values())[0],
+                    "ruletype_id": simple_rule_type.id_,
+                    "ruletype_name": simple_rule_type.name,
+                    "field_values": [],
+                    "enabled": True,
+                    "deleted": False,
+                    "instance_version": 1,
+                    "version_ids": [1],
+                    "magic_cookie": 1,
+                    "committed_on": "2022-01-01T12:00:00.000000000Z",
+                    "created_on": "2022-01-01T12:00:00.000000000Z",
+                    "created_by": "caracara@test.com",
+                    "modified_on": "2022-01-01T12:00:00.000000000Z",
+                    "modified_by": "caracara@test.com",
+                    "comment": "test comment 2",
+                }
+            ],
             "version": 1,
             "committed_on": "2022-01-01T12:00:00.000000000Z",
             "created_on": "2022-01-01T12:00:00.000000000Z",
@@ -342,14 +365,14 @@ def test_describe_rule_groups_with_rules(
 
     custom_ioa_api.query_rule_groups_full.side_effect = mock_query_rule_groups_full
     custom_ioa_api.query_rule_types.side_effect = create_mock_query_resources(
-        resources=[simple_rule_type.id_])
+        resources=[simple_rule_type.id_]
+    )
     custom_ioa_api.get_rule_types.side_effect = create_mock_get_rule_types(
-        rule_types=[simple_rule_type])
+        rule_types=[simple_rule_type]
+    )
 
     # Call caracara
-    groups = client.custom_ioas.describe_rule_groups(
-        filters="test_filter"
-    )
+    groups = client.custom_ioas.describe_rule_groups(filters="test_filter")
 
     assert len(mock_groups) == len(groups)
     for mock_group in mock_groups:
@@ -365,38 +388,42 @@ def test_delete_rule_groups_using_ids(client: Client, custom_ioa_api: falconpy.C
 
     # Assert
     custom_ioa_api.delete_rule_groups.assert_called_once_with(
-        ids=["test_group_01"], comment="test comment")
+        ids=["test_group_01"], comment="test comment"
+    )
 
 
 def test_delete_rule_groups_using_groups(client: Client, custom_ioa_api: falconpy.CustomIOA):
     """Tests `CustomIoaApiModule.delete_rule_groups` when using rule group objects"""
     # Setup
-    group = IoaRuleGroup.from_data_dict({
-        "customer_id": "test_customer",
-        "id": "test_group_01",
-        "name": "test rule group",
-        "description": "test rule group desc",
-        "platform": "windows",
-        "enabled": False,
-        "deleted": False,
-        "rule_ids": [],
-        "rules": [],
-        "version": 1,
-        "committed_on": "2022-01-01T12:00:00.000000000Z",
-        "created_on": "2022-01-01T12:00:00.000000000Z",
-        "created_by": "caracara@test.com",
-        "modified_on": "2022-01-01T12:00:00.000000000Z",
-        "modified_by": "caracara@test.com",
-        "comment": "test comment",
-    }, rule_type_map=[])
+    group = IoaRuleGroup.from_data_dict(
+        {
+            "customer_id": "test_customer",
+            "id": "test_group_01",
+            "name": "test rule group",
+            "description": "test rule group desc",
+            "platform": "windows",
+            "enabled": False,
+            "deleted": False,
+            "rule_ids": [],
+            "rules": [],
+            "version": 1,
+            "committed_on": "2022-01-01T12:00:00.000000000Z",
+            "created_on": "2022-01-01T12:00:00.000000000Z",
+            "created_by": "caracara@test.com",
+            "modified_on": "2022-01-01T12:00:00.000000000Z",
+            "modified_by": "caracara@test.com",
+            "comment": "test comment",
+        },
+        rule_type_map=[],
+    )
 
     # Call caracara
-    client.custom_ioas.delete_rule_groups(
-        rule_groups=[group], comment="test deletion comment")
+    client.custom_ioas.delete_rule_groups(rule_groups=[group], comment="test deletion comment")
 
     # Assert
     custom_ioa_api.delete_rule_groups.assert_called_once_with(
-        ids=["test_group_01"], comment="test deletion comment")
+        ids=["test_group_01"], comment="test deletion comment"
+    )
 
 
 def test_update_rule_groups_no_rules(client: Client, custom_ioa_api: falconpy.CustomIOA):
@@ -440,20 +467,23 @@ def test_update_rule_groups_no_rules(client: Client, custom_ioa_api: falconpy.Cu
     new_group = client.custom_ioas.update_rule_group(group, comment="test update comment")
 
     # Assert falconpy called correctly
-    custom_ioa_api.update_rule_group.assert_called_once_with(body={
-        "id": "test_group_01",
-        "name": "test rule group",
-        "description": "test rule group desc",
-        "enabled": False,
-        "rulegroup_version": 1,
-        "comment": "test update comment",
-    })
+    custom_ioa_api.update_rule_group.assert_called_once_with(
+        body={
+            "id": "test_group_01",
+            "name": "test rule group",
+            "description": "test rule group desc",
+            "enabled": False,
+            "rulegroup_version": 1,
+            "comment": "test update comment",
+        }
+    )
     # Assert new group is as expected
     assert new_group.version == group.version + 1
 
 
 def test_update_rule_groups_with_rule_changes(
-        client: Client, custom_ioa_api: falconpy.CustomIOA, simple_rule_type: RuleType):
+    client: Client, custom_ioa_api: falconpy.CustomIOA, simple_rule_type: RuleType
+):
     """Tests `CustomIoaApiModule.update_rule_groups` when the group has a rule to update, another
     rule to create, and another to delete."""
     # Setup
@@ -525,7 +555,8 @@ def test_update_rule_groups_with_rule_changes(
         "comment": "test rule group comment",
     }
     group = IoaRuleGroup.from_data_dict(  # Acts as an already queried group
-        raw_group, rule_type_map={simple_rule_type.id_: simple_rule_type})
+        raw_group, rule_type_map={simple_rule_type.id_: simple_rule_type}
+    )
     group.remove_rule(0)
     rule = CustomIoaRule(
         name="test rule 3",
@@ -553,8 +584,11 @@ def test_update_rule_groups_with_rule_changes(
         assert body["rulegroup_version"] == raw_group["version"] + 1
         raw_group["version"] = body["rulegroup_version"]
         for raw_rule_update in body["rule_updates"]:
-            matching_rules = [i for (i, raw_rule) in enumerate(raw_group["rules"])
-                              if raw_rule["instance_id"] == raw_rule_update["instance_id"]]
+            matching_rules = [
+                i
+                for (i, raw_rule) in enumerate(raw_group["rules"])
+                if raw_rule["instance_id"] == raw_rule_update["instance_id"]
+            ]
             assert len(matching_rules) == 1
             rule_index = matching_rules[0]
             raw_group["rules"][rule_index]["name"] = raw_rule_update["name"]
@@ -601,9 +635,11 @@ def test_update_rule_groups_with_rule_changes(
     custom_ioa_api.create_rule.side_effect = mock_create_rule
 
     custom_ioa_api.query_rule_types.side_effect = create_mock_query_resources(
-        resources=[simple_rule_type.id_])
+        resources=[simple_rule_type.id_]
+    )
     custom_ioa_api.get_rule_types.side_effect = create_mock_get_rule_types(
-        rule_types=[simple_rule_type])
+        rule_types=[simple_rule_type]
+    )
 
     # Call caracara
     new_group = client.custom_ioas.update_rule_group(group, comment="test update comment")
@@ -614,39 +650,50 @@ def test_update_rule_groups_with_rule_changes(
     # - A rule deletion
     # - A rule update
     # - A rule creation
-    custom_ioa_api.update_rule_group.assert_called_once_with(body={
-        "id": "test_group_01",
-        "name": "test rule group",
-        "description": "test rule group desc",
-        "enabled": False,
-        "rulegroup_version": 1,
-        "comment": "test update comment",
-    })
+    custom_ioa_api.update_rule_group.assert_called_once_with(
+        body={
+            "id": "test_group_01",
+            "name": "test rule group",
+            "description": "test rule group desc",
+            "enabled": False,
+            "rulegroup_version": 1,
+            "comment": "test update comment",
+        }
+    )
     custom_ioa_api.delete_rules.assert_called_once_with(
-        rule_group_id="test_group_01", ids=["test_rule_01"], comment="test update comment")
-    custom_ioa_api.update_rules.assert_called_once_with(body={
-        "rulegroup_id": "test_group_01",
-        "rulegroup_version": 2,
-        "rule_updates": [{
-            "instance_id": "test_rule_02",
-            "name": "test rule 2",
-            "description": "test rule 2 desc",
+        rule_group_id="test_group_01",
+        ids=["test_rule_01"],
+        comment="test update comment",
+    )
+    custom_ioa_api.update_rules.assert_called_once_with(
+        body={
+            "rulegroup_id": "test_group_01",
+            "rulegroup_version": 2,
+            "rule_updates": [
+                {
+                    "instance_id": "test_rule_02",
+                    "name": "test rule 2",
+                    "description": "test rule 2 desc",
+                    "pattern_severity": "critical",
+                    "disposition_id": list(simple_rule_type.disposition_map.keys())[0],
+                    "field_values": [],
+                    "enabled": True,
+                }
+            ],
+            "comment": "test update comment",
+        }
+    )
+    custom_ioa_api.create_rule.assert_called_once_with(
+        body={
+            "name": "test rule 3",
+            "description": "test rule 3 desc",
             "pattern_severity": "critical",
             "disposition_id": list(simple_rule_type.disposition_map.keys())[0],
             "field_values": [],
-            "enabled": True,
-        }],
-        "comment": "test update comment",
-    })
-    custom_ioa_api.create_rule.assert_called_once_with(body={
-        "name": "test rule 3",
-        "description": "test rule 3 desc",
-        "pattern_severity": "critical",
-        "disposition_id": list(simple_rule_type.disposition_map.keys())[0],
-        "field_values": [],
-        "ruletype_id": simple_rule_type.id_,
-        "rulegroup_id": "test_group_01",
-        "comment": "test update comment"
-    })
+            "ruletype_id": simple_rule_type.id_,
+            "rulegroup_id": "test_group_01",
+            "comment": "test update comment",
+        }
+    )
     # Assert new group is as expected
     assert new_group.version == group.version + 1

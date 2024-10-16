@@ -4,8 +4,8 @@ This module contains the the FalconApiModule class, which represents a generic
 Caracara API module. All modules, including Hosts, Prevention Policies, etc.
 derive from this abstract base class.
 """
-import logging
 
+import logging
 from abc import ABC, abstractmethod
 
 from falconpy import OAuth2

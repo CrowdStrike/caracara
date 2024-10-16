@@ -1,4 +1,5 @@
 """Caracara exceptions."""
+
 from typing import Dict, List
 
 from caracara.common.constants import OnlineState
@@ -13,10 +14,7 @@ class GenericAPIError(BaseCaracaraError):
 
     def __init__(self, errors: List[Dict] = None):
         """Construct an instance of the GenericAPIError class."""
-        self.errors = [{
-            "code": 500,
-            "message": "An unexpected error has occurred"
-        }]
+        self.errors = [{"code": 500, "message": "An unexpected error has occurred"}]
         if errors:
             self.errors = errors
         super().__init__(self.errors)
@@ -39,10 +37,12 @@ class MustProvideFilterOrID(GenericAPIError):
 
     def __init__(self):
         """Construct an instance of the MustProvideFilterOrID class."""
-        self.errors = [{
-            "code": 500,
-            "message": "You must provide either a Falcon Filter or an ID to use this method"
-        }]
+        self.errors = [
+            {
+                "code": 500,
+                "message": "You must provide either a Falcon Filter or an ID to use this method",
+            }
+        ]
         super().__init__(self.errors)
 
 
@@ -51,10 +51,12 @@ class MustProvideFilter(GenericAPIError):
 
     def __init__(self):
         """Construct an instance of the MustProvideFilter class."""
-        self.errors = [{
-            "code": 500,
-            "message": "You must provide a Falcon Filter in order to use this method"
-        }]
+        self.errors = [
+            {
+                "code": 500,
+                "message": "You must provide a Falcon Filter in order to use this method",
+            }
+        ]
         super().__init__(self.errors)
 
 
@@ -63,10 +65,12 @@ class HostGroupNotFound(GenericAPIError):
 
     def __init__(self):
         """Construct an instance of the HostGroupNotFound class."""
-        self.errors = [{
-            "code": 404,
-            "message": "The Falcon Filter you provided returned no Host Group matches"
-        }]
+        self.errors = [
+            {
+                "code": 404,
+                "message": "The Falcon Filter you provided returned no Host Group matches",
+            }
+        ]
         super().__init__(self.errors)
 
 
@@ -75,10 +79,12 @@ class DeviceNotFound(GenericAPIError):
 
     def __init__(self):
         """Construct an instance of the DeviceNotFound class."""
-        self.errors = [{
-            "code": 404,
-            "message": "The Falcon Filter you provided returned no device matches"
-        }]
+        self.errors = [
+            {
+                "code": 404,
+                "message": "The Falcon Filter you provided returned no device matches",
+            }
+        ]
         super().__init__(self.errors)
 
 
@@ -93,10 +99,7 @@ class MissingArgument(GenericAPIError):
             arg_name = f"The required argument {arg_name}"
         arg_str = f"{arg_name} was not provided"
 
-        self.errors = [{
-            "code": 500,
-            "message": arg_str
-        }]
+        self.errors = [{"code": 500, "message": arg_str}]
         super().__init__(self.errors)
 
 
@@ -111,10 +114,7 @@ class MissingArguments(GenericAPIError):
             arg_names = f"The required arguments {', '.join(arg_names)}"
         arg_str = f"{arg_names} were not provided"
 
-        self.errors = [{
-            "code": 500,
-            "message": arg_str
-        }]
+        self.errors = [{"code": 500, "message": arg_str}]
         super().__init__(self.errors)
 
 
@@ -123,9 +123,11 @@ class InvalidOnlineState(GenericAPIError):
 
     def __init__(self, online_state_string):
         """Construct an instance of the InvalidOnlineState class."""
-        self.errors = [{
-            "code": 500,
-            "message": f"Invalid online state '{online_state_string}'. \
-                        Expected one of {OnlineState.VALUES}."
-        }]
+        self.errors = [
+            {
+                "code": 500,
+                "message": f"Invalid online state '{online_state_string}'. \
+                        Expected one of {OnlineState.VALUES}.",
+            }
+        ]
         super().__init__(self.errors)

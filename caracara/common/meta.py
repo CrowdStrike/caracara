@@ -4,9 +4,9 @@ Returns information about Caracara itself, such as its package version and
 a custom user agent string based on Caracara's version.
 """
 
-import pkg_resources
+import importlib.metadata
 
-_pkg_version = pkg_resources.get_distribution("caracara").version
+_pkg_version = importlib.metadata.version("caracara")
 
 
 def user_agent_string():

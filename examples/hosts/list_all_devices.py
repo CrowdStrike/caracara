@@ -11,19 +11,14 @@ The example demonstrates how to use the Hosts API.
 import logging
 
 from caracara import Client
-
-from examples.common import (
-    caracara_example,
-    NoDevicesFound,
-    Timer,
-)
+from examples.common import NoDevicesFound, Timer, caracara_example
 
 
 @caracara_example
 def list_all_devices(**kwargs):
     """List All Devices."""
-    client: Client = kwargs['client']
-    logger: logging.Logger = kwargs['logger']
+    client: Client = kwargs["client"]
+    logger: logging.Logger = kwargs["logger"]
     timer: Timer = Timer()
 
     logger.info("Listing all devices within the tenant")

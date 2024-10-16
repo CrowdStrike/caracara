@@ -3,13 +3,13 @@ Caracara: Response Policies.
 
 This file contains platform-specific templates representing standard, blank Response policies.
 """
+
 from caracara.common.policy_wrapper import (
+    SETTINGS_TYPE_MAP,
     ChangeablePolicySetting,
     Policy,
     PolicySettingGroup,
-    SETTINGS_TYPE_MAP,
 )
-
 
 COMMAND_TEMPLATES = {
     "RealTimeFunctionality": {
@@ -95,9 +95,7 @@ OPTION_PLATFORM_MAPPING = {
         "Enable/Disable": [
             "RealTimeFunctionality",
         ],
-        "Custom scripts": [
-            "CustomScripts"
-        ],
+        "Custom scripts": ["CustomScripts"],
         "High risk commands": [
             "GetCommand",
             "PutCommand",
@@ -108,23 +106,19 @@ OPTION_PLATFORM_MAPPING = {
         "Enable/Disable": [
             "RealTimeFunctionality",
         ],
-        "Custom scripts": [
-            "CustomScripts"
-        ],
+        "Custom scripts": ["CustomScripts"],
         "High risk commands": [
             "GetCommand",
             "PutCommand",
             "ExecCommand",
             "PutAndRunCommand",
-        ]
+        ],
     },
     "Windows": {
         "Enable/Disable": [
             "RealTimeFunctionality",
         ],
-        "Custom scripts": [
-            "CustomScripts"
-        ],
+        "Custom scripts": ["CustomScripts"],
         "High risk commands": [
             "GetCommand",
             "PutCommand",
@@ -132,7 +126,7 @@ OPTION_PLATFORM_MAPPING = {
             "XMemDumpCommand",
             "ExecCommand",
             "PutAndRunCommand",
-        ]
+        ],
     },
 }
 
@@ -158,7 +152,7 @@ def generate_response_template(platform_name: str) -> Policy:
 
         for setting_id in group_settings:
             setting_data = COMMAND_TEMPLATES[setting_id]
-            setting_type = setting_data['setting_type']
+            setting_type = setting_data["setting_type"]
             setting_template: ChangeablePolicySetting = SETTINGS_TYPE_MAP[setting_type]
             loadable_setting_data = {
                 **COMMAND_TEMPLATES[setting_id],

@@ -27,13 +27,11 @@ download_event_log:
 import logging
 import os
 import time
-
 from typing import Dict, List
 
 from caracara import Client
 from caracara.modules.rtr.batch_session import BatchGetCmdRequest, RTRBatchSession
 from caracara.modules.rtr.get_file import GetFile
-
 from examples.common import caracara_example, parse_filter_list
 
 
@@ -82,9 +80,9 @@ def download_loop(
 @caracara_example
 def download_event_log(**kwargs):  # pylint: disable=too-many-locals
     """Download a specified Windows Event Log from all online systems."""
-    client: Client = kwargs['client']
-    logger: logging.Logger = kwargs['logger']
-    settings: Dict = kwargs['settings']
+    client: Client = kwargs["client"]
+    logger: logging.Logger = kwargs["logger"]
+    settings: Dict = kwargs["settings"]
 
     filename: str = settings.get("filename")
     if not filename:
@@ -102,7 +100,7 @@ def download_event_log(**kwargs):  # pylint: disable=too-many-locals
 
     logger.info("Downloading the event log %s", filename)
 
-    filters = client.FalconFilter(dialect='rtr')
+    filters = client.FalconFilter(dialect="rtr")
     filter_list: List[Dict] = settings.get("filters")
 
     # This is a custom generic function to load filters from the config file. You can
@@ -135,7 +133,8 @@ def download_event_log(**kwargs):  # pylint: disable=too-many-locals
     devices = list(x.devices.keys() for x in batch_get_cmd_reqs)
     logger.info(
         "%d batch get requests executed successfully against %d systems",
-        len(batch_get_cmd_reqs), len(devices),
+        len(batch_get_cmd_reqs),
+        len(devices),
     )
     logger.info(batch_get_cmd_req_ids)
     logger.debug(devices)

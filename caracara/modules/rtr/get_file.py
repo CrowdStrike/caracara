@@ -1,13 +1,12 @@
 """RTR Batch GET abstraction module."""
+
 from __future__ import annotations
 
 import os
-
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 import py7zr
-
 
 if TYPE_CHECKING:
     # This trick will avoid us from causing a cyclical reference within the class
@@ -77,7 +76,7 @@ class GetFile:
             filename=self.filename,
         )
 
-        with open(full_output_path_7z, 'wb') as output_7z_file:
+        with open(full_output_path_7z, "wb") as output_7z_file:
             output_7z_file.write(file_contents)
 
         if not extract:
@@ -86,8 +85,8 @@ class GetFile:
 
         with py7zr.SevenZipFile(  # nosec - The password 'infected' is generic and always the same
             file=full_output_path_7z,
-            mode='r',
-            password='infected',
+            mode="r",
+            password="infected",
         ) as archive:
             inner_filename = archive.getnames()[0]
             target_dir = os.path.dirname(full_output_path_7z)

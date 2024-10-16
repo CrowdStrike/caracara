@@ -1,5 +1,7 @@
 """Module defining wrappers around custom IOA rule types."""
+
 from __future__ import annotations
+
 from dataclasses import dataclass
 from typing import Dict, List, Optional
 
@@ -79,8 +81,9 @@ class RuleType:
         `Optional[RuleTypeField]`: The rule type field if one can be found, `None` otherwise.
         """
         for field in self.fields:
-            if (field_name_or_label in [field.name, field.label]
-                    and (field_type is None or field.type == field_type)):
+            if field_name_or_label in [field.name, field.label] and (
+                field_type is None or field.type == field_type
+            ):
                 return field
         return None
 
@@ -94,9 +97,7 @@ class RuleType:
             "name": self.name,
             "long_desc": self.long_desc,
             "platform": self.platform,
-            "disposition_map": [
-                {"id": k, "label": v} for k, v in self.disposition_map.items()
-            ],
+            "disposition_map": [{"id": k, "label": v} for k, v in self.disposition_map.items()],
             "fields": [field.dump() for field in self.fields],
             "released": self.released,
             "channel": self.channel,
@@ -146,7 +147,7 @@ class RuleTypeField:
             "label": self.label,
             "name": self.name,
             "type": self.type,
-            "options": [option.dump() for option in self.options]
+            "options": [option.dump() for option in self.options],
         }
 
     def to_concrete_field(self) -> dict:

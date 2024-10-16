@@ -9,23 +9,17 @@ list the network history for systems within your Falcon tenant.
 The example demonstrates how to use the Hosts API.
 """
 import logging
-
 from typing import Dict, List
 
 from caracara import Client
-
-from examples.common import (
-    caracara_example,
-    NoDevicesFound,
-    Timer,
-)
+from examples.common import NoDevicesFound, Timer, caracara_example
 
 
 @caracara_example
 def list_network_history(**kwargs):
     """List All Devices."""
-    client: Client = kwargs['client']
-    logger: logging.Logger = kwargs['logger']
+    client: Client = kwargs["client"]
+    logger: logging.Logger = kwargs["logger"]
     timer: Timer = Timer()
 
     logger.info("Listing all network address changes within the tenant")
@@ -39,11 +33,13 @@ def list_network_history(**kwargs):
         found = []
         if recents:
             for change in recents:
-                change_detail = "".join([
-                    f"{change.get('ip_address', 'IP Unknown')} ",
-                    f"({change.get('mac_address', 'MAC Unknown')}) on ",
-                    f"{change.get('timestamp', 'Unknown')}",
-                ])
+                change_detail = "".join(
+                    [
+                        f"{change.get('ip_address', 'IP Unknown')} ",
+                        f"({change.get('mac_address', 'MAC Unknown')}) on ",
+                        f"{change.get('timestamp', 'Unknown')}",
+                    ]
+                )
                 if change_detail not in found:
                     found.append(change_detail)
             changes = ", ".join(found)

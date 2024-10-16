@@ -10,29 +10,17 @@ r"""Hosts and Host Group APIs.
 
 This module handles interactions with the CrowdStrike Falcon Hosts and Host Group APIs.
 """
-from functools import partial
-from typing import (
-    Dict,
-    List,
-    Union,
-    Optional,
-)
 
-from falconpy import (
-    Hosts,
-    HostGroup,
-    OAuth2,
-)
+from functools import partial
+from typing import Dict, List, Optional, Union
+
+from falconpy import HostGroup, Hosts, OAuth2
 
 from caracara.common.batching import batch_get_data
 from caracara.common.constants import OnlineState
-from caracara.common.exceptions import (
-    GenericAPIError,
-)
+from caracara.common.exceptions import GenericAPIError
 from caracara.common.module import FalconApiModule, ModuleMapper
-from caracara.common.pagination import (
-    all_pages_token_offset,
-)
+from caracara.common.pagination import all_pages_token_offset
 from caracara.filters import FalconFilter
 from caracara.filters.decorators import filter_string
 
@@ -57,10 +45,7 @@ class HostsApiModule(FalconApiModule):
         self.host_group_api = HostGroup(auth_object=self.api_authentication)
 
     # Import containment functions
-    from caracara.modules.hosts._containment import (
-        contain,
-        release,
-    )
+    from caracara.modules.hosts._containment import contain, release
 
     # Import data history functions
     from caracara.modules.hosts._data_history import (
@@ -98,8 +83,8 @@ class HostsApiModule(FalconApiModule):
 
     # Import functions to filter by device online state
     from caracara.modules.hosts._online_state import (
-        get_online_state,
         filter_device_ids_by_online_state,
+        get_online_state,
         validate_online_state,
     )
 
@@ -115,9 +100,9 @@ class HostsApiModule(FalconApiModule):
     _create_tag_list = staticmethod(_create_tag_list)
 
     def _perform_action(
-            self,
-            action_name: str,
-            device_ids: List[str],
+        self,
+        action_name: str,
+        device_ids: List[str],
     ) -> Dict:
         """Perform the specified action against the list of targets."""
         returned = self.hosts_api.perform_action(ids=device_ids, action_name=action_name)["body"]
@@ -130,7 +115,7 @@ class HostsApiModule(FalconApiModule):
     @filter_string
     def describe_devices(
         self,
-        filters: FalconFilter or str = None,
+        filters: Union[FalconFilter, str] = None,
         online_state: Optional[Union[OnlineState, str]] = None,
         enrich_with_online_state: Optional[bool] = False,
     ) -> Dict[str, Dict]:
@@ -138,7 +123,7 @@ class HostsApiModule(FalconApiModule):
 
         Arguments
         ---------
-        filters: FalconFilter or str, optional
+        filters: Union[FalconFilter, str], optional
             Filters to apply to the device search.
         online_state: OnlineState or str, optional
             Device online state to filter devices on. Options are "online", "offline", "unknown"
@@ -157,10 +142,12 @@ class HostsApiModule(FalconApiModule):
             # Filter by online state, if applicable.
             if online_state is not None:
                 self.validate_online_state(online_state)
-                device_ids = list(filter(
-                    lambda key: device_state_data[key]["state"] == online_state,
-                    device_state_data,
-                ))
+                device_ids = list(
+                    filter(
+                        lambda key: device_state_data[key]["state"] == online_state,
+                        device_state_data,
+                    )
+                )
 
         device_data = self.get_device_data(device_ids)
 
@@ -172,8 +159,8 @@ class HostsApiModule(FalconApiModule):
         return device_data
 
     def get_device_data(
-            self,
-            device_ids: List[str],
+        self,
+        device_ids: List[str],
     ) -> Dict[str, Dict]:
         """Return a dictionary containing details for every device specified by ID.
 
@@ -198,14 +185,14 @@ class HostsApiModule(FalconApiModule):
     @filter_string
     def get_device_ids(
         self,
-        filters: FalconFilter or str = None,
+        filters: Union[FalconFilter, str] = None,
         online_state: Optional[Union[OnlineState, str]] = None,
     ) -> List[str]:
         """Return a list of IDs (string) for every device in your Falcon tenant.
 
         Arguments
         ---------
-        filters: FalconFilter or str, optional
+        filters: Union[FalconFilter, str], optional
             Filters to apply to the device search.
         online_state: OnlineState or str, optional
             Device online state to filter devices on. Options are "online", "offline", "unknown"

@@ -4,11 +4,10 @@ In order to avoid the main hosts.py file getting too unwieldly, this file contai
 the implementations of the functions required to retrieve data that Falcon gathers
 on hosts' network and login histories.
 """
+
 from __future__ import annotations
-from typing import (
-    Dict,
-    TYPE_CHECKING,
-)
+
+from typing import TYPE_CHECKING, Dict, Union
 
 from caracara.common.batching import batch_get_data
 from caracara.filters import FalconFilter
@@ -21,13 +20,13 @@ if TYPE_CHECKING:
 @filter_string
 def describe_network_address_history(
     self: HostsApiModule,
-    filters: FalconFilter or str = None,
+    filters: Union[FalconFilter, str] = None,
 ) -> Dict:
     """Return a dictionary of network address history for all devices in your Falcon tenant.
 
     Arguments
     ---------
-    filters: FalconFilter or str, optional
+    filters: Union[FalconFilter, str], optional
         Filters to apply to the device search.
 
     Returns
@@ -43,13 +42,13 @@ def describe_network_address_history(
 @filter_string
 def describe_login_history(
     self: HostsApiModule,
-    filters: FalconFilter or str = None,
+    filters: Union[FalconFilter, str] = None,
 ) -> Dict:
     """Return a dictionary containing login history for every device in your Falcon tenant.
 
     Arguments
     ---------
-    filters: FalconFilter or str, optional
+    filters: Union[FalconFilter, str], optional
         Filters to apply to the device search.
 
     Returns
@@ -66,7 +65,7 @@ def describe_login_history(
 @filter_string
 def describe_state(
     self: HostsApiModule,
-    filters: FalconFilter or str = None,
+    filters: Union[FalconFilter, str] = None,
 ) -> Dict[str, Dict]:
     """Return a dictionary containing online state for devices matching the provided filter.
 
@@ -74,7 +73,7 @@ def describe_state(
 
     Arguments
     ---------
-    filters: FalconFilter or str, optional
+    filters: Union[FalconFilter, str], optional
         Filters to apply to the device search.
 
     Returns
