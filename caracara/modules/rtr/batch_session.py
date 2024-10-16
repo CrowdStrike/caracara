@@ -4,10 +4,10 @@ import concurrent.futures
 import logging
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from itertools import repeat
 from functools import partial, wraps
+from itertools import repeat
 from threading import current_thread
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Optional, Tuple
 
 from falconpy import RealTimeResponse, RealTimeResponseAdmin
 
@@ -45,13 +45,7 @@ class InnerRTRBatchSession:  # pylint: disable=too-few-public-methods
     a list of InnerRTRBatchSession objects.
     """
 
-    def __init__(
-        self,
-        batch_id: str,
-        devices: Dict,
-        expiry: datetime,
-        logger: logging.Logger
-    ):
+    def __init__(self, batch_id: str, devices: Dict, expiry: datetime, logger: logging.Logger):
         """Configure an inner batch of RTR sessions."""
         self.batch_id = batch_id
         self.devices = devices
@@ -177,7 +171,7 @@ class RTRBatchSession:
             self.logger.info("%s | Connected to %s systems", thread_name, len(successful_devices))
             self.logger.debug("%s | %s", thread_name, response)
             batch_data = InnerRTRBatchSession(
-                batch_id=response['batch_id'],
+                batch_id=response["batch_id"],
                 devices=successful_devices,
                 expiry=datetime.now() + timedelta(seconds=SESSION_EXPIRY),
                 logger=self.logger,
@@ -257,7 +251,7 @@ class RTRBatchSession:
         batch_get_cmd_reqs: List[BatchGetCmdRequest] = []
         for thread_name, response in completed:
             try:
-                devices = response['combined']['resources']
+                devices = response["combined"]["resources"]
             except KeyError:
                 self.logger.warning(
                     "%s | Batch contained no successful get command executions",
@@ -452,7 +446,7 @@ class RTRBatchSession:
         all_responses: Dict = {}
         for thread_name, response in completed:
             try:
-                devices = response['combined']['resources']
+                devices = response["combined"]["resources"]
             except KeyError:
                 self.logger.warning(
                     "%s | Batch contained no successful command executions",
@@ -460,9 +454,7 @@ class RTRBatchSession:
                 )
                 continue
             self.logger.info(
-                "%s | Executed commands on a batch of %d hosts",
-                thread_name,
-                len(devices)
+                "%s | Executed commands on a batch of %d hosts", thread_name, len(devices)
             )
             all_responses.update(devices)
 
