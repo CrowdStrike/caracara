@@ -17,7 +17,7 @@ def respol_test():
             "caracara.modules.response_policies.response_policies.ResponsePolicies",
             autospec=falconpy.ResponsePolicies,
         )
-        @patch("caracara.client.OAuth2")
+        @patch("caracara.client.OAuth2", autospec=True)
         def test_new_func(mock_oauth2, mock_prevpol):
             # B106 is a bandit warning for hardcoded passwords, this is a testing context and
             # the credentials passed to this constructor aren't valid and aren't used.
