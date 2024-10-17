@@ -115,7 +115,7 @@ def hosts_test():
     def decorator(func):
         @patch("caracara.modules.hosts.hosts.HostGroup", autospec=falconpy.HostGroup)
         @patch("caracara.modules.hosts.hosts.Hosts", autospec=falconpy.Hosts)
-        @patch("caracara.client.OAuth2")
+        @patch("caracara.client.OAuth2", autospec=True)
         def new_func(mock_oauth2, mock_hosts, mock_hostgroup):
             # B106 is a bandit warning for hardcoded passwords.
             # This is a testing context and the credentials passed to this constructor

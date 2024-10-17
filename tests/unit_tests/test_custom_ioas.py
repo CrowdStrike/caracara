@@ -25,7 +25,7 @@ def client():
     """Pytest fixture that provides a client with a mocked OAuth2 object, so no API credentials
     are needed.
     """
-    auth = MagicMock(autospec=falconpy.OAuth2)
+    auth = MagicMock(spec=falconpy.OAuth2, autospec=True)
     client = Client(falconpy_authobject=auth)
     return client
 
