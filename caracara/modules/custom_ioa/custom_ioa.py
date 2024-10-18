@@ -209,7 +209,7 @@ class CustomIoaApiModule(FalconApiModule):
             new_group.version += 1
 
         new_group.rules = list(chain((
-            rule for rule in group.rules if rule.exists_in_cloud()), 
+            rule for rule in group.rules if rule.exists_in_cloud()),
             (new_rule for rule in new_rules))
         )
 

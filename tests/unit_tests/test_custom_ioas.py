@@ -2,7 +2,7 @@
 
 import copy
 from typing import List
-from unittest.mock import DEFAULT, MagicMock
+from unittest.mock import MagicMock
 
 import falconpy
 import pytest
@@ -426,11 +426,6 @@ def test_delete_rule_groups_using_groups(client: Client, custom_ioa_api: falconp
     )
 
 
-def test_update_rule_groups_no_changes(client: Client, custom_ioa_api: falconpy.CustomIOA):
-    """Tests `CustomIoaApiModule.update_rule_group` when no changes are made"""
-
-
-
 def test_update_rule_groups_no_rules(client: Client, custom_ioa_api: falconpy.CustomIOA):
     """Tests `CustomIoaApiModule.update_rule_groups` when the group has no rules"""
     # Setup
@@ -641,8 +636,10 @@ def test_update_rule_groups_with_rule_changes(
 
     def mock_delete_rule(rule_group_id, ids, comment):
         assert raw_group["id"] == rule_group_id
+        assert ids
+        assert comment
         raw_group["version"] += 1
-        return DEFAULT
+        return {"body": {}}
 
     custom_ioa_api.delete_rules.side_effect = mock_delete_rule
 
