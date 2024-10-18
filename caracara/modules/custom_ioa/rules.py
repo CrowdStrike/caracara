@@ -262,7 +262,7 @@ class IoaRuleGroup:
         return {
             "comment": comment,
             "rule_updates": [rule.dump_update(group=self) for rule in self.rules],
-            "rulegroup_version": self.version + 1,
+            "rulegroup_version": self.version,
             "rulegroup_id": self.id_,
         }
 
