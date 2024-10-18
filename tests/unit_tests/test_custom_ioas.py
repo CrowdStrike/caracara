@@ -575,13 +575,14 @@ def test_update_rule_groups_with_rule_changes(
         raw_group["description"] = body["description"]
         raw_group["enabled"] = body["enabled"]
         raw_group["comment"] = body["comment"]
+        raw_group["version"] += 1
         return {"body": {"resources": [raw_group]}}
 
     custom_ioa_api.update_rule_group.side_effect = mock_update_rule_group
 
     def mock_update_rules(body):
         assert body["rulegroup_id"] == raw_group["id"]
-        assert body["rulegroup_version"] == raw_group["version"] + 1
+        assert body["rulegroup_version"] == raw_group["version"]
         raw_group["version"] = body["rulegroup_version"]
         for raw_rule_update in body["rule_updates"]:
             matching_rules = [
@@ -647,8 +648,8 @@ def test_update_rule_groups_with_rule_changes(
     # Assert falconpy called correctly
     # This consists of
     # - A rule group update
-    # - A rule deletion
     # - A rule update
+    # - A rule deletion
     # - A rule creation
     custom_ioa_api.update_rule_group.assert_called_once_with(
         body={
@@ -659,11 +660,6 @@ def test_update_rule_groups_with_rule_changes(
             "rulegroup_version": 1,
             "comment": "test update comment",
         }
-    )
-    custom_ioa_api.delete_rules.assert_called_once_with(
-        rule_group_id="test_group_01",
-        ids=["test_rule_01"],
-        comment="test update comment",
     )
     custom_ioa_api.update_rules.assert_called_once_with(
         body={
@@ -695,5 +691,10 @@ def test_update_rule_groups_with_rule_changes(
             "comment": "test update comment",
         }
     )
+    custom_ioa_api.delete_rules.assert_called_once_with(
+        rule_group_id="test_group_01",
+        ids=["test_rule_01"],
+        comment="test update comment",
+    )
     # Assert new group is as expected
-    assert new_group.version == group.version + 1
+    assert new_group.version == group.version + 4
