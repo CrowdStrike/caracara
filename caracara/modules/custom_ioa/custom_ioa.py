@@ -216,8 +216,8 @@ class CustomIoaApiModule(FalconApiModule):
             )
             # If successful (i.e. no exceptions raised), clear the deletion queue
             group.rules_to_delete = []
-        
-        new_group.version += len(new_group.rules) + bool(group.rules_to_delete)
+
+        new_group.version += len(new_rules) + bool(group.rules_to_delete)
         return new_group
 
     @filter_string
