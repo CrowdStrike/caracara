@@ -1,6 +1,7 @@
 """Caracara Indicator of Attack (IOA) API module."""
 
 from functools import partial
+from itertools import chain
 from time import monotonic
 from typing import Dict, List, Union
 
@@ -205,8 +206,13 @@ class CustomIoaApiModule(FalconApiModule):
             )
             new_rule.rulegroup_id = group.id_
             new_rules.append(new_rule)
+            new_group.version += 1
 
-        new_group.rules.extend(new_rules)
+        new_group.rules = list(chain((
+            rule for rule in group.rules if rule.exists_in_cloud()), 
+            (new_rule for rule in new_rules))
+        )
+
 
         # Delete rules queued for deletion, if any
         if len(group.rules_to_delete) > 0:
@@ -216,8 +222,8 @@ class CustomIoaApiModule(FalconApiModule):
             )
             # If successful (i.e. no exceptions raised), clear the deletion queue
             group.rules_to_delete = []
+            new_group.version += 1
 
-        new_group.version += len(new_rules) + bool(group.rules_to_delete)
         return new_group
 
     @filter_string

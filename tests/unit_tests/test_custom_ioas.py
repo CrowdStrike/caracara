@@ -2,7 +2,7 @@
 
 import copy
 from typing import List
-from unittest.mock import MagicMock
+from unittest.mock import DEFAULT, MagicMock
 
 import falconpy
 import pytest
@@ -426,6 +426,11 @@ def test_delete_rule_groups_using_groups(client: Client, custom_ioa_api: falconp
     )
 
 
+def test_update_rule_groups_no_changes(client: Client, custom_ioa_api: falconpy.CustomIOA):
+    """Tests `CustomIoaApiModule.update_rule_group` when no changes are made"""
+
+
+
 def test_update_rule_groups_no_rules(client: Client, custom_ioa_api: falconpy.CustomIOA):
     """Tests `CustomIoaApiModule.update_rule_groups` when the group has no rules"""
     # Setup
@@ -583,7 +588,7 @@ def test_update_rule_groups_with_rule_changes(
     def mock_update_rules(body):
         assert body["rulegroup_id"] == raw_group["id"]
         assert body["rulegroup_version"] == raw_group["version"]
-        raw_group["version"] = body["rulegroup_version"]
+        raw_group["version"] += 1
         for raw_rule_update in body["rule_updates"]:
             matching_rules = [
                 i
@@ -605,6 +610,7 @@ def test_update_rule_groups_with_rule_changes(
 
     def mock_create_rule(body):
         assert raw_group["id"] == body["rulegroup_id"]
+        raw_group["version"] += 1
         new_rule = {
             "customer_id": "test_customer",
             "instance_id": "test_rule_03",
@@ -632,6 +638,13 @@ def test_update_rule_groups_with_rule_changes(
 
         raw_group["rules"].append(new_rule)
         return {"body": {"resources": [new_rule]}}
+
+    def mock_delete_rule(rule_group_id, ids, comment):
+        assert raw_group["id"] == rule_group_id
+        raw_group["version"] += 1
+        return DEFAULT
+
+    custom_ioa_api.delete_rules.side_effect = mock_delete_rule
 
     custom_ioa_api.create_rule.side_effect = mock_create_rule
 
