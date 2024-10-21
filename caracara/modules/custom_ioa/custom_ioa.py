@@ -208,11 +208,12 @@ class CustomIoaApiModule(FalconApiModule):
             new_rules.append(new_rule)
             new_group.version += 1
 
-        new_group.rules = list(chain((
-            rule for rule in group.rules if rule.exists_in_cloud()),
-            (new_rule for rule in new_rules))
+        new_group.rules = list(
+            chain(
+                (rule for rule in group.rules if rule.exists_in_cloud()),
+                (new_rule for rule in new_rules),
+            )
         )
-
 
         # Delete rules queued for deletion, if any
         if len(group.rules_to_delete) > 0:
