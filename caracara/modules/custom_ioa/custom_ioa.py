@@ -1,6 +1,7 @@
 """Caracara Indicator of Attack (IOA) API module."""
 
 from functools import partial
+from itertools import chain
 from time import monotonic
 from typing import Dict, List, Union
 
@@ -96,7 +97,7 @@ class CustomIoaApiModule(FalconApiModule):
             rule.group = new_group
 
         # Update the rules
-        new_group = self._create_update_delete_rules(new_group, comment=comment)
+        new_group = self._update_create_delete_rules(new_group, comment=comment)
 
         return new_group
 
@@ -138,7 +139,7 @@ class CustomIoaApiModule(FalconApiModule):
         new_group.rules_to_delete = group.rules_to_delete
 
         # Update the rules
-        new_group = self._create_update_delete_rules(new_group, comment=comment)
+        new_group = self._update_create_delete_rules(new_group, comment=comment)
 
         return new_group
 
@@ -167,7 +168,7 @@ class CustomIoaApiModule(FalconApiModule):
                 ids_to_delete.append(rule_group)
         instr(self.custom_ioa_api.delete_rule_groups)(ids=ids_to_delete, comment=comment)
 
-    def _create_update_delete_rules(self, group: IoaRuleGroup, comment: str) -> IoaRuleGroup:
+    def _update_create_delete_rules(self, group: IoaRuleGroup, comment: str) -> IoaRuleGroup:
         existing_rules = []
         to_be_created = []
         for rule in group.rules:
@@ -175,6 +176,24 @@ class CustomIoaApiModule(FalconApiModule):
                 existing_rules.append(rule)
             else:
                 to_be_created.append(rule)
+
+        # Update the existing rules, if there are any
+        if len(existing_rules) > 0:
+            response = instr(self.custom_ioa_api.update_rules)(
+                body={
+                    "comment": comment,
+                    "rule_updates": [rule.dump_update() for rule in existing_rules],
+                    "rulegroup_version": group.version,
+                    "rulegroup_id": group.id_,
+                }
+            )
+            raw_group = response["body"]["resources"][0]
+
+            # Create the object representing the updated group
+            rule_types = self._get_rule_types_cached()
+            new_group = IoaRuleGroup.from_data_dict(data_dict=raw_group, rule_type_map=rule_types)
+        else:
+            new_group = group
 
         # Create the new rules
         new_rules = []
@@ -187,25 +206,14 @@ class CustomIoaApiModule(FalconApiModule):
             )
             new_rule.rulegroup_id = group.id_
             new_rules.append(new_rule)
+            new_group.version += 1
 
-        # Update the existing rules, if there are any
-        if len(existing_rules) > 0:
-            response = instr(self.custom_ioa_api.update_rules)(
-                body={
-                    "comment": comment,
-                    "rule_updates": [rule.dump_update() for rule in existing_rules],
-                    "rulegroup_version": group.version + 1,
-                    "rulegroup_id": group.id_,
-                }
+        new_group.rules = list(
+            chain(
+                (rule for rule in group.rules if rule.exists_in_cloud()),
+                (new_rule for rule in new_rules),
             )
-            raw_group = response["body"]["resources"][0]
-
-            # Create the object representing the updated group
-            rule_types = self._get_rule_types_cached()
-            new_group = IoaRuleGroup.from_data_dict(data_dict=raw_group, rule_type_map=rule_types)
-        else:
-            group.rules = new_rules
-            new_group = group
+        )
 
         # Delete rules queued for deletion, if any
         if len(group.rules_to_delete) > 0:
@@ -215,6 +223,8 @@ class CustomIoaApiModule(FalconApiModule):
             )
             # If successful (i.e. no exceptions raised), clear the deletion queue
             group.rules_to_delete = []
+            new_group.version += 1
+
         return new_group
 
     @filter_string
