@@ -708,3 +708,141 @@ def test_update_rule_groups_with_rule_changes(
     )
     # Assert new group is as expected
     assert new_group.version == group.version + 4
+
+
+def test_update_rule_group_with_new_rules(client: Client, custom_ioa_api: falconpy.CustomIOA, simple_rule_type: RuleType):
+    """"""
+    raw_group = {  # Acts as a store for the API
+        "customer_id": "test_customer",
+        "id": "test_group_01",
+        "name": "test rule group",
+        "description": "test rule group desc",
+        "platform": "windows",
+        "enabled": False,
+        "deleted": False,
+        "rule_ids": ["test_rule_01", "test_rule_02"],
+        "rules": [
+            {
+                "customer_id": "test_customer",
+                "instance_id": "test_rule_01",
+                "name": "test rule 1",
+                "description": "test rule 1 desc",
+                "pattern_id": "41000",
+                "pattern_severity": "critical",
+                "disposition_id": list(simple_rule_type.disposition_map.keys())[0],
+                "action_label": list(simple_rule_type.disposition_map.values())[0],
+                "ruletype_id": simple_rule_type.id_,
+                "ruletype_name": simple_rule_type.name,
+                "field_values": [],
+                "enabled": True,
+                "deleted": False,
+                "instance_version": 1,
+                "version_ids": [1],
+                "magic_cookie": 1,
+                "committed_on": "2022-01-01T12:00:00.000000000Z",
+                "created_on": "2022-01-01T12:00:00.000000000Z",
+                "created_by": "caracara@test.com",
+                "modified_on": "2022-01-01T12:00:00.000000000Z",
+                "modified_by": "caracara@test.com",
+                "comment": "test rule 1 comment",
+            },
+            {
+                "customer_id": "test_customer",
+                "instance_id": "test_rule_02",
+                "name": "test rule 2",
+                "description": "test rule 2 desc",
+                "pattern_id": "41000",
+                "pattern_severity": "critical",
+                "disposition_id": list(simple_rule_type.disposition_map.keys())[0],
+                "action_label": list(simple_rule_type.disposition_map.values())[0],
+                "ruletype_id": simple_rule_type.id_,
+                "ruletype_name": simple_rule_type.name,
+                "field_values": [],
+                "enabled": True,
+                "deleted": False,
+                "instance_version": 1,
+                "version_ids": [1],
+                "magic_cookie": 1,
+                "committed_on": "2022-01-01T12:00:00.000000000Z",
+                "created_on": "2022-01-01T12:00:00.000000000Z",
+                "created_by": "caracara@test.com",
+                "modified_on": "2022-01-01T12:00:00.000000000Z",
+                "modified_by": "caracara@test.com",
+                "comment": "test rule 2 comment",
+            },
+        ],
+        "version": 1,
+        "committed_on": "2022-01-01T12:00:00.000000000Z",
+        "created_on": "2022-01-01T12:00:00.000000000Z",
+        "created_by": "caracara@test.com",
+        "modified_on": "2022-01-01T12:00:00.000000000Z",
+        "modified_by": "caracara@test.com",
+        "comment": "test rule group comment",
+    }
+    group = IoaRuleGroup.from_data_dict(  # Acts as an already queried group
+        raw_group, rule_type_map={simple_rule_type.id_: simple_rule_type}
+    )
+
+    rule = CustomIoaRule(
+        name="test rule 3",
+        description="test rule 3 desc",
+        severity="critical",
+        rule_type=simple_rule_type,
+    )
+    rule.set_action("Test Action")
+    group.add_rule(rule)
+
+    def mock_create_rule(body):
+        assert raw_group["id"] == body["rulegroup_id"]
+        raw_group["version"] += 1
+        new_rule = {
+            "customer_id": "test_customer",
+            "instance_id": "test_rule_03",
+            "name": body["name"],
+            "description": body["description"],
+            "pattern_id": "41000",
+            "pattern_severity": body["pattern_severity"],
+            "disposition_id": body["disposition_id"],
+            "action_label": list(simple_rule_type.disposition_map.values())[0],
+            "ruletype_id": body["ruletype_id"],
+            "ruletype_name": simple_rule_type.name,
+            "field_values": body["field_values"],
+            "enabled": False,
+            "deleted": False,
+            "instance_version": 1,
+            "version_ids": [1],
+            "magic_cookie": 1,
+            "committed_on": "2022-01-01T12:00:00.000000000Z",
+            "created_on": "2022-01-01T12:00:00.000000000Z",
+            "created_by": "caracara@test.com",
+            "modified_on": "2022-01-01T12:00:00.000000000Z",
+            "modified_by": "caracara@test.com",
+            "comment": body["comment"],
+        }
+
+        raw_group["rules"].append(new_rule)
+        return {"body": {"resources": [new_rule]}}
+    custom_ioa_api.create_rule.side_effect = mock_create_rule
+
+    custom_ioa_api.query_rule_types.side_effect = create_mock_query_resources(
+        resources=[simple_rule_type.id_]
+    )
+    custom_ioa_api.get_rule_types.side_effect = create_mock_get_rule_types(
+        rule_types=[simple_rule_type]
+    )
+
+    new_group = client.custom_ioas.update_rule_group(group, comment="test update comment")
+    
+    custom_ioa_api.create_rule.assert_called_once_with(
+        body={
+            "name": "test rule 3",
+            "description": "test rule 3 desc",
+            "pattern_severity": "critical",
+            "disposition_id": list(simple_rule_type.disposition_map.keys())[0],
+            "field_values": [],
+            "ruletype_id": simple_rule_type.id_,
+            "rulegroup_id": "test_group_01",
+            "comment": "test update comment",
+        }
+    )
+    assert len([rule for rule in new_group.rules if rule.exists_in_cloud()]) == len(group.rules)
