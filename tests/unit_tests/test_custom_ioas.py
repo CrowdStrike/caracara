@@ -710,8 +710,10 @@ def test_update_rule_groups_with_rule_changes(
     assert new_group.version == group.version + 4
 
 
-def test_update_rule_group_with_new_rules(client: Client, custom_ioa_api: falconpy.CustomIOA, simple_rule_type: RuleType):
-    """"""
+def test_update_rule_group_with_new_rules(
+    client: Client, custom_ioa_api: falconpy.CustomIOA, simple_rule_type: RuleType
+):
+    """Tests `CustomIoaApiModule.update_rule_groups` when the group a rule to create."""
     raw_group = {  # Acts as a store for the API
         "customer_id": "test_customer",
         "id": "test_group_01",
@@ -822,6 +824,7 @@ def test_update_rule_group_with_new_rules(client: Client, custom_ioa_api: falcon
 
         raw_group["rules"].append(new_rule)
         return {"body": {"resources": [new_rule]}}
+
     custom_ioa_api.create_rule.side_effect = mock_create_rule
 
     custom_ioa_api.query_rule_types.side_effect = create_mock_query_resources(
@@ -832,7 +835,7 @@ def test_update_rule_group_with_new_rules(client: Client, custom_ioa_api: falcon
     )
 
     new_group = client.custom_ioas.update_rule_group(group, comment="test update comment")
-    
+
     custom_ioa_api.create_rule.assert_called_once_with(
         body={
             "name": "test rule 3",
