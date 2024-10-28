@@ -364,7 +364,6 @@ class CustomIoaRule:
         self.severity = severity
         self.rule_type = rule_type
         self.group = None
-        self.instance_id = None
 
         self.fields = {}
         for field_type in rule_type.fields:
