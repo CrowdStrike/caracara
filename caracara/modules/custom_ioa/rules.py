@@ -312,9 +312,8 @@ class CustomIoaRule:
     # This field should exist if this object has been added to a group
     group: IoaRuleGroup
 
-    # All these fields should exist if `exists_in_cloud()` returns True, with the exception of
-    # instance_id which should exist and initialised to `None` if this object does not exist in the
-    # cloud
+    # The fields below will only be populated if `exists_in_cloud()` returns `True`,
+    # otherwise they will be `None`
     instance_id: str
     action_label: str
     comment: str
@@ -610,6 +609,8 @@ class CustomIoaRule:
 
         This object model is defined in the CrowdStrike API Swagger document.
         """
+        if not self.exists_in_cloud():
+            raise ValueError("This group does not exist in the cloud!")
         return {
             "customer_id": self.customer_id,
             "instance_id": self.instance_id,
