@@ -23,7 +23,8 @@ class IoaRuleGroup:
     rules_to_delete: List[CustomIoaRule]
     group: IoaRuleGroup
 
-    # The fields below will only be populated if `exists_in_cloud()` returns `True`, otherwise they will be `None`
+    # The fields below will only be populated if `exists_in_cloud()` returns `True`,
+    # otherwise they will be `None`
     id_: str
     comment: str
     committed_on: datetime
