@@ -23,9 +23,7 @@ class IoaRuleGroup:
     rules_to_delete: List[CustomIoaRule]
     group: IoaRuleGroup
 
-    # The fields below will only be populated if `exists_in_cloud()` returns `True`, with the
-    # exception of `id` which should be initialised to `None` if this object does not exist on the
-    # cloud
+    # The fields below will only be populated if `exists_in_cloud()` returns `True`, otherwise they will be `None`
     id_: str
     comment: str
     committed_on: datetime
@@ -60,7 +58,19 @@ class IoaRuleGroup:
         self.rules = []
         self.rules_to_delete = []
         self.group = None
+
         self.id_ = None
+        self.comment = None
+        self.committed_on = None
+        self.created_by = None
+        self.created_on = None
+        self.customer_id = None
+        self.deleted = None
+        self.enabled = None
+        self.modified_by = None
+        self.modified_on = None
+        self.rule_ids = None
+        self.version = None
 
     def __repr__(self):
         """Return an unambiguous string representation of the IOA and its ID, platform and name."""
@@ -359,6 +369,23 @@ class CustomIoaRule:
         for field_type in rule_type.fields:
             field = field_type.to_concrete_field()
             self.fields[(field["name"], field["type"])] = field
+
+        self.instance_id = None
+        self.action_label = None
+        self.comment = None
+        self.committed_on = None
+        self.created_by = None
+        self.created_on = None
+        self.customer_id = None
+        self.deleted = None
+        self.disposition_id = None
+        self.enabled = None
+        self.instance_version = None
+        self.magic_cookie = None
+        self.modified_by = None
+        self.modified_on = None
+        self.version_ids = None
+        self.pattern_id = None
 
     def __repr__(self):
         """Return an unambiguous string representation of the CustomIoaRule and its properties.
