@@ -849,3 +849,29 @@ def test_update_rule_group_with_new_rules(
         }
     )
     assert len([rule for rule in new_group.rules if rule.exists_in_cloud()]) == len(group.rules)
+
+
+def test_ioa_rule_group_repr():
+    """Tests the `__repr__` function of an IoaRuleGroup."""
+    irg = IoaRuleGroup("name", "desc", "platform")
+    assert (
+        str(irg) == "<IoaRuleGroup(id_=None, version=None, platform='platform', name='name', ...)>"
+    )
+
+
+def test_ioa_rule_repr(simple_rule_type: RuleType):
+    """Tests the `__repr__` function of an CustomIoaRule."""
+    ir = CustomIoaRule("name", "desc", "informational", simple_rule_type)
+    assert str(ir) == (
+        "<CustomIoaRule(group=None, instance_id=None, instance_version=None name='name', "
+        "ruletype=<RuleType(id_='test_rule_type_simple', "
+        "name='SimpleType', platform='windows', ...)>, ...)>"
+    )
+
+
+def test_rule_type_repr(simple_rule_type: RuleType):
+    """Tests the `__repr__` function of an RuleType."""
+    assert (
+        str(simple_rule_type)
+        == "<RuleType(id_='test_rule_type_simple', name='SimpleType', platform='windows', ...)>"
+    )
