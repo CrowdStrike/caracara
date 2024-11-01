@@ -53,6 +53,7 @@ disable = [
     # (from Falcon) by definition. Therefore, we have switched this rule off globally.
     "too-many-public-methods",
 ]
+max-positional-arguments=10
 
 
 [tool.poetry.scripts]
