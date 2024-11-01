@@ -4,6 +4,12 @@ profiles:
       client_id: clientid123456
       client_secret: clientsecret123456
       cloud_name: auto
+      # Enable FalconPy native debugging by setting to True
+      debug: False
+      # Number of records to return in a debug
+      debug_record_count: 100
+      # Do not disable log sanitization in production environments
+      sanitize_log: True
     logging:
       level: debug
     examples:
