@@ -144,12 +144,11 @@ def test_push_policy(auth: Client, **_):
         }
     )
 
-    res = auth.prevention_policies.push_policy(
-        Policy(
-            data_dict=mock_policy,
-            style="prevention",
-        )
+    new_policy = Policy(
+        data_dict=mock_policy,
+        style="prevention",
     )
+    res = auth.prevention_policies.push_policy(new_policy)
 
     assert res.cid == mock_cid
 

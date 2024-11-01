@@ -7,7 +7,7 @@ import pytest
 
 from caracara import Client
 from caracara.common.constants import OnlineState
-from caracara.common.exceptions import InvalidOnlineState
+from caracara.common.exceptions import InvalidOnlineState, MustProvideFilter
 
 # A lot of mock methods need a certain function signature, and since they only mock functionality
 # they do not always use all the arguments. Therefore, we disable the unused-argument warning.
@@ -18,17 +18,21 @@ from caracara.common.exceptions import InvalidOnlineState
 mock_devices = {
     "00000000000000000000000000000000": {
         "device_id": "00000000000000000000000000000000",
+        "hostname": "TESTTEST0",
     },
     "00000000000000000000000000000001": {
         "device_id": "00000000000000000000000000000001",
+        "hostname": "TESTTEST1",
     },
     "00000000000000000000000000000002": {
         "device_id": "00000000000000000000000000000002",
         "host_hidden_status": "hidden",
+        "hostname": "TESTTEST2",
     },
     "00000000000000000000000000000003": {
         "device_id": "00000000000000000000000000000003",
         "host_hidden_status": "hidden",
+        "hostname": "TESTTEST3",
     },
 }
 visible_ids = [i for i, dev in mock_devices.items() if dev.get("host_hidden_status") != "hidden"]
@@ -58,9 +62,12 @@ unknown_ids = [i for i, data in mock_device_online_states.items() if data.get("s
 
 
 def mock_query_devices_by_filter_scroll(*, filter, limit, offset):
-    """Mock method for falconpy.Hosts.query_devices_by_filter_scroll"""
-    assert filter is None
-
+    """Mock method for falconpy.Hosts.query_devices_by_filter_scroll.
+    
+    Although we use filters (pluralised) in Caracara to avoid overwriting the native Python
+    filter keyword, we have to use filter here so that we match with the Falcon API spec we
+    are mocking.
+    """
     if offset is None:
         offset = 0
 
@@ -77,9 +84,12 @@ def mock_query_devices_by_filter_scroll(*, filter, limit, offset):
 
 
 def mock_query_hidden_devices(*, filter, limit, offset):
-    """Mock method for falconpy.Hosts.query_hidden_devices"""
-    assert filter is None
+    """Mock method for falconpy.Hosts.query_hidden_devices.
 
+    Although we use filters (pluralised) in Caracara to avoid overwriting the native Python
+    filter keyword, we have to use filter here so that we match with the Falcon API spec we
+    are mocking.
+    """
     if offset is None:
         offset = 0
 
@@ -327,13 +337,26 @@ def test_describe_network_address_history(auth: Client, **_):
 
 
 @hosts_test()
+def test_contain_no_filter(auth: Client, **_):
+    """Unit test for HostsApiModule.contain with no filter provider."""
+    with pytest.raises(MustProvideFilter):
+        auth.hosts.contain()
+
+
+@hosts_test()
 def test_contain(auth: Client, **_):
     """Unit test for HostsApiModule.contain"""
-    resources = []
+    resources = [
+        "00000000000000000000000000000000",
+        "00000000000000000000000000000001",
+        "00000000000000000000000000000002",
+        "00000000000000000000000000000003",
+    ]
 
     def mock_perform_action(*, ids, action_name):
         return {
             "body": {
+                "errors": None,
                 "resources": resources,
             }
         }
@@ -345,7 +368,10 @@ def test_contain(auth: Client, **_):
         }
     )
 
-    assert auth.hosts.contain() == resources
+    filters = auth.FalconFilter(dialect="hosts")
+    filters.create_new_filter("Hostname", "TESTTEST*")
+
+    assert auth.hosts.contain(filters=filters) == resources
     auth.hosts.hosts_api.perform_action.assert_called_once_with(
         ids=visible_ids,
         action_name="contain",
@@ -355,11 +381,17 @@ def test_contain(auth: Client, **_):
 @hosts_test()
 def test_release(auth: Client, **_):
     """Unit test for HostsApiModule.release"""
-    resources = []
+    resources = [
+        "00000000000000000000000000000000",
+        "00000000000000000000000000000001",
+        "00000000000000000000000000000002",
+        "00000000000000000000000000000003",
+    ]
 
     def mock_perform_action(*, ids, action_name):
         return {
             "body": {
+                "errors": None,
                 "resources": resources,
             }
         }
@@ -371,7 +403,10 @@ def test_release(auth: Client, **_):
         }
     )
 
-    assert auth.hosts.release() == resources
+    filters = auth.FalconFilter(dialect="hosts")
+    filters.create_new_filter("Hostname", "TESTTEST*")
+
+    assert auth.hosts.release(filters=filters) == resources
     auth.hosts.hosts_api.perform_action.assert_called_once_with(
         ids=visible_ids,
         action_name="lift_containment",
@@ -381,11 +416,17 @@ def test_release(auth: Client, **_):
 @hosts_test()
 def test_hide(auth: Client, **_):
     """Unit test for HostsApiModule.hide"""
-    resources = []
+    resources = [
+        "00000000000000000000000000000000",
+        "00000000000000000000000000000001",
+        "00000000000000000000000000000002",
+        "00000000000000000000000000000003",
+    ]
 
     def mock_perform_action(*, ids, action_name):
         return {
             "body": {
+                "errors": None,
                 "resources": resources,
             }
         }
@@ -397,7 +438,10 @@ def test_hide(auth: Client, **_):
         }
     )
 
-    assert auth.hosts.hide() == resources
+    filters = auth.FalconFilter(dialect="hosts")
+    filters.create_new_filter("Hostname", "TESTTEST*")
+
+    assert auth.hosts.hide(filters=filters) == resources
     auth.hosts.hosts_api.perform_action.assert_called_once_with(
         ids=visible_ids,
         action_name="hide_host",
@@ -407,11 +451,17 @@ def test_hide(auth: Client, **_):
 @hosts_test()
 def test_unhide(auth: Client, **_):
     """Unit test for HostsApiModule.unhide"""
-    resources = []
+    resources = [
+        "00000000000000000000000000000000",
+        "00000000000000000000000000000001",
+        "00000000000000000000000000000002",
+        "00000000000000000000000000000003",
+    ]
 
     def mock_perform_action(*, ids, action_name):
         return {
             "body": {
+                "errors": None,
                 "resources": resources,
             }
         }
@@ -423,7 +473,10 @@ def test_unhide(auth: Client, **_):
         }
     )
 
-    assert auth.hosts.unhide() == resources
+    filters = auth.FalconFilter(dialect="hosts")
+    filters.create_new_filter("Hostname", "TESTTEST*")
+
+    assert auth.hosts.unhide(filters=filters) == resources
     auth.hosts.hosts_api.perform_action.assert_called_once_with(
         ids=hidden_ids,
         action_name="unhide_host",
@@ -433,12 +486,18 @@ def test_unhide(auth: Client, **_):
 @hosts_test()
 def test_tag(auth: Client, **_):
     """Unit test for HostsApiModule.tag"""
-    resources = []
+    resources = [
+        "00000000000000000000000000000000",
+        "00000000000000000000000000000001",
+        "00000000000000000000000000000002",
+        "00000000000000000000000000000003",
+    ]
     tags = ["tag1", "tag2"]
 
     def mock_update_device_tags(*, action_name, ids, tags):
         return {
             "body": {
+                "errors": None,
                 "resources": resources,
             }
         }
@@ -450,7 +509,10 @@ def test_tag(auth: Client, **_):
         }
     )
 
-    assert auth.hosts.tag(tags) == resources
+    filters = auth.FalconFilter(dialect="hosts")
+    filters.create_new_filter("Hostname", "TESTTEST*")
+
+    assert auth.hosts.tag(filters=filters, tags=tags) == resources
     auth.hosts.hosts_api.update_device_tags.assert_called_once_with(
         action_name="add",
         ids=visible_ids,
@@ -461,12 +523,18 @@ def test_tag(auth: Client, **_):
 @hosts_test()
 def test_untag(auth: Client, **_):
     """Unit test for HostsApiModule.untag"""
-    resources = []
+    resources = [
+        "00000000000000000000000000000000",
+        "00000000000000000000000000000001",
+        "00000000000000000000000000000002",
+        "00000000000000000000000000000003",
+    ]
     tags = ["tag1", "tag2"]
 
     def mock_update_device_tags(*, action_name, ids, tags):
         return {
             "body": {
+                "errors": None,
                 "resources": resources,
             }
         }
@@ -478,7 +546,10 @@ def test_untag(auth: Client, **_):
         }
     )
 
-    assert auth.hosts.untag(tags) == resources
+    filters = auth.FalconFilter(dialect="hosts")
+    filters.create_new_filter("Hostname", "TESTTEST*")
+
+    assert auth.hosts.untag(filters=filters, tags=tags) == resources
     auth.hosts.hosts_api.update_device_tags.assert_called_once_with(
         action_name="remove",
         ids=visible_ids,
