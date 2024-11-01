@@ -63,7 +63,7 @@ unknown_ids = [i for i, data in mock_device_online_states.items() if data.get("s
 
 def mock_query_devices_by_filter_scroll(*, filter, limit, offset):
     """Mock method for falconpy.Hosts.query_devices_by_filter_scroll.
-    
+
     Although we use filters (pluralised) in Caracara to avoid overwriting the native Python
     filter keyword, we have to use filter here so that we match with the Falcon API spec we
     are mocking.
