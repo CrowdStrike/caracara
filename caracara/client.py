@@ -60,6 +60,9 @@ class Client:
         proxy: str = None,
         user_agent: str = None,
         verbose: bool = False,
+        debug: bool = False,
+        debug_record_count: int = None,
+        sanitize_log: bool = True,
         falconpy_authobject: OAuth2 = None,
     ):
         """Configure a Caracara Falcon API Client object."""
@@ -110,6 +113,9 @@ class Client:
                 "user_agent": user_agent,
                 "ssl_verify": ssl_verify,
                 "timeout": timeout,
+                "debug": debug,
+                "debug_record_count": debug_record_count,
+                "sanitize_log": sanitize_log,
             }
 
             self.logger.info(
