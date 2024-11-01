@@ -39,7 +39,7 @@ def queue_command(**kwargs):
     if not settings or "command" not in settings:
         error_message = "".join(
             [
-                "You must configure the 'cmd' argument within your "
+                "You must configure the 'command' argument within your "
                 "YAML file to proceed with this example."
             ]
         )
@@ -49,7 +49,7 @@ def queue_command(**kwargs):
     cmd: str = settings["command"]
     logger.info("Running the command: %s", cmd)
 
-    filters = client.FalconFilter(dialect="rtr")
+    filters = client.FalconFilter(dialect="hosts")
     filter_list: List[Dict] = settings.get("filters")
     parse_filter_list(filter_list, filters)
 
@@ -76,6 +76,8 @@ def queue_command(**kwargs):
 
     for device_id, device_result in batch_session.run_generic_command(cmd).items():
         logger.info("[%s] Task queued: %s", device_id, device_result["task_id"])
+        if device_result.get("complete"):
+            print(device_result.get("stdout", device_result.get("stderr", "No output received")))
 
 
 if __name__ in ["__main__", "examples.rtr.queue_command"]:
