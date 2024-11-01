@@ -204,7 +204,6 @@ class CustomIoaApiModule(FalconApiModule):
                 raw_rule,
                 rule_type=self._get_rule_types_cached()[raw_rule["ruletype_id"]],
             )
-            new_rule.rulegroup_id = group.id_
             new_rules.append(new_rule)
             new_group.version += 1
 
