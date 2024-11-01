@@ -122,7 +122,6 @@ class IoaRuleGroup:
             # The following line might raise an index error if there's a rule type on this rule that
             # we don't know about. I don't catch this since I don't think it's likely to happen.
             rule_type = rule_type_map[raw_rule["ruletype_id"]]
-            raw_rule["rulegroup_id"] = rule_group.id_  # API doesn't populate this field, so we do
             rule = CustomIoaRule.from_data_dict(data_dict=raw_rule, rule_type=rule_type)
             rule_group.rules.append(rule)
 
@@ -330,6 +329,7 @@ class CustomIoaRule:
     modified_on: datetime
     version_ids: List[str]
     pattern_id: str
+    rulegroup_id: str
 
     def __init__(
         self,
@@ -385,6 +385,7 @@ class CustomIoaRule:
         self.modified_on = None
         self.version_ids = None
         self.pattern_id = None
+        self.rulegroup_id = None
 
     def __repr__(self):
         """Return an unambiguous string representation of the CustomIoaRule and its properties.
@@ -441,6 +442,7 @@ class CustomIoaRule:
         rule.version_ids = data_dict["version_ids"]
         rule.pattern_id = data_dict["pattern_id"]
         rule.comment = data_dict["comment"]
+        rule.rulegroup_id = data_dict["rulegroup_id"]
 
         rule.fields = {}
         for field_value in data_dict["field_values"]:
@@ -622,6 +624,7 @@ class CustomIoaRule:
             "action_label": self.action_label,
             "ruletype_id": self.rule_type.id_,
             "ruletype_name": self.rule_type.name,
+            "rulegroup_id": self.rulegroup_id,
             "field_values": list(self.fields.values()),
             "enabled": self.enabled,
             "deleted": self.deleted,
