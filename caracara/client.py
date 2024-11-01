@@ -49,7 +49,7 @@ class Client:
         This subclass allows pre-existing code to continue referencing FalconFilter.
         """
 
-    def __init__(  # pylint: disable=R0913,R0914,R0915
+    def __init__(  # pylint: disable=R0913,R0914,R0915,R0917
         self,
         client_id: str = None,
         client_secret: str = None,
@@ -68,12 +68,6 @@ class Client:
         """Configure a Caracara Falcon API Client object."""
         self.logger = logging.getLogger(__name__)
 
-        if client_id is None and client_secret is None and falconpy_authobject is None:
-            raise ValueError(
-                "You must provide either a Client ID and Client Secret, "
-                "or a pre-created FalconPy OAuth2 object"
-            )
-
         if client_id is not None and client_secret is None:
             raise ValueError("You cannot provide a Client ID without a Client Secret")
 
@@ -85,7 +79,13 @@ class Client:
 
         self.logger.info("Setting up the Caracara client and configuring authentication")
 
-        if client_id:
+        if falconpy_authobject:
+            self.logger.info(
+                "Using pre-created FalconPy OAuth2 object. All other options will be ignored"
+            )
+            self.api_authentication = falconpy_authobject
+
+        else:
             # Load all parameters for the FalconPy authentication object into a dictionary
             # and handle environment variable interpolation
             interpolator = VariableInterpolator()
@@ -141,13 +141,6 @@ class Client:
 
             self.logger.debug("Configuring api_authentication object as an OAuth2 object")
             self.api_authentication = OAuth2(**auth_keys)
-        elif falconpy_authobject:
-            self.logger.info(
-                "Using pre-created FalconPy OAuth2 object. All other options will be ignored"
-            )
-            self.api_authentication = falconpy_authobject
-        else:
-            raise TypeError("Impossible authentication scenario")
 
         self.logger.info("Requesting API token")
         self.api_authentication.token()  # Need to force the authentication to resolve the base_url

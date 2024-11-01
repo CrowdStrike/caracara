@@ -1,8 +1,11 @@
 profiles:
   TestProfile1Auto:
     falcon:
+      # Not required if FALCON_CLIENT_ID and FALCON_CLIENT_SECRET
+      # are present within the current running environment
       client_id: clientid123456
       client_secret: clientsecret123456
+      # Not required for US-1, US-2 or EU-1 users
       cloud_name: auto
       # Enable FalconPy native debugging by setting to True
       debug: False
@@ -13,6 +16,7 @@ profiles:
     logging:
       level: debug
     examples:
+      # Profile specific example settings
       rtr:
         download_event_log:
           # How long to wait between attempts for the file to upload to Falcon
@@ -43,3 +47,25 @@ profiles:
       client_id: ${CLIENT_ID_EU_ENV_VARIABLE}
       client_secret: ${CLIENT_SECRET_EU_ENV_VARIABLE}
       cloud_name: auto
+
+globals:
+  examples:
+    # Global example settings
+    rtr:
+      download_event_log:
+        # How long to wait between attempts for the file to upload to Falcon
+        attempt_delay: 30
+        # Maximum number of attempts to retrieve files from Falcon
+        attempt_limit: 10
+        # Log filename (must exist in C:\Windows\System32\winevt\Logs\)
+        filename: System.evtx
+        # Which machines to upload logs from
+        filters:
+          - OS: Windows
+        # Output folder on disk to download the logs to
+        output_folder: /tmp/logs
+      queue_command:
+        filters:
+          - OS: Linux
+          - Hostname: example-host-2
+        command: ls

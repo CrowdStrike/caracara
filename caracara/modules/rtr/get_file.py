@@ -88,14 +88,8 @@ class GetFile:
             mode="r",
             password="infected",
         ) as archive:
-            inner_filename = archive.getnames()[0]
             target_dir = os.path.dirname(full_output_path_7z)
-
-            archive.extract(target_dir, inner_filename)
-            os.rename(
-                os.path.join(target_dir, inner_filename),
-                full_output_path,
-            )
+            archive.extract(path=target_dir)
 
             if not preserve_7z:
                 os.unlink(full_output_path_7z)

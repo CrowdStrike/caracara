@@ -100,7 +100,7 @@ def download_event_log(**kwargs):  # pylint: disable=too-many-locals
 
     logger.info("Downloading the event log %s", filename)
 
-    filters = client.FalconFilter(dialect="rtr")
+    filters = client.FalconFilter(dialect="hosts")
     filter_list: List[Dict] = settings.get("filters")
 
     # This is a custom generic function to load filters from the config file. You can

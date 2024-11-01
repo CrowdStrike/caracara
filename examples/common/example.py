@@ -11,6 +11,7 @@ import yaml
 
 from caracara import Client
 from caracara.common.csdialog import csradiolist_dialog
+from caracara.common.interpolation import VariableInterpolator
 
 _config_path = os.path.join(
     os.path.dirname(os.path.dirname(__file__)),
@@ -28,13 +29,10 @@ def _select_profile(config: dict) -> str:
         if falcon is None:
             print(f"{profile_name} does not have a falcon stanza; skipping")
             continue
-
-        client_id = falcon.get("client_id")
-        if client_id is None:
-            print(f"The falcon stanza in {profile_name} does not contain a client ID; skipping")
-            continue
-
-        client_id = str(client_id)
+        cln = VariableInterpolator()
+        client_id = cln.interpolate(
+            str(profiles[profile_name]["falcon"].get("client_id", "ENVIRONMENT"))
+        )
         profile_text = f"{profile_name} (Client ID: {client_id[0:7]}{'x'*24})"
         profile_pairs.append((profile_name, profile_text))
 
@@ -64,17 +62,34 @@ def _get_profile() -> Dict:
         raise KeyError("You must create a profiles stanza in the configuration YAML file")
 
     profile_names = list(config["profiles"].keys())
+    global_config = None
+    if "globals" in config:
+        global_config = config["globals"]
+    # Check for default profile
+    default_name = None
+    for prof in profile_names:
+        if config["profiles"][prof].get("default", False):
+            default_name = prof
+            # First one we encounter is the default
+            break
+
     # Check to see if the user provided us with a profile name as the first argument
     profile_name = None
     if len(sys.argv) > 1:
         profile_name = sys.argv[1]
         if profile_name not in profile_names:
             raise KeyError(f"The profile named {profile_name} does not exist in config.yml")
+    elif len(profile_names) == 1:
+        # There's only one, treat it as the default
+        profile_name = profile_names[0]
+    elif default_name:
+        # Default profile key has been set
+        profile_name = default_name
     else:
         profile_name = _select_profile(config)
 
     profile = config["profiles"][profile_name]
-    return profile
+    return profile, global_config
 
 
 def _configure_logging(profile: Dict) -> None:
@@ -97,11 +112,8 @@ def _configure_logging(profile: Dict) -> None:
     logging.basicConfig(format=log_format, level=log_level)
 
 
-def _get_example_settings(profile: Dict, example_abs_path: str) -> Dict:
+def _get_example_settings(profile: Dict, example_abs_path: str, globalsettings: Dict) -> Dict:
     """Load example-specific settings from config.yml based on the filename."""
-    if "examples" not in profile:
-        return None
-
     # Get the base path of the examples module by obtaining the common
     # path between this file and the example in question
     common_path = os.path.commonpath([__file__, example_abs_path])
@@ -116,24 +128,28 @@ def _get_example_settings(profile: Dict, example_abs_path: str) -> Dict:
     # Remove the file extension so that we get just the example name, without the .py
     example_rel_path, _ = os.path.splitext(example_rel_path)
 
-    # Split the resultant path into a list of sectiions
+    # Split the resultant path into a list of sections
     example_dict_path = example_rel_path.split(os.path.sep)
 
-    """
-    Iterate over every part of the path to ensure that the example-specific data
-    exists within the config.yml. We would rather return None here than throw an
-    exception. It is up to each individual module to check whether the settings are
-    complete.
-    """
-    example_settings = profile["examples"]
-    for path_section in example_dict_path:
-        if path_section not in example_settings:
-            return None
+    # Set our example module and name
+    example_module = example_dict_path[0]
+    example_name = example_dict_path[1]
 
-        example_settings = example_settings[path_section]
+    # Get global settings for this example
+    global_settings = globalsettings.get("examples", {})
+    global_module_settings = global_settings.get(example_module, {})
+    global_example_settings = global_module_settings.get(example_name, {})
 
-    # Returns the settings relative to this particular example
-    return example_settings
+    # Get profile settings for this example
+    profile_module_settings = profile.get("examples", {}).get(example_module, {})
+    profile_example_settings = profile_module_settings.get(example_name, {})
+
+    # Overlay global example settings with profile-specific example settings
+    # The dicts are expanded in order, so the profile-specific settings will overlay the global ones
+    merged_example_settings = {**global_example_settings, **profile_example_settings}
+
+    # Return back the merged settings dictionary
+    return merged_example_settings
 
 
 def caracara_example(example_func):
@@ -141,7 +157,7 @@ def caracara_example(example_func):
 
     @wraps(example_func)
     def wrapped(*args, **kwargs):
-        profile = _get_profile()
+        profile, global_config = _get_profile()
         if not profile:
             raise TypeError("No profile chosen; aborting")
 
@@ -153,9 +169,6 @@ def caracara_example(example_func):
 
         falcon_config: Dict = profile["falcon"]
 
-        if "client_id" not in falcon_config or "client_secret" not in falcon_config:
-            raise KeyError("You must include, at minimum, a client_id and client_secret")
-
         _configure_logging(profile)
 
         client = Client(**falcon_config)
@@ -163,6 +176,7 @@ def caracara_example(example_func):
         example_settings = _get_example_settings(
             profile,
             example_func.__globals__["__file__"],
+            global_config,
         )
 
         # Pass data back to the example via keyword arguments
