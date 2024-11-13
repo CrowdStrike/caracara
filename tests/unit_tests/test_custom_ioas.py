@@ -103,6 +103,7 @@ def create_mock_create_rule(assigned_id: str, rule_types: List[RuleType]):
             "pattern_severity": body["pattern_severity"],
             "disposition_id": body["disposition_id"],
             "action_label": rule_type.disposition_map[body["disposition_id"]],
+            "rulegroup_id": "test_group_01",
             "ruletype_id": body["ruletype_id"],
             "ruletype_name": rule_type.name,
             "field_values": body["field_values"],
@@ -332,6 +333,7 @@ def test_describe_rule_groups_with_rules(
                     "action_label": list(simple_rule_type.disposition_map.values())[0],
                     "ruletype_id": simple_rule_type.id_,
                     "ruletype_name": simple_rule_type.name,
+                    "rulegroup_id": "test_group_01",
                     "field_values": [],
                     "enabled": True,
                     "deleted": False,
@@ -373,7 +375,6 @@ def test_describe_rule_groups_with_rules(
 
     # Call caracara
     groups = client.custom_ioas.describe_rule_groups(filters="test_filter")
-
     assert len(mock_groups) == len(groups)
     for mock_group in mock_groups:
         assert mock_group["id"] in groups.keys()
@@ -508,6 +509,7 @@ def test_update_rule_groups_with_rule_changes(
                 "action_label": list(simple_rule_type.disposition_map.values())[0],
                 "ruletype_id": simple_rule_type.id_,
                 "ruletype_name": simple_rule_type.name,
+                "rulegroup_id": "test_group_01",
                 "field_values": [],
                 "enabled": True,
                 "deleted": False,
@@ -532,6 +534,7 @@ def test_update_rule_groups_with_rule_changes(
                 "action_label": list(simple_rule_type.disposition_map.values())[0],
                 "ruletype_id": simple_rule_type.id_,
                 "ruletype_name": simple_rule_type.name,
+                "rulegroup_id": "test_group_01",
                 "field_values": [],
                 "enabled": True,
                 "deleted": False,
@@ -617,6 +620,7 @@ def test_update_rule_groups_with_rule_changes(
             "action_label": list(simple_rule_type.disposition_map.values())[0],
             "ruletype_id": body["ruletype_id"],
             "ruletype_name": simple_rule_type.name,
+            "rulegroup_id": "test_group_01",
             "field_values": body["field_values"],
             "enabled": False,
             "deleted": False,
@@ -735,6 +739,7 @@ def test_update_rule_group_with_new_rules(
                 "action_label": list(simple_rule_type.disposition_map.values())[0],
                 "ruletype_id": simple_rule_type.id_,
                 "ruletype_name": simple_rule_type.name,
+                "rulegroup_id": "test_group_01",
                 "field_values": [],
                 "enabled": True,
                 "deleted": False,
@@ -759,6 +764,7 @@ def test_update_rule_group_with_new_rules(
                 "action_label": list(simple_rule_type.disposition_map.values())[0],
                 "ruletype_id": simple_rule_type.id_,
                 "ruletype_name": simple_rule_type.name,
+                "rulegroup_id": "test_group_01",
                 "field_values": [],
                 "enabled": True,
                 "deleted": False,
@@ -808,6 +814,7 @@ def test_update_rule_group_with_new_rules(
             "action_label": list(simple_rule_type.disposition_map.values())[0],
             "ruletype_id": body["ruletype_id"],
             "ruletype_name": simple_rule_type.name,
+            "rulegroup_id": "test_group_01",
             "field_values": body["field_values"],
             "enabled": False,
             "deleted": False,

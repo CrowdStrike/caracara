@@ -32,7 +32,11 @@ jobs:
     - name: Install dependencies
       run: poetry install
 
+    - name: Run unit tests
+      run: poetry run py.test tests/unit_tests
+
     - name: Lint package source with flake8
+      if: success() || failure()
       run: |
         poetry run flake8 caracara/ --show-source --statistics
         poetry run flake8 examples/ --show-source --statistics

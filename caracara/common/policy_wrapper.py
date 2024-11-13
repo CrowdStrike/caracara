@@ -363,7 +363,7 @@ class Policy:
             self.groups.append(GroupAssignment(data_dict=group_dict))
 
         # Load all groups of settings
-        settings_groups: List[Dict] = data_dict.get(self.settings_key_name)
+        settings_groups: List[Dict] = data_dict.get(self.settings_key_name, [])
         for settings_group_dict in settings_groups:
             self.settings_groups.append(PolicySettingGroup(data_dict=settings_group_dict))
 
@@ -409,7 +409,7 @@ class Policy:
             "description": self.description,
             "name": self.name,
             "platform_name": self.platform_name,
-            "settings": settings,
+            self.settings_key_name: settings,
         }
         if self.policy_id:
             data["id"] = self.policy_id
