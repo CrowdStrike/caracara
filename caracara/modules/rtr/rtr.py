@@ -289,5 +289,8 @@ class RTRApiModule(FalconApiModule):
         self.logger.info("Retrieved %d falcon script IDs", len(falcon_script_ids))
         self.logger.debug(falcon_script_ids)
 
-        falcon_script_data = batch_get_data(falcon_script_ids, self.rtr_admin_api.get_falcon_scripts)
+        falcon_script_data = batch_get_data(
+            falcon_script_ids,
+            self.rtr_admin_api.get_falcon_scripts
+        )
         return falcon_script_data
