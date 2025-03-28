@@ -27,6 +27,10 @@ python-dateutil = "^2.8.2"
 black = "^24.8.0"
 isort = "^5.13.2"
 
+# pylint dependencies for legacy Python versions that are not auto-resolved by Poetry
+typing_extensions = {version = "^4.13", python = "<3.11"}
+dill = {version = "^0.2.0", python = "<3.11"}
+
 [build-system]
 build-backend = "poetry.core.masonry.api"
 requires = ["poetry-core>=1.0.0", "setuptools"]

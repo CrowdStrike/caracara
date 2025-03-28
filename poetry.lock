@@ -729,11 +729,27 @@ dev = ["bandit", "coverage", "flake8", "pydocstyle", "pylint", "pytest", "pytest
 
 [[package]]
 name = "dill"
+version = "0.2.9"
+description = "serialize all of python"
+optional = false
+python-versions = ">=2.5, !=3.0.*"
+groups = ["dev"]
+markers = "python_version < \"3.11\""
+files = [
+    {file = "dill-0.2.9.tar.gz", hash = "sha256:f6d6046f9f9195206063dd0415dff185ad593d6ee8b0e67f12597c0f4df4986f"},
+]
+
+[package.extras]
+graph = ["objgraph (>=1.7.2)"]
+
+[[package]]
+name = "dill"
 version = "0.3.9"
 description = "serialize all of Python"
 optional = false
 python-versions = ">=3.8"
 groups = ["dev"]
+markers = "python_version >= \"3.11\""
 files = [
     {file = "dill-0.3.9-py3-none-any.whl", hash = "sha256:468dff3b89520b474c0397703366b7b95eebe6303f108adf9b19da1f702be87a"},
     {file = "dill-0.3.9.tar.gz", hash = "sha256:81aa267dddf68cbfe8029c42ca9ec6a4ab3b22371d1c450abc54422577b4512c"},
@@ -2118,4 +2134,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.8.2"
-content-hash = "a8de05f42ce2a83d4a0280de1cab63a8e752646e2854cdc8047fce01548a9d0c"
+content-hash = "617a5795c5cea006a61d77c121d0cdcd04adda4f52d526a875af5738ed5dfd4d"
