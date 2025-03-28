@@ -291,6 +291,6 @@ class RTRApiModule(FalconApiModule):
 
         falcon_script_data = batch_get_data(
             falcon_script_ids,
-            self.rtr_admin_api.get_falcon_scripts
+            self.rtr_admin_api.get_falcon_scripts,
         )
         return falcon_script_data
