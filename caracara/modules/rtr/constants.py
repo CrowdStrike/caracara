@@ -10,6 +10,7 @@ RTR_COMMANDS = {
     "encrypt": "active_responder",
     "env": "read_only",
     "eventlog": "read_only",
+    "falconscript": "admin",
     "filehash": "read_only",
     "get": "active_responder",
     "getsid": "read_only",

@@ -249,7 +249,7 @@ class RTRApiModule(FalconApiModule):
         Returns
         -------
         Dict: a dictionary containing a list of every script uploaded to the Falcon Cloud,
-            including its contents
+            including the contents
         """
         self.logger.info("Querying RTR scripts using the filter string %s", filters)
         func_ids = partial(self.rtr_admin_api.list_scripts, filter=filters)
@@ -262,3 +262,35 @@ class RTRApiModule(FalconApiModule):
 
         script_data = batch_get_data(script_ids, self.rtr_admin_api.get_scripts)
         return script_data
+
+    @filter_string
+    def describe_falcon_scripts(self, filters: Union[str, FalconFilter] = None) -> Dict:
+        """
+        Query RTR scripts provided by the Falcon platform, known as "Falcon Scripts".
+
+        These scripts can be executed via the RTR falconscript command.
+
+        Arguments
+        ---------
+        filters: Union[FalconFilter, str], optional
+            Filters to apply to the script search
+
+        Returns
+        -------
+        Dict: a dictionary containing a list of every available Falcon script,
+            including its contents
+        """
+        self.logger.info("Querying RTR Falcon scripts using the filter string %s", filters)
+        func_ids = partial(self.rtr_admin_api.list_falcon_scripts, filter=filters)
+        falcon_script_ids = all_pages_numbered_offset_parallel(
+            func=func_ids,
+            logger=self.logger,
+        )
+        self.logger.info("Retrieved %d falcon script IDs", len(falcon_script_ids))
+        self.logger.debug(falcon_script_ids)
+
+        falcon_script_data = batch_get_data(
+            falcon_script_ids,
+            self.rtr_admin_api.get_falcon_scripts,
+        )
+        return falcon_script_data
