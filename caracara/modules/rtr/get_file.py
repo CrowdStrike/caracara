@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
-from typing import List, Optional, TYPE_CHECKING
+from typing import Tuple, TYPE_CHECKING
 
 import py7zr
 import py7zr.callbacks
@@ -24,26 +24,29 @@ class SevenZipExtractProgressBar(py7zr.callbacks.ExtractCallback, tqdm):
     This code is heavily based on an example published on GitHub here:
         https://github.com/miurahr/py7zr/pull/558
     """
+
     def __init__(self, *args, total_bytes: int, **kwargs):
-            super().__init__(self, *args, total=total_bytes, **kwargs)
+        """Initialise the progress bar."""
+        super().__init__(self, *args, total=total_bytes, **kwargs)
 
     def report_start_preparation(self):
-        pass
-    
+        """No start preparation callback needed."""
+
     def report_start(self, processing_file_path, processing_bytes):
-        pass
+        """No start callback needed."""
 
     def report_end(self, processing_file_path, wrote_bytes):
-        pass
+        """No end callback needed."""
 
     def report_update(self, decompressed_bytes):
+        """Update the progress bar."""
         self.update(int(decompressed_bytes))
 
     def report_postprocess(self):
-        pass
+        """No post-process callback needed."""
 
     def report_warning(self, message):
-        pass
+        """No warning callback needed."""
 
 
 @dataclass
@@ -72,6 +75,7 @@ class GetFile:
 
     @property
     def rtr_api(self) -> RealTimeResponse:
+        """Property that returns an authenticated RealTimeResponse FalconPy object."""
         if self._rtr_api:
             return self._rtr_api
         if self.client:
@@ -86,6 +90,93 @@ class GetFile:
     @rtr_api.setter
     def rtr_api(self, v: RealTimeResponse) -> None:
         self._rtr_api = v
+
+    def _download_derive_output_paths(self, output_path: str, extract: bool) -> Tuple[str, str]:
+        """Derive the output filename of a GET file downloaded from the CrowdStrike cloud."""
+        # Get the name of the uploaded file from the filename value, which actually contains the
+        # full path to the file on the origin system's disk.
+        if self.filename.startswith("/"):
+            # macOS or *nix path
+            filename = self.filename.rsplit("/", maxsplit=1)[-1]
+        else:
+            # Windows filename
+            filename = self.filename.rsplit("\\", maxsplit=1)[-1]
+
+        filename_noext, ext = os.path.splitext(filename)
+
+        # Figure out what the file should be named.
+        # If a directory is provided as an output, we rename the file according to its name,
+        # hash and origin device AID.
+        # Otherwise, we use the exact filename provided as a parameter.
+        if os.path.isdir(output_path):
+            # Output path is a folder, so we should compute the filename
+            if self.device_id:
+                output_filename = f"{filename_noext}_{self.sha256}_{self.device_id}{ext}"
+            else:
+                output_filename = f"{filename_noext}_{self.sha256}{ext}"
+
+            full_output_path = os.path.join(
+                output_path,
+                output_filename,
+            )
+            full_output_path_7z = full_output_path + ".7z"
+        else:
+            full_output_path = output_path
+            if extract:
+                full_output_path_7z = full_output_path + ".7z"
+            else:
+                # We should ensure that the user's path ends in .7z if they are not extracting
+                if full_output_path.endswith(".7z"):
+                    full_output_path_7z = full_output_path
+                else:
+                    full_output_path_7z = full_output_path + ".7z"
+
+        return full_output_path, full_output_path_7z
+
+    def _extract_downloaded_7z(
+            self,
+            archive_path: str,
+            output_path: str,
+            show_extraction_progress: bool
+    ) -> None:
+        """Extract the downloaded 7-Zip archive if requested."""
+        target_dir = os.path.dirname(archive_path)
+
+        with py7zr.SevenZipFile(  # nosec - The password "infected" is generic and always the same
+            file=archive_path,
+            mode="r",
+            password="infected",
+        ) as archive:
+            archive_filenames = archive.getnames()
+            if show_extraction_progress:
+                archive_info = archive.archiveinfo()
+                with SevenZipExtractProgressBar(
+                    unit="B",
+                    unit_scale=True,
+                    miniters=1,
+                    total_bytes=archive_info.uncompressed,
+                    desc="Extracting...",
+                    ascii=True,
+                ) as progress:
+                    # archive.extract() does not provide a callback parameter, but behaviour should
+                    # not differ since RTR 7-Zip archives should always contain exactly one inner
+                    # file.
+                    archive.extractall(path=target_dir, callback=progress)
+            else:
+                archive.extract(path=target_dir)
+
+        # Check that we truly only received exactly one output file in the 7-Zip archive.
+        # If all is well, we rename the first (and hopefully only) output file to match the name
+        # derived at the beginning of this function.
+        if archive_filenames and len(archive_filenames) == 1:
+            orig_filename = archive_filenames[0]
+            orig_path = os.path.join(target_dir, orig_filename)
+            os.rename(orig_path, output_path)
+        else:
+            raise ValueError(
+                "The downloaded 7-Zip archive contains the wrong number of files. "
+                f"Contents: {str(archive_filenames)}"
+            )
 
     def download(
         self,
@@ -120,50 +211,17 @@ class GetFile:
         if (
             not self.session_id or
             not self.sha256 or
-            not self.filename 
+            not self.filename
         ):
             raise ValueError(
                 "A session ID, SHA256 hash, and filename are all required to download a GET file. "
                 "Ensure these values are set in the object before calling the download function."
             )
 
-        # Get the name of the uploaded file from the filename value, which actually contains the
-        # full path to the file on the origin system's disk.
-        if self.filename.startswith("/"):
-            # macOS or *nix path
-            filename = self.filename.rsplit("/", maxsplit=1)[-1]
-        else:
-            # Windows filename
-            filename = self.filename.rsplit("\\", maxsplit=1)[-1]
-
-        filename_noext, ext = os.path.splitext(filename)
-
-        # Figure out what the file should be named.
-        # If a directory is provided as an output, we rename the file according to its name,
-        # hash and origin device AID.
-        # Otherwise, we use the exact filename provided as a parameter.
-        if os.path.isdir(output_path):
-            # Output path is a folder, so we should compute the filename
-            if self.device_id:
-                output_filename = f"{filename_noext}_{self.sha256}_{self.device_id}{ext}",
-            else:
-                output_filename = f"{filename_noext}_{self.sha256}{ext}"
-
-            full_output_path = os.path.join(
-                output_path,
-                output_filename,
-            )
-            full_output_path_7z = full_output_path + ".7z"
-        else:
-            full_output_path = output_path
-            if extract:
-                full_output_path_7z = full_output_path + ".7z"
-            else:
-                # We should ensure that the user's path ends in .7z if they are not extracting
-                if full_output_path.endswith(".7z"):
-                    full_output_path_7z = full_output_path
-                else:
-                    full_output_path_7z = full_output_path + ".7z"
+        full_output_path, full_output_path_7z = self._download_derive_output_paths(
+            output_path,
+            extract,
+        )
 
         # Chunked downloads can be disabled by providing a 0 as the chunk size.
         # This is rarely advantageous, but is provided for compatability.
@@ -212,43 +270,11 @@ class GetFile:
             # Downloaded, so we're done now!
             return
 
-        target_dir = os.path.dirname(full_output_path_7z)
-
-        with py7zr.SevenZipFile(  # nosec - The password "infected" is generic and always the same
-            file=full_output_path_7z,
-            mode="r",
-            password="infected",
-        ) as archive:
-            archive_filenames = archive.getnames()
-            if show_download_progress:
-                archive_info = archive.archiveinfo()
-                with SevenZipExtractProgressBar(
-                    unit="B",
-                    unit_scale=True,
-                    miniters=1,
-                    total_bytes=archive_info.uncompressed,
-                    desc=f"Extracting...",
-                    ascii=True,
-                ) as progress:
-                    # archive.extract() does not provide a callback parameter, but behaviour should
-                    # not differ since RTR 7-Zip archives should always contain exactly one inner
-                    # file.
-                    archive.extractall(path=target_dir, callback=progress)
-            else:
-                archive.extract(path=target_dir)
-
-        # Check that we truly only received exactly one output file in the 7-Zip archive.
-        # If all is well, we rename the first (and hopefully only) output file to match the name
-        # derived at the beginning of this function.
-        if archive_filenames and len(archive_filenames) == 1:
-            orig_filename = archive_filenames[0]
-            orig_path = os.path.join(target_dir, orig_filename)
-            os.rename(orig_path, full_output_path)
-        else:
-            raise ValueError(
-                "The downloaded 7-Zip archive contains the wrong number of files. Contents: %s",
-                str(archive_filenames),
-            )
+        self._extract_downloaded_7z(
+            archive_path=full_output_path_7z,
+            output_path=full_output_path,
+            show_extraction_progress=show_download_progress,
+        )
 
         # Delete the 7-Zip archive after extracting its contents if the developer told us it
         # does not need to be preserved.
