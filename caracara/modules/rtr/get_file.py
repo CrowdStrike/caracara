@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
-from typing import Tuple, TYPE_CHECKING
+from typing import TYPE_CHECKING, Tuple
 
 import py7zr
 import py7zr.callbacks
@@ -14,6 +14,7 @@ if TYPE_CHECKING:
     # This trick will avoid us from causing a cyclical reference within the class
     # Credit: https://stackoverflow.com/a/39757388
     from falconpy import RealTimeResponse
+
     from caracara import Client
     from caracara.modules.rtr.batch_session import RTRBatchSession
 
