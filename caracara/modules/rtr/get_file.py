@@ -134,10 +134,7 @@ class GetFile:
         return full_output_path, full_output_path_7z
 
     def _extract_downloaded_7z(
-            self,
-            archive_path: str,
-            output_path: str,
-            show_extraction_progress: bool
+        self, archive_path: str, output_path: str, show_extraction_progress: bool
     ) -> None:
         """Extract the downloaded 7-Zip archive if requested."""
         target_dir = os.path.dirname(archive_path)
@@ -208,11 +205,7 @@ class GetFile:
         - download_chunk_size: Size of each chunk to stream via requests. Defaults to 1MiB.
                                If this is set to 0, chunking will not be used.
         """
-        if (
-            not self.session_id or
-            not self.sha256 or
-            not self.filename
-        ):
+        if not self.session_id or not self.sha256 or not self.filename:
             raise ValueError(
                 "A session ID, SHA256 hash, and filename are all required to download a GET file. "
                 "Ensure these values are set in the object before calling the download function."
