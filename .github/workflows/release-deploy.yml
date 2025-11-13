@@ -1,6 +1,4 @@
-# This workflow will upload a Python Package using Twine when a release is created
-# For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
-
+# This workflow will upload a Python Package via the Trusted Publishing functionality in PyPI.
 name: Publish Python Package
 
 on:
@@ -10,6 +8,9 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      id-token: write
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python
@@ -19,8 +20,10 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        python -m pip install poetry --pre
-    - name: Build and publish
+        python -m pip install poetry
+    - name: Build package with Poetry
       run: |
-        poetry config pypi-token.pypi ${{ secrets.PACKAGE_API_SECRET }}
-        poetry publish --build
+        poetry build
+    - name: Publish package to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+
