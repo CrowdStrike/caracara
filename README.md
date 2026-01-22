@@ -16,12 +16,21 @@
 
 A friendly wrapper to help you interact with the CrowdStrike Falcon API. Less code, less fuss, better performance, and full interoperability with [FalconPy](https://github.com/CrowdStrike/falconpy/).
 
-- [Features](#features)
-- [Installation](#installation-instructions)
-- [Basic Usage](#basic-usage-example)
-- [Examples](#examples-collection)
-- [Documentation](#documentation)
-- [Contributing](#contributing)
+- [Caracara](#caracara)
+  - [Features](#features)
+  - [Installation Instructions](#installation-instructions)
+    - [Poetry: Installation](#poetry-installation)
+    - [Poetry: Upgrading](#poetry-upgrading)
+    - [Poetry: Removal](#poetry-removal)
+    - [Pip: Installation](#pip-installation)
+    - [Pip: Upgrading](#pip-upgrading)
+    - [Pip: Removal](#pip-removal)
+  - [Basic Usage Examples](#basic-usage-examples)
+  - [Examples Collection](#examples-collection)
+    - [Executing the Examples](#executing-the-examples)
+  - [Documentation](#documentation)
+  - [Contributing](#contributing)
+  - [Why Caracara?](#why-caracara)
 
 ## Features
 
@@ -41,7 +50,7 @@ A few of the developer experience enhancements provided by the Caracara toolkit 
 
 Caracara supports all major Python packaging solutions. Instructions for [Poetry](https://python-poetry.org) and [Pip](https://pypi.org/project/pip/) are provided below.
 
-Caracara supports Python versions that are still supported by the Python Software Foundation, i.e., **Python 3.8 and up**.
+Caracara supports Python versions that are still supported by the Python Software Foundation, i.e., **Python 3.10 and up**.
 
 <details>
 <summary><h3>Installing Caracara from PyPI using Poetry (Recommended!)</h3></summary>
