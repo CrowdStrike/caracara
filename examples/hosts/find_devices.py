@@ -17,6 +17,7 @@ hosts are returned.
 
 The example demonstrates how to use the Hosts API.
 """
+
 import logging
 from typing import Dict, List
 

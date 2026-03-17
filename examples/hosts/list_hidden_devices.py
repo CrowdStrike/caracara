@@ -8,6 +8,7 @@ list the names of all recently hidden systems within your Falcon tenant.
 
 The example demonstrates how to use the Hosts API.
 """
+
 import logging
 
 from caracara import Client

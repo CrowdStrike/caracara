@@ -13,6 +13,7 @@ scrolling tabular format listing Device ID, Hostname, IP addresses and agent ver
 
 The example demonstrates how to use the Hosts API and the Client context.
 """
+
 import logging
 
 from tabulate import tabulate

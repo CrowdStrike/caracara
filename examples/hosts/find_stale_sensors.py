@@ -12,6 +12,7 @@ find stale sensors deployments within your Falcon tenant.
 
 The example demonstrates how to use the Hosts API and a FalconFilter using a date.
 """
+
 import logging
 from datetime import datetime, timezone
 from typing import Dict

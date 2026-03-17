@@ -7,6 +7,7 @@ describe_roles.py
 This example will use the API credentials configured in your config.yml file to
 show all the possible roles that may be assigned to users in the Falcon tenant.
 """
+
 import logging
 
 from caracara import Client

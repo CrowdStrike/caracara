@@ -8,6 +8,7 @@ list the login history for systems within your Falcon tenant.
 
 The example demonstrates how to use the Hosts API.
 """
+
 import logging
 from typing import Dict, List
 

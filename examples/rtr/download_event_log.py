@@ -24,6 +24,7 @@ download_event_log:
   # Output folder on disk to download the logs to
   output_folder: /tmp/logs
 """
+
 import logging
 import os
 import time
