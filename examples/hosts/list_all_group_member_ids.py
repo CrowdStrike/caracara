@@ -8,6 +8,7 @@ list the device member IDs for every host group within your Falcon tenant.
 
 The example demonstrates how to use the Hosts API.
 """
+
 import logging
 
 from caracara import Client

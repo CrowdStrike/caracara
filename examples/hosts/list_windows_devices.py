@@ -9,6 +9,7 @@ list the names of all systems within your Falcon tenant that run Windows.
 
 The example demonstrates how to use the FalconFilter() class and the Hosts API.
 """
+
 import logging
 
 from caracara import Client

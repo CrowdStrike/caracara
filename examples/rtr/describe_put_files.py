@@ -7,6 +7,7 @@ describe_put_files.py
 This example will use the API credentials configuration in your config.yml file to
 list all the files that can be used with the PUT command.
 """
+
 import logging
 
 from caracara import Client

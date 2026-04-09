@@ -10,6 +10,7 @@ show all the Windows response policies configured within the Falcon tenant.
 This example demonstrates using a combination of the FalconFilter class and
 the response policies API.
 """
+
 import logging
 from typing import List
 

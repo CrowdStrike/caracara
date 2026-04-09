@@ -7,6 +7,7 @@ describe_users.py
 This example will use the API credentials configured in your config.yml file to
 show all the users configured within the Falcon tenant.
 """
+
 import logging
 
 from caracara import Client

@@ -10,6 +10,7 @@ search for all queued RTR sessions, and clear (delete) them.
 Note that this can only access sessions that were created with this API token,
 as the Falcon API will not let you clear somebody else's queued session.
 """
+
 import logging
 
 from caracara import Client

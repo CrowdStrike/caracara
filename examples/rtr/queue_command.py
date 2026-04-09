@@ -16,6 +16,7 @@ queue_command:
     - Filter2Name__Operator: Filter2Value
   command: CommandToRun
 """
+
 import logging
 from typing import Dict, List
 

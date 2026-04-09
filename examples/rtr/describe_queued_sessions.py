@@ -7,6 +7,7 @@ list_queued_sessions.py
 This example will use the API credentials configuration in your config.yml file to
 list all queued RTR sesisons, as well as the commands scheduled for exection.
 """
+
 import logging
 
 from caracara import Client

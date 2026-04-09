@@ -7,6 +7,7 @@ create_response_policy.py
 This example will create a Windows response policy based on the included template.
 You can use this code sample to customise the policy.
 """
+
 import logging
 
 from caracara import Client

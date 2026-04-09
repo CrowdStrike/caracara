@@ -6,6 +6,7 @@ get_maintenance_token.py
 
 This example will allow you to search for a system in the CID and get its maintenance token.
 """
+
 from typing import Dict
 
 from caracara import Client

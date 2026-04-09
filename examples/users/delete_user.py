@@ -7,6 +7,7 @@ delete_user.py
 This example will use the API credentials configured in your config.yml file to
 delete a user in the Falcon tenant.
 """
+
 import logging
 
 from caracara import Client
