@@ -11,7 +11,7 @@ CrowdStrike Caracara
 """
 
 import logging
-from typing import Dict, Optional, Union
+from typing import Dict, Optional
 
 try:
     from falconpy import OAuth2, confirm_base_region, confirm_base_url
