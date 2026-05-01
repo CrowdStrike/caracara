@@ -31,6 +31,7 @@ import re
 
 from typing import Optional
 
+
 class VariableInterpolator:  # pylint: disable=too-few-public-methods
     """Variable interpolation class.
 
