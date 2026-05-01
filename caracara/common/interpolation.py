@@ -28,7 +28,6 @@ to configure Caracara dynamically or interactively by using environment variable
 import logging
 import os
 import re
-
 from typing import Optional
 
 
