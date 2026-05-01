@@ -10,7 +10,7 @@ Falcon UI.
 from __future__ import annotations
 
 from functools import partial
-from typing import TYPE_CHECKING, Dict, List, Union
+from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
 from caracara.common.batching import batch_get_data
 from caracara.common.constants import SCROLL_BATCH_SIZE
@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 @filter_string
 def describe_hidden_devices(
     self: HostsApiModule,
-    filters: Union[FalconFilter, str] = None,
+    filters: Optional[Union[FalconFilter, str]] = None,
 ) -> Dict:
     """Return a dictionary containing details for every hidden device in your Falcon tenant.
 
@@ -49,7 +49,7 @@ def describe_hidden_devices(
 @filter_string
 def get_hidden_ids(
     self: HostsApiModule,
-    filters: Union[FalconFilter, str] = None,
+    filters: Optional[Union[FalconFilter, str]] = None,
 ) -> List[str]:
     """Return a list of IDs (string) for every hidden device in your Falcon tenant.
 
@@ -70,7 +70,7 @@ def get_hidden_ids(
         limit=SCROLL_BATCH_SIZE,
     )
     if not id_list:
-        return DeviceNotFound
+        raise DeviceNotFound
 
     return id_list
 
@@ -78,7 +78,7 @@ def get_hidden_ids(
 @filter_string
 def hide(
     self: HostsApiModule,
-    filters: Union[FalconFilter, str] = None,
+    filters: Optional[Union[FalconFilter, str]] = None,
 ) -> Dict:
     """Hide a host or list of hosts within your Falcon tenant.
 
@@ -103,7 +103,7 @@ def hide(
 @filter_string
 def unhide(
     self: HostsApiModule,
-    filters: Union[FalconFilter, str] = None,
+    filters: Optional[Union[FalconFilter, str]] = None,
 ) -> Dict:
     """Unhide a host or list of hosts within your Falcon tenant.
 
