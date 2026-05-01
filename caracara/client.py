@@ -12,6 +12,8 @@ CrowdStrike Caracara
 
 import logging
 
+from typing import Dict, Optional, Union
+
 try:
     from falconpy import OAuth2, confirm_base_region, confirm_base_url
 except ImportError as no_falconpy:
@@ -51,19 +53,19 @@ class Client:
 
     def __init__(  # pylint: disable=R0913,R0914,R0915,R0917
         self,
-        client_id: str = None,
-        client_secret: str = None,
-        cloud_name: str = "auto",
-        member_cid: str = None,
+        client_id: Optional[str] = None,
+        client_secret: Optional[str] = None,
+        cloud_name: Optional[str] = "auto",
+        member_cid: Optional[str] = None,
         ssl_verify: bool = True,
-        timeout: float = None,
-        proxy: str = None,
-        user_agent: str = None,
+        timeout: Optional[float] = None,
+        proxy: Optional[str] = None,
+        user_agent: Optional[str] = None,
         verbose: bool = False,
         debug: bool = False,
-        debug_record_count: int = None,
+        debug_record_count: Optional[int] = None,
         sanitize_log: bool = True,
-        falconpy_authobject: OAuth2 = None,
+        falconpy_authobject: Optional[OAuth2] = None,
     ):
         """Configure a Caracara Falcon API Client object."""
         self.logger = logging.getLogger(__name__)
@@ -102,6 +104,15 @@ class Client:
             else:
                 user_agent = user_agent_string()
 
+            # The proxy will be provided as a string, so we have to set up a requests
+            # proxy dictionary for HTTP and HTTPS.
+            proxy_obj: Optional[Dict[str, str]] = None
+            if proxy:
+                proxy_obj = {
+                    "http": proxy,
+                    "https": proxy,
+                }
+
             self.logger.debug("User agent: %s", user_agent)
 
             auth_keys = {
@@ -109,7 +120,7 @@ class Client:
                 "client_id": client_id,
                 "client_secret": client_secret,
                 "member_cid": member_cid,
-                "proxy": proxy,
+                "proxy": proxy_obj,
                 "user_agent": user_agent,
                 "ssl_verify": ssl_verify,
                 "timeout": timeout,
