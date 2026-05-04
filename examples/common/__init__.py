@@ -2,11 +2,12 @@
 
 __all__ = [
     "caracara_example",
+    "load_client_from_profile",
     "parse_filter_list",
     "pretty_print",
 ]
 
-from examples.common.example import caracara_example
+from examples.common.example import caracara_example, load_client_from_profile
 from examples.common.exceptions import (
     MissingArgument,
     NoAddressesFound,

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "caracara"
-version = "1.0.2"
+version = "1.1.0"
 description = "The CrowdStrike Falcon Developer Toolkit"
 authors = [ "CrowdStrike <falconpy@crowdstrike.com>" ]
 readme = "README.md"
@@ -9,7 +9,7 @@ readme = "README.md"
 python = "^3.10"
 py7zr = "^0.22.0"
 crowdstrike-falconpy = "^1.5.0"
-caracara-filters = "^1.0.0"
+caracara-filters = "^1.2.0"
 tqdm = "^4.67.1"
 
 [tool.poetry.group.dev.dependencies]
@@ -90,6 +90,10 @@ describe-queued-sessions = "examples.rtr.describe_queued_sessions:describe_queue
 describe-scripts = "examples.rtr.describe_scripts:describe_scripts"
 download-event-log = "examples.rtr.download_event_log:download_event_log"
 queue-command = "examples.rtr.queue_command:queue_command"
+# Sensor Download
+get-ccid = "examples.sensor_download.get_ccid:get_ccid"
+list-sensor-versions = "examples.sensor_download.list_sensor_versions:list_sensor_versions"
+download-sensor-installer = "examples.sensor_download.download_sensor_installer:download_sensor_installer"
 # Sensor Update Policies
 get-maintenance-token = "examples.sensor_update_policies.get_maintenance_token:get_maintenance_token"
 # Users

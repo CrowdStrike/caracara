@@ -192,9 +192,8 @@ class Client:
         self.logger.debug("Entering Caracara context manager")
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *_):
         """Discard our token when we exit the context."""
         self.logger.info("Discarding API token on Client exit")
         self.api_authentication.revoke(self.api_authentication.token_value)
         self.logger.debug("Discarding Caracara context manager")
-        return args
