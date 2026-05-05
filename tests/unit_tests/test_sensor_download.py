@@ -411,3 +411,21 @@ def test_download_installer_file_exists_overwrite(
 
     assert result == str(existing)
     assert existing.read_bytes() == MOCK_CONTENT_LINUX
+
+
+@sensor_download_test()
+def test_download_installer_invalid_if_exists(auth: Client, mock_sensor_download, tmp_path, **_):
+    """download_installer raises ValueError for an unrecognised if_exists value."""
+    auth.sensor_download.sensor_download_api.configure_mock(
+        **{
+            "get_sensor_installer_entities_v3.side_effect": mock_get_installer_entities_v3,
+        }
+    )
+
+    with pytest.raises(ValueError, match="if_exists"):
+        auth.sensor_download.download_installer(
+            sha256=MOCK_SHA256,
+            destination_path=str(tmp_path),
+            if_exists="invalid_value",  # type: ignore[arg-type]
+            show_progress=False,
+        )

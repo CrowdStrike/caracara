@@ -28,26 +28,11 @@ Examples:
       --filename my-sensor.exe
 """
 
-import os
 from typing import Tuple
 
 import click
 
-from caracara import Client
-from examples.common import load_client_from_profile
-
-
-def _build_filters(client: Client, filter_kv_strings: Tuple[str, ...]):
-    """Convert a sequence of key=value strings into a sensor_download FalconFilter."""
-    filters = client.FalconFilter(dialect="sensor_download")
-    for kv in filter_kv_strings:
-        if "=" not in kv:
-            raise click.BadParameter(
-                f"'{kv}' is not in key=value format. "
-                "Example: -f platform=Linux  or  -f version__GTE=7.14.0"
-            )
-        filters.create_new_filter_from_kv_string(*kv.split("=", 1))
-    return filters
+from examples.common import build_sensor_download_filters, load_client_from_profile
 
 
 @click.command(
@@ -142,8 +127,6 @@ def download_sensor_installer(  # pylint: disable=too-many-arguments
 
     client, _ = load_client_from_profile(profile)
 
-    os.makedirs(destination, exist_ok=True)
-
     with client:
         ccid = client.sensor_download.get_cid(include_checksum=True)
 
@@ -152,7 +135,7 @@ def download_sensor_installer(  # pylint: disable=too-many-arguments
                 click.style("Downloading installer by SHA256: ", bold=True) + sha256[:16] + "..."
             )
         else:
-            filters = _build_filters(client, filter_kv_strings)
+            filters = build_sensor_download_filters(client, filter_kv_strings)
             fql = filters.get_fql()
             click.echo(click.style("FQL filter: ", bold=True), nl=False)
             click.echo(fql)

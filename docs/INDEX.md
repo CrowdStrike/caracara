@@ -13,6 +13,7 @@ docs/
 ├── modules/
 │   ├── README.md                      ← All modules overview
 │   ├── hosts.md                       ← Device management (most used)
+│   ├── sensor_download.md             ← Sensor installer downloads and CCID
 │   └── rtr.md                         ← Remote command execution
 └── advanced/
     └── pagination-batching.md         ← How Caracara handles large datasets
@@ -46,6 +47,7 @@ docs/
 |--------|----------|--------------|
 | **Hosts** | [Documentation](modules/hosts.md) | Device search, groups, containment, tagging |
 | **RTR** | [Documentation](modules/rtr.md) | Remote commands, file operations, scripts |
+| **Sensor Download** | [Documentation](modules/sensor_download.md) | Installer search, download, CCID retrieval |
 | **All Modules** | [Overview](modules/README.md) | Complete module reference |
 
 ### Advanced Topics

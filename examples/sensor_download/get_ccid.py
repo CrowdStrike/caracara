@@ -40,7 +40,7 @@ def get_ccid(profile: str):
 
     with client:
         ccid = client.sensor_download.get_cid(include_checksum=True)
-        cid = client.sensor_download.get_cid(include_checksum=False)
+        cid = ccid[:-3].lower()
 
     click.echo(click.style("CID  (plain):        ", bold=True) + cid)
     click.echo(

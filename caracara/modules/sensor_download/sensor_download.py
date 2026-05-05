@@ -187,28 +187,28 @@ class SensorDownloadApiModule(FalconApiModule):
         """Stream installer content to disk and return the SHA256 hex digest."""
         hasher = hashlib.sha256()
         try:
-            if show_progress:
-                with tqdm.wrapattr(
-                    stream=open(full_path, "wb"),  # noqa: WPS515
-                    method="write",
-                    total=file_size or 0,
-                    miniters=1,
-                    bytes=True,
-                    desc=filename,
-                ) as output_file:
+            with open(full_path, "wb") as raw_file:
+                if show_progress:
+                    with tqdm.wrapattr(
+                        stream=raw_file,
+                        method="write",
+                        total=file_size or 0,
+                        miniters=1,
+                        bytes=True,
+                        desc=filename,
+                    ) as output_file:
+                        for chunk in response.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
+                            if chunk:
+                                hasher.update(chunk)
+                                output_file.write(chunk)
+                        # Explicitly flush buffered data before the context manager closes.
+                        # See: https://github.com/tqdm/tqdm/issues/1247
+                        output_file.close()
+                else:
                     for chunk in response.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
                         if chunk:
                             hasher.update(chunk)
-                            output_file.write(chunk)
-                    # Explicitly flush buffered data before the context manager closes.
-                    # See: https://github.com/tqdm/tqdm/issues/1247
-                    output_file.close()
-            else:
-                with open(full_path, "wb") as output_file:
-                    for chunk in response.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
-                        if chunk:
-                            hasher.update(chunk)
-                            output_file.write(chunk)
+                            raw_file.write(chunk)
         except Exception:
             if os.path.exists(full_path):
                 os.remove(full_path)
@@ -266,9 +266,15 @@ class SensorDownloadApiModule(FalconApiModule):
         ------
         FileExistsError: Destination file already exists and if_exists="error".
         GenericAPIError: API returned an error status.
+        ValueError: if_exists is not one of "error", "skip", or "overwrite".
         ValueError: Downloaded file SHA256 does not match the expected hash.
         """
         self.logger.info("Downloading sensor installer with SHA256: %s", sha256)
+
+        if if_exists not in ("error", "skip", "overwrite"):
+            raise ValueError(
+                f"if_exists must be 'error', 'skip', or 'overwrite'; got {if_exists!r}"
+            )
 
         filename, file_size = self._resolve_filename(sha256, filename, include_version)
         self.logger.info("Using installer filename: %s", filename)

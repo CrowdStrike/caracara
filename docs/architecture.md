@@ -29,10 +29,10 @@ This document provides a detailed overview of Caracara's architecture, design pr
 │ │Policies │  │  Control    │  │    Policies         │    │
 │ └─────────┘  └─────────────┘  └─────────────────────┘    │
 │    │              │                      │                  │
-│ ┌──▼──────┐  ┌───▼─────────┐                              │
-│ │ Users   │  │  Custom IOA │                              │
-│ │ Module  │  │   Module    │                              │
-│ └─────────┘  └─────────────┘                              │
+│ ┌──▼──────┐  ┌───▼─────────┐  ┌────────────────────────┐  │
+│ │ Users   │  │  Custom IOA │  │  Sensor Download       │  │
+│ │ Module  │  │   Module    │  │      Module            │  │
+│ └─────────┘  └─────────────┘  └────────────────────────┘  │
 │                                                              │
 │  ┌──────────────────────────────────────────────────┐     │
 │  │    Common Utilities                               │     │
@@ -357,7 +357,8 @@ caracara/
     ├── sensor_update_policies/
     ├── flight_control/
     ├── users/
-    └── custom_ioa/
+    ├── custom_ioa/
+    └── sensor_download/        # Sensor installer download
 ```
 
 ## Next Steps

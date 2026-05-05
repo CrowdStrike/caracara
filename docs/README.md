@@ -97,7 +97,7 @@ for device_id, device_data in stale_devices.items():
 
 ## Version Information
 
-- **Current Version**: 1.0.3
+- **Current Version**: 1.1.0
 - **Minimum Python Version**: 3.10+
 - **FalconPy Version**: 1.5.0+
 

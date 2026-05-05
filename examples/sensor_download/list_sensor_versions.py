@@ -30,8 +30,7 @@ import click
 from packaging.version import InvalidVersion, Version
 from tabulate import tabulate
 
-from caracara import Client
-from examples.common import load_client_from_profile
+from examples.common import build_sensor_download_filters, load_client_from_profile
 
 
 def _version_sort_key(version_str: str):
@@ -40,19 +39,6 @@ def _version_sort_key(version_str: str):
         return (0, Version(version_str))
     except InvalidVersion:
         return (1, version_str)
-
-
-def _build_filters(client: Client, filter_kv_strings: Tuple[str, ...]):
-    """Convert a sequence of key=value strings into a sensor_download FalconFilter."""
-    filters = client.FalconFilter(dialect="sensor_download")
-    for kv in filter_kv_strings:
-        if "=" not in kv:
-            raise click.BadParameter(
-                f"'{kv}' is not in key=value format. "
-                "Example: -f platform=Linux  or  -f version__GTE=7.14.0"
-            )
-        filters.create_new_filter_from_kv_string(*kv.split("=", 1))
-    return filters
 
 
 @click.command(
@@ -96,7 +82,7 @@ def list_sensor_versions(
 ):
     """List available Falcon sensor installer versions."""
     client, _ = load_client_from_profile(profile)
-    filters = _build_filters(client, filter_kv_strings)
+    filters = build_sensor_download_filters(client, filter_kv_strings)
 
     fql = filters.get_fql()
     if fql:
