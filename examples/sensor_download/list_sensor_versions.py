@@ -144,4 +144,4 @@ def list_sensor_versions(
 
 
 if __name__ == "__main__":
-    list_sensor_versions()
+    list_sensor_versions()  # pylint: disable=no-value-for-parameter

@@ -49,4 +49,4 @@ def get_ccid(profile: str):
 
 
 if __name__ == "__main__":
-    get_ccid()
+    get_ccid()  # pylint: disable=no-value-for-parameter

@@ -123,7 +123,7 @@ def _build_filters(client: Client, filter_kv_strings: Tuple[str, ...]):
     show_default=True,
     help="Behaviour when the destination file already exists.",
 )
-def download_sensor_installer(
+def download_sensor_installer(  # pylint: disable=too-many-arguments
     profile: str,
     filter_kv_strings: Tuple[str, ...],
     sha256: str,
@@ -166,8 +166,7 @@ def download_sensor_installer(
                 raise SystemExit(1)
 
             if len(installers) > 1 and not filename and not include_version:
-                names = {i["name"] for i in installers}
-                if len(names) < len(installers):
+                if len({i["name"] for i in installers}) < len(installers):
                     raise click.UsageError(
                         f"{len(installers)} installers matched but their canonical filenames "
                         "are not all unique — add --include-version to embed the version in "
@@ -199,4 +198,4 @@ def download_sensor_installer(
 
 
 if __name__ == "__main__":
-    download_sensor_installer()
+    download_sensor_installer()  # pylint: disable=no-value-for-parameter
