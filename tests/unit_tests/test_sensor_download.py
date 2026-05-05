@@ -85,7 +85,9 @@ def sensor_download_test():
     return decorator
 
 
-def mock_get_combined_installers_v3(filter, sort, offset, limit):  # pylint: disable=redefined-builtin
+def mock_get_combined_installers_v3(
+    filter, sort, offset, limit
+):  # pylint: disable=redefined-builtin
     return {
         "body": {
             "resources": mock_installers[offset : offset + limit],
@@ -144,7 +146,7 @@ def test_describe_installers(auth: Client, mock_sensor_download, **_):
     """describe_installers returns a list of all installer metadata dicts."""
     auth.sensor_download.sensor_download_api.configure_mock(
         **{
-            "get_combined_sensor_installers_by_query_v3.side_effect": mock_get_combined_installers_v3,
+            "get_combined_sensor_installers_by_query_v3.side_effect": mock_get_combined_installers_v3,  # noqa: E501
         }
     )
 
@@ -335,7 +337,7 @@ def test_download_installer_include_version(auth: Client, mock_sensor_download, 
 
 @sensor_download_test()
 def test_download_installer_file_exists_error(auth: Client, mock_sensor_download, tmp_path, **_):
-    """download_installer raises FileExistsError when the file already exists and if_exists='error'."""
+    """download_installer raises FileExistsError when the file already exists and if_exists='error'."""  # noqa: E501
     existing = tmp_path / mock_installer_linux["name"]
     existing.write_bytes(b"old content")
 
@@ -405,4 +407,3 @@ def test_download_installer_file_exists_overwrite(
 
     assert result == str(existing)
     assert existing.read_bytes() == MOCK_CONTENT_LINUX
-

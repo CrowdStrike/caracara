@@ -194,9 +194,7 @@ def load_client_from_profile(
     profile = config["profiles"][profile_name]
 
     if "falcon" not in profile:
-        raise KeyError(
-            f"Profile '{profile_name}' has no falcon stanza in config.yml"
-        )
+        raise KeyError(f"Profile '{profile_name}' has no falcon stanza in config.yml")
 
     _configure_logging(profile)
     client = Client(**profile["falcon"])

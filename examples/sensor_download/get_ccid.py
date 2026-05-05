@@ -44,8 +44,7 @@ def get_ccid(profile: str):
 
     click.echo(click.style("CID  (plain):        ", bold=True) + cid)
     click.echo(
-        click.style("CCID (with checksum): ", bold=True)
-        + click.style(ccid, fg="green", bold=True)
+        click.style("CCID (with checksum): ", bold=True) + click.style(ccid, fg="green", bold=True)
     )
 
 

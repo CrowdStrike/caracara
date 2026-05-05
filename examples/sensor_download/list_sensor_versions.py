@@ -120,16 +120,18 @@ def list_sensor_versions(
 
     rows = []
     for inst in installers:
-        rows.append([
-            inst["platform"],
-            inst["version"],
-            inst["os"],
-            inst.get("os_version") or "—",
-            inst["release_date"][:10],
-            ", ".join(inst.get("architectures") or []) or "—",
-            click.style("Yes", fg="green") if inst.get("is_lts") else "No",
-            inst["sha256"],
-        ])
+        rows.append(
+            [
+                inst["platform"],
+                inst["version"],
+                inst["os"],
+                inst.get("os_version") or "—",
+                inst["release_date"][:10],
+                ", ".join(inst.get("architectures") or []) or "—",
+                click.style("Yes", fg="green") if inst.get("is_lts") else "No",
+                inst["sha256"],
+            ]
+        )
 
     click.echo(
         tabulate(
