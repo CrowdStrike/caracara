@@ -28,6 +28,7 @@ to configure Caracara dynamically or interactively by using environment variable
 import logging
 import os
 import re
+from typing import Optional
 
 
 class VariableInterpolator:  # pylint: disable=too-few-public-methods
@@ -51,7 +52,7 @@ class VariableInterpolator:  # pylint: disable=too-few-public-methods
         self.logger = logging.getLogger(__name__)
         self.logger.debug("Instantiating a Variable Interpolator")
 
-    def interpolate(self, input_string: str) -> str:
+    def interpolate(self, input_string: Optional[str]) -> Optional[str]:
         """Take an input string and swap interpolation strings with environment variables.
 
         Since the regex pattern only returns the inner text, we need to re-add the
