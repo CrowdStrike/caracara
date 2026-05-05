@@ -8,6 +8,7 @@ import falconpy
 import pytest
 
 from caracara import Client
+from caracara.common.exceptions import GenericAPIError
 
 # pylint: disable=unused-argument, redefined-builtin
 
@@ -88,6 +89,7 @@ def sensor_download_test():
 def mock_get_combined_installers_v3(
     filter, sort, offset, limit
 ):  # pylint: disable=redefined-builtin
+    """Return a paginated mock response for get_combined_sensor_installers_by_query_v3."""
     return {
         "body": {
             "resources": mock_installers[offset : offset + limit],
@@ -105,6 +107,7 @@ def mock_get_combined_installers_v3(
 
 
 def mock_get_installer_ids(filter, sort, offset, limit):  # pylint: disable=redefined-builtin
+    """Return a paginated mock response for get_sensor_installers_by_query_v3."""
     all_ids = [i["sha256"] for i in mock_installers]
     return {
         "body": {
@@ -123,6 +126,7 @@ def mock_get_installer_ids(filter, sort, offset, limit):  # pylint: disable=rede
 
 
 def mock_get_installer_entities_v3(ids):
+    """Return a mock response for get_sensor_installer_entities_v3 by SHA256."""
     sha256 = ids if isinstance(ids, str) else ids[0]
     for installer in mock_installers:
         if installer["sha256"] == sha256:
@@ -146,7 +150,9 @@ def test_describe_installers(auth: Client, mock_sensor_download, **_):
     """describe_installers returns a list of all installer metadata dicts."""
     auth.sensor_download.sensor_download_api.configure_mock(
         **{
-            "get_combined_sensor_installers_by_query_v3.side_effect": mock_get_combined_installers_v3,  # noqa: E501
+            "get_combined_sensor_installers_by_query_v3.side_effect": (
+                mock_get_combined_installers_v3
+            ),
         }
     )
 
@@ -265,8 +271,6 @@ def test_download_installer_with_custom_filename(auth: Client, mock_sensor_downl
 @sensor_download_test()
 def test_download_installer_raises_on_api_error(auth: Client, mock_sensor_download, tmp_path, **_):
     """download_installer raises GenericAPIError when the API returns a 4xx status."""
-    from caracara.common.exceptions import GenericAPIError
-
     auth.sensor_download.sensor_download_api.configure_mock(
         **{
             "get_sensor_installer_entities_v3.side_effect": mock_get_installer_entities_v3,
@@ -337,7 +341,7 @@ def test_download_installer_include_version(auth: Client, mock_sensor_download, 
 
 @sensor_download_test()
 def test_download_installer_file_exists_error(auth: Client, mock_sensor_download, tmp_path, **_):
-    """download_installer raises FileExistsError when the file already exists and if_exists='error'."""  # noqa: E501
+    """download_installer raises FileExistsError when the destination file already exists."""
     existing = tmp_path / mock_installer_linux["name"]
     existing.write_bytes(b"old content")
 
