@@ -3,11 +3,10 @@
 import hashlib
 import os
 from functools import partial
-from typing import Dict, List, Literal, Optional, Union
-
-from tqdm import tqdm
+from typing import Dict, List, Literal, Optional, Tuple, Union
 
 from falconpy import OAuth2, SensorDownload
+from tqdm import tqdm
 
 from caracara.common.exceptions import GenericAPIError
 from caracara.common.module import FalconApiModule, ModuleMapper
@@ -93,9 +92,7 @@ class SensorDownloadApiModule(FalconApiModule):
         -------
         List[Dict]: A list of installer metadata dictionaries ordered by the chosen sort.
         """
-        self.logger.info(
-            "Describing sensor installers with filter '%s', sort '%s'", filters, sort
-        )
+        self.logger.info("Describing sensor installers with filter '%s', sort '%s'", filters, sort)
         func = partial(
             self.sensor_download_api.get_combined_sensor_installers_by_query_v3,
             filter=filters,
@@ -130,9 +127,7 @@ class SensorDownloadApiModule(FalconApiModule):
         List[str]: A list of SHA256 hashes for each matching sensor installer. These can
             be passed directly to download_installer().
         """
-        self.logger.info(
-            "Fetching sensor installer IDs with filter '%s', sort '%s'", filters, sort
-        )
+        self.logger.info("Fetching sensor installer IDs with filter '%s', sort '%s'", filters, sort)
         func = partial(
             self.sensor_download_api.get_sensor_installers_by_query_v3,
             filter=filters,
@@ -159,7 +154,69 @@ class SensorDownloadApiModule(FalconApiModule):
         except (KeyError, IndexError) as exc:
             raise GenericAPIError(response["body"].get("errors", [])) from exc
 
-    def download_installer(
+    def _resolve_filename(
+        self,
+        sha256: str,
+        filename: Optional[str],
+        include_version: bool,
+    ) -> Tuple[str, Optional[int]]:
+        """Return (filename, file_size), fetching installer metadata when no filename is given."""
+        if filename is not None:
+            return filename, None
+
+        metadata = self._get_installer_metadata(sha256)
+        base_name = metadata["name"]
+        file_size = metadata.get("file_size")
+
+        if include_version:
+            version = metadata.get("version", "")
+            if version:
+                stem, ext = os.path.splitext(base_name)
+                return f"{stem}-{version}{ext}", file_size
+
+        return base_name, file_size
+
+    def _write_installer(
+        self,
+        response,
+        full_path: str,
+        filename: str,
+        file_size: Optional[int],
+        show_progress: bool,
+    ) -> str:
+        """Stream installer content to disk and return the SHA256 hex digest."""
+        hasher = hashlib.sha256()
+        try:
+            if show_progress:
+                with tqdm.wrapattr(
+                    stream=open(full_path, "wb"),  # noqa: WPS515
+                    method="write",
+                    total=file_size or 0,
+                    miniters=1,
+                    bytes=True,
+                    desc=filename,
+                ) as output_file:
+                    for chunk in response.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
+                        if chunk:
+                            hasher.update(chunk)
+                            output_file.write(chunk)
+                    # Explicitly flush buffered data before the context manager closes.
+                    # See: https://github.com/tqdm/tqdm/issues/1247
+                    output_file.close()
+            else:
+                with open(full_path, "wb") as output_file:
+                    for chunk in response.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
+                        if chunk:
+                            hasher.update(chunk)
+                            output_file.write(chunk)
+        except Exception:
+            if os.path.exists(full_path):
+                os.remove(full_path)
+            raise
+
+        return hasher.hexdigest()
+
+    def download_installer(  # pylint: disable=too-many-arguments
         self,
         sha256: str,
         destination_path: str,
@@ -167,7 +224,6 @@ class SensorDownloadApiModule(FalconApiModule):
         include_version: bool = False,
         if_exists: Literal["error", "skip", "overwrite"] = "error",
         show_progress: bool = True,
-        download_chunk_size: int = DOWNLOAD_CHUNK_SIZE,
     ) -> str:
         """Download a sensor installer to disk by its SHA256 hash, verifying integrity.
 
@@ -201,8 +257,6 @@ class SensorDownloadApiModule(FalconApiModule):
             "overwrite" — replace the existing file.
         show_progress: bool, optional
             Display a tqdm progress bar while downloading. Default True.
-        download_chunk_size: int, optional
-            HTTP streaming chunk size in bytes. Default 1 MiB.
 
         Returns
         -------
@@ -216,21 +270,8 @@ class SensorDownloadApiModule(FalconApiModule):
         """
         self.logger.info("Downloading sensor installer with SHA256: %s", sha256)
 
-        file_size = None
-        if filename is None:
-            metadata = self._get_installer_metadata(sha256)
-            base_name = metadata["name"]
-            file_size = metadata.get("file_size")
-            if include_version:
-                version = metadata.get("version", "")
-                if version:
-                    stem, ext = os.path.splitext(base_name)
-                    filename = f"{stem}-{version}{ext}"
-                else:
-                    filename = base_name
-            else:
-                filename = base_name
-            self.logger.info("Using installer filename: %s", filename)
+        filename, file_size = self._resolve_filename(sha256, filename, include_version)
+        self.logger.info("Using installer filename: %s", filename)
 
         os.makedirs(destination_path, exist_ok=True)
         full_path = os.path.join(destination_path, filename)
@@ -244,7 +285,6 @@ class SensorDownloadApiModule(FalconApiModule):
             if if_exists == "skip":
                 self.logger.info("Skipping download; file already exists: %s", full_path)
                 return full_path
-            # if_exists == "overwrite" — fall through to download
 
         self.logger.info("Streaming %s to %s", filename, destination_path)
 
@@ -256,38 +296,10 @@ class SensorDownloadApiModule(FalconApiModule):
         if isinstance(response, dict):
             raise GenericAPIError(response.get("body", {}).get("errors", []))
 
-        full_path = os.path.join(destination_path, filename)
-        hasher = hashlib.sha256()
+        actual_sha256 = self._write_installer(
+            response, full_path, filename, file_size, show_progress
+        )
 
-        try:
-            if show_progress:
-                with tqdm.wrapattr(
-                    stream=open(full_path, "wb"),  # noqa: WPS515
-                    method="write",
-                    total=file_size or 0,
-                    miniters=1,
-                    bytes=True,
-                    desc=filename,
-                ) as output_file:
-                    for chunk in response.iter_content(chunk_size=download_chunk_size):
-                        if chunk:
-                            hasher.update(chunk)
-                            output_file.write(chunk)
-                    # Explicitly flush buffered data before the context manager closes.
-                    # See: https://github.com/tqdm/tqdm/issues/1247
-                    output_file.close()
-            else:
-                with open(full_path, "wb") as output_file:
-                    for chunk in response.iter_content(chunk_size=download_chunk_size):
-                        if chunk:
-                            hasher.update(chunk)
-                            output_file.write(chunk)
-        except Exception:
-            if os.path.exists(full_path):
-                os.remove(full_path)
-            raise
-
-        actual_sha256 = hasher.hexdigest()
         if actual_sha256.lower() != sha256.lower():
             os.remove(full_path)
             raise ValueError(

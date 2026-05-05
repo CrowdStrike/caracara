@@ -2,9 +2,17 @@
 
 __all__ = [
     "caracara_example",
+    "choose_item",
     "load_client_from_profile",
     "parse_filter_list",
     "pretty_print",
+    "MissingArgument",
+    "NoAddressesFound",
+    "NoDevicesFound",
+    "NoGroupsFound",
+    "NoLoginsFound",
+    "NoSessionsConnected",
+    "Timer",
 ]
 
 from examples.common.example import caracara_example, load_client_from_profile
@@ -20,17 +28,3 @@ from examples.common.filter_loader import parse_filter_list
 from examples.common.prompts import choose_item
 from examples.common.timer import Timer
 from examples.common.utils import pretty_print
-
-__all__ = [
-    "caracara_example",
-    "choose_item",
-    "parse_filter_list",
-    "pretty_print",
-    "MissingArgument",
-    "NoAddressesFound",
-    "NoDevicesFound",
-    "NoGroupsFound",
-    "NoLoginsFound",
-    "NoSessionsConnected",
-    "Timer",
-]
