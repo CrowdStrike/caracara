@@ -5,7 +5,7 @@ import logging
 import os
 import sys
 from functools import wraps
-from typing import Dict
+from typing import Dict, Optional, Tuple
 
 import yaml
 
@@ -150,6 +150,56 @@ def _get_example_settings(profile: Dict, example_abs_path: str, globalsettings: 
 
     # Return back the merged settings dictionary
     return merged_example_settings
+
+
+def load_client_from_profile(
+    profile_name: Optional[str] = None,
+) -> Tuple[Client, logging.Logger]:
+    """Load a Caracara Client from config.yml for use in Click-based examples.
+
+    Selects a profile by name if given, auto-selects when only one profile exists,
+    picks the profile marked default: true, or raises a helpful error if selection
+    is ambiguous. Does not inspect sys.argv, so it is safe to call from Click commands.
+    """
+    if not os.path.exists(_config_path):
+        raise FileNotFoundError(f"You must create the file {_config_path}")
+
+    with open(_config_path, "r", encoding="utf8") as yaml_config_file:
+        config = yaml.safe_load(yaml_config_file)
+
+    if "profiles" not in config:
+        raise KeyError("You must create a profiles stanza in the configuration YAML file")
+
+    profile_names = list(config["profiles"].keys())
+
+    if profile_name:
+        if profile_name not in profile_names:
+            raise KeyError(f"The profile named {profile_name} does not exist in config.yml")
+    elif len(profile_names) == 1:
+        profile_name = profile_names[0]
+    else:
+        default_name = None
+        for prof in profile_names:
+            if config["profiles"][prof].get("default", False):
+                default_name = prof
+                break
+        if default_name:
+            profile_name = default_name
+        else:
+            raise ValueError(
+                f"Multiple profiles found in config.yml: {profile_names}. "
+                "Use --profile NAME to select one."
+            )
+
+    profile = config["profiles"][profile_name]
+
+    if "falcon" not in profile:
+        raise KeyError(f"Profile '{profile_name}' has no falcon stanza in config.yml")
+
+    _configure_logging(profile)
+    client = Client(**profile["falcon"])
+    logger = logging.getLogger(profile_name)
+    return client, logger
 
 
 def caracara_example(example_func):
