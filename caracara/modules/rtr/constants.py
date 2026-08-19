@@ -28,12 +28,14 @@ RTR_COMMANDS = {
     "ps": "read_only",
     "put": "admin",
     "put-and-run": "admin",
+    "pwd": "read_only",
     "reg": {
         "_default": "active_responder",
         "query": "read_only",
     },
     "restart": "active_responder",
     "rm": "active_responder",
+    "rmdir": "active_responder",
     "run": "admin",
     "runscript": {
         "_default": "admin",
