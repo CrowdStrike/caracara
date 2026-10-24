@@ -11,11 +11,11 @@ FalconPy functionality is unit tested to run under the following versions of Pyt
 
 | Version | Supported |
 | :------- | :--------- |
-| 3.10.x   | :white_check_mark: |
-| 3.9.x   | :white_check_mark: |
-| 3.8.x   | :white_check_mark: |
-| 3.7.x   | :white_check_mark: |
-| <= 3.6.x | :x: |
+| 3.14.x   | :white_check_mark: |
+| 3.13.x   | :white_check_mark: |
+| 3.12.x   | :white_check_mark: |
+| 3.11.x   | :white_check_mark: |
+| <= 3.10.x | :x: |
 | <= 2.x.x | :x: |
 
 This unit testing is performed using Windows, MacOS, and Ubuntu Linux.
