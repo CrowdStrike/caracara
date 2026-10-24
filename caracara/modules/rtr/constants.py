@@ -28,7 +28,8 @@ RTR_COMMANDS = {
     "ps": "read_only",
     "put": "admin",
     "put-and-run": "admin",
-    "pwd": "read_only",
+    # "pwd" is the RTR print-working-directory command, not a password
+    "pwd": "read_only",  # nosec B105
     "reg": {
         "_default": "active_responder",
         "query": "read_only",

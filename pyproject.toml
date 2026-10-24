@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "caracara"
-version = "1.0.4"
+version = "1.1.0"
 description = "The CrowdStrike Falcon Developer Toolkit"
 authors = [ "CrowdStrike <falconpy@crowdstrike.com>" ]
 readme = "README.md"
